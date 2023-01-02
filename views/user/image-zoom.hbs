@@ -1,0 +1,42 @@
+<section>
+
+    <div class="container ">
+        <div class="row">
+            <div class="image-div">
+                <img id="main_image" src="/product-images/{{id}}.jpg" alt="">
+            </div>
+            <div class="zoom-buttons">
+                <button type="button" onclick="zoomIn()" class="btn btn-danger btn-sm">Zoom in</button>
+                <button type="button" onclick="zoomOut()" class="btn btn-danger btn-sm">Zoom out</button>
+            </div>
+
+        </div>
+
+    </div>
+    <style>
+        div.image-div {
+            width: 500px;
+            height: 500px;
+            margin-top: 10px;
+            border: 1px solid;
+            overflow-y: auto;
+            overflow-x: auto;
+        }
+
+        .main_image {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        .image-div::-webkit-scrollbar {
+            display: none;
+        }
+
+        .zoom-buttons {
+            margin: 20px;
+        }
+    </style>
+
+
+</section>

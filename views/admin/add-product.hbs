@@ -1,0 +1,54 @@
+<div class="container mt-5">
+  <div class="row">
+    <div class="col-md-6">
+      <h2 class="text-center">Add Products</h2>
+      {{#if productStatus}}
+      <div class="alert alert-success" role="alert">
+        {{productStatus}}
+      </div>
+      {{/if}}
+      <form action="/admin/add-product" method="post" enctype="multipart/form-data">
+        <div class="mb-3">
+          <label for="exampleInputEmail1" class="form-label">Product Name</label>
+          <input type="text" name="name" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp">
+        </div>
+        <div class="mb-3" style="display: flex; justify-content: center;margin-top: 10px; flex-direction: column;">
+          <label style="margin-bottom: 20px;" for="exampleInputEmail1" class="form-label">Category</label>
+
+          <select name="category" class="input-select">
+            <option value=""></option>
+            {{#each category}}
+            {{#if this.category_view}}
+            <option value="{{this.category_name}}">{{this.category_name}}</option>
+            {{/if}}
+            {{/each}}
+          </select>
+
+
+          {{!-- <input type="text" name="category" class="form-control" id="exampleInputEmail1"
+            aria-describedby="emailHelp"> --}}
+        </div>
+        <div class="mb-3">
+          <label for="exampleInputEmail1" class="form-label">Price</label>
+          <input type="number" name="price" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp">
+        </div>
+        <div class="mb-3">
+          <label for="exampleInputEmail1" class="form-label">Description</label>
+          <input type="text" name="description" class="form-control" id="exampleInputEmail1"
+            aria-describedby="emailHelp">
+        </div>
+        <div class="mb-3">
+          <label for="exampleInputEmail1" class="form-label">Quantity</label>
+          <input type="text" name="quantity" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp">
+        </div>
+        <div class="mb-3">
+          <label for="formFileMultiple" class="form-label">Add Image</label>
+          <input name="image" class="form-control" type="file" value="upload" id="formFileMultiple" multiple />
+        </div>
+
+        <button type="submit" class="btn btn-primary">Submit</button>
+      </form>
+
+    </div>
+  </div>
+</div>

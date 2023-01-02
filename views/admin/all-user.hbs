@@ -1,0 +1,43 @@
+<section class="container p-3">
+  <div class="row">
+    <div id="admin" class="col s12">
+      <div class="card material-table">
+        <div class="table-header">
+          <span class="table-title">User List</span>
+          <div class="actions">
+            <a href="#add_users" class="modal-trigger waves-effect btn-flat nopadding"><i
+                class="material-icons">person_add</i></a>
+            <a href="#" class="search-toggle waves-effect btn-flat nopadding"><i class="material-icons">search</i></a>
+          </div>
+        </div>
+        <table id="datatable">
+          <thead>
+            <tr>
+              <th>username</th>
+              <th>email</th>
+              <th>mobile</th>
+              <th>status</th>
+            </tr>
+          </thead>
+          <tbody>
+            {{#each userInfo}}
+            <tr>
+              <td>{{this.name}}</td>
+              <td>{{this.email}}</td>
+              <td>{{this.mobile}}</td>
+              <td style="display: in;">
+                {{#if this.access}}
+                <a type="button" href="/admin/user-block/{{this._id}}"onclick="return confirm('Do you want to block this user {{this.name}}')" class="btn btn-danger btn-sm">block</a>
+                {{else}}
+                <a type="button" href="/admin/user-unblocking/{{this._id}}" onclick="return confirm('Do you want to unblock this user{{this.name}}')" class="btn btn-primary btn-sm">unblock</a>
+                {{/if}}
+              </td>
+            </tr>
+            {{/each}}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+</section>

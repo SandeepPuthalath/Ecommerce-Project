@@ -1,0 +1,60 @@
+<section class="container p-3">
+  <div class="row">
+    <div id="admin" class="col s12">
+      <div class="card material-table">
+        <div class="table-header">
+          <h1 class="table-title">Product List</h1>
+          {{!-- <div class="actions">
+            <a href="#add_users" class="modal-trigger waves-effect btn-flat nopadding"><i
+                class="material-icons">person_add</i></a>
+            <a href="#" class="search-toggle waves-effect btn-flat nopadding"><i class="material-icons">search</i></a>
+          </div> --}}
+        </div>
+        <div style="display: flex;">
+          <select form="category-select" id="myCourses" autofocus>
+            <option value="all-products">All products</option>
+            <option value="mobile">mobiles</option>
+             <option value="laptop">Laptop</option>
+            <option value="smart device">Smart devices</option>
+            <option value="accessories">Accessories</option>
+          </select>
+          <br>
+          <form id="category-select">
+            <input style="margin-left: 10px;" class="btn btn-success bt-sm" type="submit">
+          </form>
+        </div>
+        <a style="margin-top: 20px; margin-bottom: 20px;" type="button" href="/admin/add-product" class="btn btn-primary btn-sm">Add Product</a>
+        <table id="datatable">
+          <thead>
+            <tr>
+              <th>Product</th>
+              <th>Category</th>
+              <th>Description</th>
+              <th>Price</th>
+              <th>Quantity</th>
+              <th>Image</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            {{#each product}}
+            <tr>
+              <td>{{this.product_name}}</td>
+              <td>{{this.product_category}}</td>
+              <td>{{this.product_description}}</td>
+              <td>{{this.product_price}}</td>
+              <td>{{this.product_quantity}}</td>
+              <td><img style="width: 40px ;height: 50px;" src="/product-images/{{this._id}}.jpg" alt=""></td>
+              <td style="display: in;">
+                <a type="button" href="/admin/edit-product/{{this._id}}" class="btn btn-primary btn-sm">Edit</a>
+                <a type="button" href="/admin/delete-product/{{this._id}}" class="btn btn-danger btn-sm" onclick="return confirm('Do you want to delete {{this.product_name}}')">Delete</a>
+              </td>
+            </tr>
+            {{/each}}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+</section>

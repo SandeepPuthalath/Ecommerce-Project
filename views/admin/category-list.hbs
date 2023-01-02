@@ -1,0 +1,100 @@
+<section>
+    <div class="container py-5 h-100">
+        <div class="row d-flex justify-content-center align-items-center h-100">
+            <div class="col-12 col-md-8 col-lg-6 col-xl-5">
+                <div class="card shadow-2-strong" style="border-radius: 1rem;">
+                    <div style="text-transform: capitalize;" class="card-body p-5 text-center">
+
+                        <h3 class="mb-5">Add Categorys</h3>
+                        {{#if otpStatus}}
+                        <div class="alert alert-success" role="alert">
+                            {{otpStatus}}
+                        </div>
+                        {{/if}}
+                        {{#if otpLoginErr}}
+                        <div class="alert alert-danger" role="alert">
+                            {{otpLoginErr}}
+                        </div>
+                        {{/if}}
+                        <div class="form-outline mb-4">
+                            <form action="/admin/add-category" method="post">
+                                <label class="form-label" style="text-transform: capitalize;" for="typeEmailX-2">Enter
+                                    Category</label>
+                                <div style="display: flex;" class="">
+                                    <input name="category" type="text" id="typeEmailX-2"
+                                        class="form-control form-control-lg" required>
+                                </div>
+                                {{!-- <label class="form-label" for="typePasswordX-2">Enter sub-category</label>
+                                <div style="display: flex;" class="">
+                                    <input name="scategory" type="text" id="typeEmailX-2"
+                                        class="form-control form-control-lg" required>
+                                </div> --}}
+                                <button style="margin: 20px;" class="btn btn-primary btn-lg btn-sm" type="submit">Add categorys</button>
+                            </form>
+                        </div>
+
+                        <hr class="my-4">
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<section class="container p-3">
+    <div class="row">
+        <div id="admin" class="col s12">
+            <div class="card material-table">
+                <div class="table-header">
+                    <h1 class="table-title">Product List</h1>
+                    {{!-- <div class="actions">
+                        <a href="#add_users" class="modal-trigger waves-effect btn-flat nopadding"><i
+                                class="material-icons">person_add</i></a>
+                        <a href="#" class="search-toggle waves-effect btn-flat nopadding"><i
+                                class="material-icons">search</i></a>
+                    </div> --}}
+                </div>
+                <div style="display: flex;">
+                    <select form="category-select" id="myCourses" autofocus>
+                        <option value="all-products">All products</option>
+                        <option value="mobile">mobiles</option>
+                        <option value="laptop">Laptop</option>
+                        <option value="smart device">Smart devices</option>
+                        <option value="accessories">Accessories</option>
+                    </select>
+                    <br>
+                    <form id="category-select">
+                        <input style="margin-left: 10px;" class="btn btn-success bt-sm" type="submit">
+                    </form>
+                </div>
+                <a style="margin-top: 20px; margin-bottom: 20px;" type="button" href="/admin/add-product"
+                    class="btn btn-primary btn-sm">Add Product</a>
+                <table id="datatable">
+                    <thead>
+                        <tr>
+                            <th style="">Sl.No</th>
+                            <th>Category</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {{#each category}}
+                        <tr>
+                            <td>{{@index}}</td>
+                            <td>{{this.category_name}}</td>
+                            <td style="display: in;">
+                                {{#if this.category_view}}
+                                <a type="button"onclick="return confirm('Do you want to unlist this category {{this.category_name}}')" href="/admin/unlist-category/{{this._id}}"
+                                    class="btn btn-primary btn-sm">Unlist</a>
+                                {{else}}    
+                                <a type="button" href="/admin/list-category/{{this._id}}" onclick="return confirm('Do you want to list this category {{this.category_name}}')" class="btn btn-danger btn-sm">List</a>
+                                {{/if}}
+                            </td>
+                        </tr>
+                        {{/each}}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</section>

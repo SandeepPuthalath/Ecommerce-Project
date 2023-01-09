@@ -1,68 +1,157 @@
 <!DOCTYPE html>
 <html lang="en">
 
+{{#if admin_header}}
+<!-- Mirrored from wp.alithemes.com/html/evara/evara-backend/index.html by HTTrack Website Copier/3.x [XR&CO'2014], Sun, 01 Aug 2021 15:32:35 GMT -->
+
+<!-- Mirrored from wp.alithemes.com/html/evara/evara-backend/index.html by HTTrack Website Copier/3.x [XR&CO'2014], Sun, 01 Aug 2021 15:32:35 GMT -->
+
 <head>
 	<meta charset="utf-8">
-	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>Evara Dashboard</title>
+	<meta http-equiv="x-ua-compatible" content="ie=edge">
+	<meta name="description" content="">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
-
-	<title>Electro - HTML Ecommerce Template</title>
-
-	<!-- Google font -->
-	<link href="https://fonts.googleapis.com/css?family=Montserrat:400,500,700" rel="stylesheet">
-
-	<!-- Bootstrap -->
-	<link type="text/css" rel="stylesheet" href="/css/bootstrap.min.css" />
-
-	<!-- Slick -->
-	<link type="text/css" rel="stylesheet" href="/css/slick.css" />
-	<link type="text/css" rel="stylesheet" href="/css/slick-theme.css" />
-
-	<!-- nouislider -->
-	<link type="text/css" rel="stylesheet" href="/css/nouislider.min.css" />
-
-	<!-- Font Awesome Icon -->
-	<link rel="stylesheet" href="/css/font-awesome.min.css">
-
-	<!-- Custom stlylesheet -->
-	<link type="text/css" rel="stylesheet" href="/css/style.css" />
-
-	<!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
-	<!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
-	<!--[if lt IE 9]>
-		  <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
-		  <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
-		<![endif]-->
-	{{!-- my styles --}}
-	
-	
+	<meta property="og:title" content="">
+	<meta property="og:type" content="">
+	<meta property="og:url" content="">
+	<meta property="og:image" content="">
+	<!-- Favicon -->
+	<link rel="shortcut icon" type="image/x-icon" href="/assets/imgs/theme/favicon.svg">
+	<!-- Template CSS -->
+	<link href="/assets/css/main.css" rel="stylesheet" type="text/css" />
 </head>
+
+{{else}}
+{{#if admin}}
+<!-- Mirrored from wp.alithemes.com/html/evara/evara-backend/index.html by HTTrack Website Copier/3.x [XR&CO'2014], Sun, 01 Aug 2021 15:32:35 GMT -->
+
+<!-- Mirrored from wp.alithemes.com/html/evara/evara-backend/index.html by HTTrack Website Copier/3.x [XR&CO'2014], Sun, 01 Aug 2021 15:32:35 GMT -->
+
+<head>
+	<meta charset="utf-8">
+	<title>Evara Dashboard</title>
+	<meta http-equiv="x-ua-compatible" content="ie=edge">
+	<meta name="description" content="">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta property="og:title" content="">
+	<meta property="og:type" content="">
+	<meta property="og:url" content="">
+	<meta property="og:image" content="">
+	<!-- Favicon -->
+	<link rel="shortcut icon" type="image/x-icon" href="/assets/imgs/theme/favicon.svg">
+	<!-- Template CSS -->
+	<link href="/assets/css/main.css" rel="stylesheet" type="text/css" />
+</head>
+
+
+{{else}}
+
+<head>
+	<meta charset="utf-8">
+	<title>Evara - eCommerce HTML Template</title>
+	<meta http-equiv="x-ua-compatible" content="ie=edge">
+	<meta name="description" content="">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta property="og:title" content="">
+	<meta property="og:type" content="">
+	<meta property="og:url" content="">
+	<meta property="og:image" content="">
+	<!-- Favicon -->
+	<link rel="shortcut icon" type="image/x-icon" href="/imgs/theme/favicon.svg">
+	<!-- Template CSS -->
+	<link rel="stylesheet" href="/css/main.css">
+
+	{{!-- my links --}}
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script> 
+	<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+
+
+</head>
+{{/if}}
+{{/if}}
 
 <body>
 
 	{{#if admin_header}}
 	{{>admin-header}}
+	{{>admin_sidebar}}
 	{{else}}
 	{{#if admin}}
 	{{>admin-header}}
+	{{>admin_sidebar}}
 	{{else}}
 	{{>user-header}}
 	{{/if}}
 	{{/if}}
 	{{{body}}}
-	<script src="/javascripts/script.js"></script>
-	<!-- jQuery Plugins -->
-	<script src="/js/jquery.min.js"></script>
-	<script src="/js/bootstrap.min.js"></script>
-	<script src="/js/slick.min.js"></script>
-	<script src="/js/nouislider.min.js"></script>
-	<script src="/js/jquery.zoom.min.js"></script>
-	<script src="/js/main.js"></script>
 
+	{{#if admin_header}}
+	{{>admin-footer}}
+	{{else}}
+	{{#if admin}}
+	{{>admin-footer}}
+	{{else}}
+	{{>user-footer}}
+	{{/if}}
+	{{/if}}
+
+	{{#if admin-header}}
+	<script src="/assets/js/vendors/jquery-3.6.0.min.js"></script>
+	<script src="/assets/js/vendors/bootstrap.bundle.min.js"></script>
+	<script src="/assets/js/vendors/select2.min.js"></script>
+	<script src="/assets/js/vendors/perfect-scrollbar.js"></script>
+	<script src="/assets/js/vendors/jquery.fullscreen.min.js"></script>
+	<script src="/assets/js/vendors/chart.js"></script>
+	<!-- Main Script -->
+	<script src="/assets/js/main.js" type="text/javascript"></script>
+	<script src="/assets/js/custom-chart.js" type="text/javascript"></script>
+
+	{{else}}
+	{{#if admin}}
+	<script src="/assets/js/vendors/jquery-3.6.0.min.js"></script>
+	<script src="/assets/js/vendors/bootstrap.bundle.min.js"></script>
+	<script src="/assets/js/vendors/select2.min.js"></script>
+	<script src="/assets/js/vendors/perfect-scrollbar.js"></script>
+	<script src="/assets/js/vendors/jquery.fullscreen.min.js"></script>
+	<script src="/assets/js/vendors/chart.js"></script>
+	<!-- Main Script -->
+	<script src="/assets/js/main.js" type="text/javascript"></script>
+	<script src="/assets/js/custom-chart.js" type="text/javascript"></script>
+
+	{{else}}
 	{{!-- my script --}}
-	
+	<script src="/javascripts/script.js"></script>
+	<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+	<!-- Vendor JS-->
+	<script src="/js/vendor/modernizr-3.6.0.min.js"></script>
+	<script src="/js/vendor/jquery-3.6.0.min.js"></script>
+	<script src="/js/vendor/jquery-migrate-3.3.0.min.js"></script>
+	<script src="/js/vendor/bootstrap.bundle.min.js"></script>
+	<script src="/js/plugins/slick.js"></script>
+	<script src="/js/plugins/jquery.syotimer.min.js"></script>
+	<script src="/js/plugins/wow.js"></script>
+	<script src="/js/plugins/jquery-ui.js"></script>
+	<script src="/js/plugins/perfect-scrollbar.js"></script>
+	<script src="/js/plugins/magnific-popup.js"></script>
+	<script src="/js/plugins/select2.min.js"></script>
+	<script src="/js/plugins/waypoints.js"></script>
+	<script src="/js/plugins/counterup.js"></script>
+	<script src="/js/plugins/jquery.countdown.min.js"></script>
+	<script src="/js/plugins/images-loaded.js"></script>
+	<script src="/js/plugins/isotope.js"></script>
+	<script src="/js/plugins/scrollup.js"></script>
+	<script src="/js/plugins/jquery.vticker-min.js"></script>
+	<script src="/js/plugins/jquery.theia.sticky.js"></script>
+	<script src="/js/plugins/jquery.elevatezoom.js"></script>
+	<!-- Template  JS -->
+	<script src="/js/main.js"></script>
+	<script src="/js/shop.js"></script>
 
+
+
+	{{/if}}
+	{{/if}}
 </body>
 
 </html>

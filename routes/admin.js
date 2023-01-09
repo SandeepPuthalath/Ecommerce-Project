@@ -1,7 +1,7 @@
 var express = require('express');
 var router = express.Router();
-const admin_controller = require('../controllers/admin-controller');
-const session_check = require('../middleware/session-handling');
+const admin_controller = require('../controllers/adminController');
+const session_check = require('../middleware/sessionHandling');
 
 /* GET admin Dashboard.... */
 router.get('/', session_check.checkingAdmin, admin_controller.adminDashboard);
@@ -34,7 +34,7 @@ router.route('/edit-product/:id').get(session_check.checkingAdmin, admin_control
 
 // Deleting product 
 
-router.get('/delete-product/:id', admin_controller.deleteProduct);
+router.get('/delete-product/:id', admin_controller. changeStatusProduct);
 
 //Rendering category management page ...
 
@@ -52,8 +52,13 @@ router.get('/list-category/:id', admin_controller.listCategory);
 
 router.get('/unlist-category/:id', admin_controller.unlistCategory);
 
+// All order details listing page loading..
+
+router.get('/all-order-details',session_check.checkingAdmin,admin_controller.usersOrderDetails)
+
 //admin logout..
 
 router.get('/admin-logout', admin_controller.adminLogout);
+
 
 module.exports = router;

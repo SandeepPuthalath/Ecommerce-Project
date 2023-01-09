@@ -13,6 +13,8 @@ require('dotenv').config();
 
 var userRouter = require('./routes/user');
 var adminRouter = require('./routes/admin');
+const { route } = require('./routes/user');
+const router = require('./routes/user');
 
 var app = express();
 
@@ -26,9 +28,11 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
+
+
 app.use(fileUpload());
 app.use(session({
-  key : 'user_id',
+  key : 'user_sid',
   secret :'thisisthekeyforuser',
   resave : false,
   saveUninitialized : false,
@@ -36,6 +40,17 @@ app.use(session({
 }));
 
 app.use(nocache())
+
+// app.use((req, res, next) =>{
+//   if(req.session.ueser && req.cookies.user_sid){
+//     res.redirect('/');
+//   }
+//   else{
+//     next();
+//   }
+// });
+
+
 
 app.use('/', userRouter);
 app.use('/admin', adminRouter);
@@ -57,3 +72,5 @@ app.use(function(err, req, res, next) {
 });
 
 module.exports = app;
+
+

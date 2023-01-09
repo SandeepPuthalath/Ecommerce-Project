@@ -1,77 +1,99 @@
-<section>
-  <div class="container mt-5">
+<main class="main-wrap">
+  <section class="content-main">
     <div class="row">
-      <div class="col-md-6">
-        <h2 class="text-center">Edit Product</h2>
-        <form id="form" action="/admin/edit-product/{{product._id}}" method="post" enctype="multipart/form-data">
-          <div class="mb-3">
-            <label for="exampleInputEmail1" class="form-label">Product Name</label>
-            <input type="text" name="name" class="form-control" id="exampleInputEmail1" value="{{product.product_name}}"
-              aria-describedby="emailHelp">
-          </div>
-          <div class="mb-3" style="display: flex; justify-content: center;margin-top: 10px; flex-direction: column;">
-            <label style="margin-bottom: 20px;" for="exampleInputEmail1" class="form-label">Category</label>
+      <div class="col-9">
+        <div class="content-header">
+          <h2 class="content-title">Edit Product</h2>
 
-            <select value = "{{product.product_category}}" name="category" class="input-select">
-              {{#each category}}
-              {{#if this.category_view}}
-              <option  value="{{this.category_name}} ">{{this.category_name}}</option>
-              {{/if}}
-              {{/each}}
-            </select>
-
-
-            {{!-- <input type="text" name="category" class="form-control" id="exampleInputEmail1"
-              aria-describedby="emailHelp"> --}}
-          </div>
-          <div class="mb-3">
-            <label for="exampleInputEmail1" class="form-label">Description</label>
-            <input type="text" name="description" class="form-control" id="exampleInputEmail1"
-              value="{{product.product_description}}" aria-describedby="emailHelp">
-          </div>
-          <div class="mb-3">
-            <label for="exampleInputEmail1" class="form-label">Price</label>
-            <input type="number" name="price" class="form-control" id="exampleInputEmail1"
-              value="{{product.product_price}}" aria-describedby="emailHelp">
-          </div>
-          <div class="mb-3">
-            <label for="exampleInputEmail1" class="form-label">Quantity</label>
-            <input type="text" name="quantity" class="form-control" id="exampleInputEmail1"
-              value="{{product.product_quantity}}" aria-describedby="emailHelp">
-          </div>
-          <div class="mb-3">
-            <img id="imgView" style="width: 100px;height: 100px;" src="/product-images/{{product._id}}.jpg" alt="">
-            <a id="editImg" onclick="editImage()" class="btn btn-primary">Edit Image</a>
-          </div>
-          <div id="imageEdit" style="display: none;" class="mb-3">
-            <label for="formFileMultiple" class="form-label">Image</label>
-
-            <input name="image" class="form-control" type="file" value="upload" id="formFileMultiple"
-              onchange="viewImage(event)" multiple />
-          </div>
-
-          <button type="submit" class="btn btn-primary">Submit</button>
-        </form>
-
+        </div>
       </div>
+      {{#if productStatus}}
+      <div class="alert alert-success" role="alert">
+        {{productStatus}}
+      </div>
+      {{/if}}
+      <form id="form" action="/admin/edit-product/{{product._id}}" method="post" enctype="multipart/form-data">
+        <div class="col-lg-6">
+          <div class="card mb-4">
+            <div class="card-header">
+              <h4>Basic</h4>
+            </div>
+            <div class="card-body">
+              <div class="mb-4">
+                <label for="product_name" class="form-label">Product title</label>
+                <input type="text" name="name" value="{{product.product_name}}" placeholder="Type here"
+                  class="form-control" id="product_name">
+              </div>
+              <div class="mb-4">
+                <label class="form-label">Full description</label>
+                <textarea name="description" placeholder="Type here" class="form-control"
+                  rows="4">{{product.product_description}}</textarea>
+              </div>
+              <div class="row">
+                <div class="col-lg-4">
+                  <div class="mb-4">
+                    <label class="form-label">Regular price</label>
+                    <div class="row gx-2">
+                      <input placeholder="$" value="{{product.product_price}}" name="price" type="text"
+                        class="form-control">
+                    </div>
+                  </div>
+                </div>
+                <div class="col-lg-4">
+                  <div class="mb-4">
+                    <label class="form-label">Quantity</label>
+                    <input placeholder="Quantity" value="{{product.product_quantity}}" name="quantity" type="text"
+                      class="form-control">
+                  </div>
+                </div>
+                <div class="col-lg-4">
+                  <label class="form-label">Category</label>
+                  <select style="text-transform: capitalize;" name="category" class="form-select">
+                    {{#each category}}
+                    {{#if this.category_view}}
+                    <option value="{{this.category_name}}" selected="{{product.product_category}}">
+                      {{this.category_name}}</option>
+                    {{/if}}
+                    {{/each}}
+                  </select>
+                </div>
+              </div>
+              {{!-- <label class="form-check mb-4">
+                <input class="form-check-input" type="checkbox" value="">
+                <span class="form-check-label"> Make a template </span>
+              </label> --}}
+            </div>
+          </div> <!-- card end// -->
+        </div>
+        <div class="col-lg-3">
+          <div class="card mb-4">
+            <div class="card-header">
+              <h4>Media</h4>
+            </div>
+            <div class="card-body">
+              <div class="input-upload">
+                <img src="/product-images/{{product._id}}.jpg" id="imgView" alt="">
+                <input class="form-control" name="image" onchange="viewImage(event)" value="upload" type="file"
+                  multiple>
+              </div>
+            </div>
+          </div> <!-- card end// -->
+        </div>
+        <div>
+          <button class="btn btn-light rounded font-sm mr-5 text-body hover-up">Save to draft</button>
+          <button type="submit" class="btn btn-md rounded font-sm hover">Publich</button>
+        </div>
+      </form>
     </div>
-  </div>
-</section>
-<script>
+    <script>
 
-  let form = document.getElementById('form');
-  let imageInput = document.getElementById('imageEdit').value;
-
-  form.addEventListener('submit', (e) => {
-    e.defaultPrevented()// prevent form from auto submitting..\
-  })
-  function viewImage(event) {
-    document.getElementById('imgView').src = URL.createObjectURL(event.target.files[0])
-  }
-
-  function editImage() {
-    let imageEdit = document.getElementById('imageEdit');
-    imageEdit.style.display = 'block';
-  }
-
-</script>
+      let form = document.getElementById('form');
+      form.addEventListener('submit', (e) => {
+        e.defaultPrevented()// prevent form from auto submitting..\
+      })
+      function viewImage(event) {
+        document.getElementById('imgView').src = URL.createObjectURL(event.target.files[0])
+      }
+    </script>
+  </section> <!-- content-main end// -->
+</main>

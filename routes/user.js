@@ -2,9 +2,7 @@ var express = require('express');
 var router = express.Router();
 const user_controller = require('../controllers/userControllers')
 const page_controller = require('../controllers/pageController');
-const { doLogout } = require('../helpers/userHelper');
 const session_check = require('../middleware/sessionHandling');
-const { authenticationCheck } = require('../middleware/sessionHandling');
 
 
 
@@ -76,7 +74,42 @@ router.get('/user/user-details',session_check.userChecking,user_controller.getAc
 
 // Cancelling user order ss
 
-router.post('/user/order-cancel',user_controller.orderCancelling)
+router.post('/user/order-cancel',user_controller.orderCancelling);
+
+//adding address
+
+router.post('/add-address',user_controller.addAddress);
+
+//user whichlist 
+
+router.get('/user-wishlist',session_check.userChecking ,user_controller.loadingWishlist);
+
+//adding product to user wishlist..
+
+router.post('/addToWishlist',user_controller.addToWishlist);
+
+//deleting user Address 
+
+router.delete('/remove-address/:id',user_controller.removeAddress);
+
+// paypal methods
+router.get('/success',user_controller.paypalSuccess);
+
+router.get('/cancel',user_controller.paypalCancel);
+
+// adding item from wishlist to cart
+
+router.put('/addFromWishlist/:prodId',user_controller.addFromWishlist);
+
+//user profile editing page rendering....
+
+router.get('/user-profile-edit',session_check.userChecking,user_controller.getUserProfile)
+
+router.post('/update-user-info',session_check.userChecking,user_controller.updateUserInfo)
+
+// razorypay payment verifying
+
+router.post('/verify-payment',user_controller.verifyPayment)
 
 
 

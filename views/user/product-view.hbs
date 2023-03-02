@@ -1,427 +1,246 @@
-<div id="breadcrumb" class="section">
-			<!-- container -->
-			<div class="container">
-				<!-- row -->
-				<div class="row">
-					<div class="col-md-12">
-						<ul class="breadcrumb-tree">
-							<li><a href="#">Home</a></li>
-							<li><a href="#">All Categories</a></li>
-							<li><a href="#">Accessories</a></li>
-							<li class="active">Headphones (227,490 Results)</li>
+<main class="main">
+	<div class="page-header breadcrumb-wrap">
+		<div class="container">
+			<div class="breadcrumb">
+				<a href="index.html" rel="nofollow">Home</a>
+				<span></span> Shop
+			</div>
+		</div>
+	</div>
+	<section class="mt-50 mb-50">
+		<div class="container">
+			<div class="row flex-row-reverse">
+				<div class="col-lg-9">
+					<div class="shop-product-fillter">
+						<div class="totall-product">
+							<p> We found <strong class="text-brand">688</strong> items for you!</p>
+						</div>
+						<div class="sort-by-product-area">
+							<div class="sort-by-cover mr-10">
+								<div class="sort-by-product-wrap">
+									<div class="sort-by">
+										<span><i class="fi-rs-apps"></i>Show:</span>
+									</div>
+									<div class="sort-by-dropdown-wrap">
+										<span> 50 <i class="fi-rs-angle-small-down"></i></span>
+									</div>
+								</div>
+								<div class="sort-by-dropdown">
+									<ul>
+										<li><a class="active" href="#">50</a></li>
+										<li><a href="#">100</a></li>
+										<li><a href="#">150</a></li>
+										<li><a href="#">200</a></li>
+										<li><a href="#">All</a></li>
+									</ul>
+								</div>
+							</div>
+							<div class="sort-by-cover">
+								<div class="sort-by-product-wrap">
+									<div class="sort-by">
+										<span><i class="fi-rs-apps-sort"></i>Sort by:</span>
+									</div>
+									<div class="sort-by-dropdown-wrap">
+										<span> Featured <i class="fi-rs-angle-small-down"></i></span>
+									</div>
+								</div>
+								<div class="sort-by-dropdown">
+									<ul>
+										<li><a class="active" href="#">Featured</a></li>
+										<li><a href="#">Price: Low to High</a></li>
+										<li><a href="#">Price: High to Low</a></li>
+										<li><a href="#">Release Date</a></li>
+										<li><a href="#">Avg. Rating</a></li>
+									</ul>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="row product-grid-3">
+						{{#each product}}
+						<div class="col-lg-4 col-md-4 col-12 col-sm-6">
+							<div class="product-cart-wrap mb-30">
+								<div class="product-img-action-wrap">
+									<div class="product-img product-img-zoom">
+										<a href="shop-product-right.html">
+											<img class="default-img" src="/product-images/{{this._id}}.jpg" alt="">
+											<img class="hover-img" src="/product-images/{{this._id}}.jpg" alt="">
+										</a>
+									</div>
+									<div class="product-action-1">
+										<a aria-label="Quick view" class="action-btn hover-up" data-bs-toggle="modal"
+											data-bs-target="#quickViewModal">
+											<i class="fi-rs-search"></i></a>
+										<a aria-label="Add To Wishlist" class="action-btn hover-up"
+											href="shop-wishlist.html"><i class="fi-rs-heart"></i></a>
+										<a aria-label="Compare" class="action-btn hover-up" href="shop-compare.html"><i
+												class="fi-rs-shuffle"></i></a>
+									</div>
+									<div class="product-badges product-badges-position product-badges-mrg">
+										<span class="hot">Hot</span>
+									</div>
+								</div>
+								<div class="product-content-wrap">
+									<div class="product-category">
+										<a href="shop-grid-right.html">Music</a>
+									</div>
+									<h2><a href="shop-product-right.html">{{this.product_name}}</a></h2>
+									<div class="rating-result" title="90%">
+										<span>
+											<span>90%</span>
+										</span>
+									</div>
+									<div class="product-price">
+										<span>Rs. {{this.product_price}}</span>
+										<span class="old-price">$245.8</span>
+									</div>
+									<div class="product-action-1 show">
+										<a aria-label="Add To Cart" class="action-btn hover-up" href="shop-cart.html"><i
+												class="fi-rs-shopping-bag-add"></i></a>
+									</div>
+								</div>
+							</div>
+						</div>
+						{{/each}}
+					</div>
+					<!--pagination-->
+					<div class="pagination-area mt-15 mb-sm-5 mb-lg-0">
+						<nav aria-label="Page navigation example">
+							<ul class="pagination justify-content-start">
+								<li class="page-item active"><a class="page-link" href="#">01</a></li>
+								<li class="page-item"><a class="page-link" href="#">02</a></li>
+								<li class="page-item"><a class="page-link" href="#">03</a></li>
+								<li class="page-item"><a class="page-link dot" href="#">...</a></li>
+								<li class="page-item"><a class="page-link" href="#">16</a></li>
+								<li class="page-item"><a class="page-link" href="#"><i
+											class="fi-rs-angle-double-small-right"></i></a></li>
+							</ul>
+						</nav>
+					</div>
+				</div>
+				<div class="col-lg-3 primary-sidebar sticky-sidebar">
+					<div class="widget-category mb-30">
+						<h5 class="section-title style-1 mb-30 wow fadeIn animated">Category</h5>
+						<ul class="categories">
+							<li><a href="shop-grid-right.html">Shoes & Bags</a></li>
+							<li><a href="shop-grid-right.html">Blouses & Shirts</a></li>
+							<li><a href="shop-grid-right.html">Dresses</a></li>
+							<li><a href="shop-grid-right.html">Swimwear</a></li>
+							<li><a href="shop-grid-right.html">Beauty</a></li>
+							<li><a href="shop-grid-right.html">Jewelry & Watch</a></li>
+							<li><a href="shop-grid-right.html">Accessories</a></li>
 						</ul>
 					</div>
-				</div>
-				<!-- /row -->
-			</div>
-			<!-- /container -->
-		</div>
-		<!-- /BREADCRUMB -->
-
-		<!-- SECTION -->
-		<div class="section">
-			<!-- container -->
-			<div class="container">
-				<!-- row -->
-				<div class="row">
-					<!-- ASIDE -->
-					<div id="aside" class="col-md-3">
-						<!-- aside Widget -->
-						<div class="aside">
-							<h3 class="aside-title">Categories</h3>
-							<div class="checkbox-filter">
-
-								<div class="input-checkbox">
-									<input type="checkbox" id="category-1">
-									<label for="category-1">
-										<span></span>
-										Laptops
-										<small>(120)</small>
-									</label>
-								</div>
-
-								<div class="input-checkbox">
-									<input type="checkbox" id="category-2">
-									<label for="category-2">
-										<span></span>
-										Smartphones
-										<small>(740)</small>
-									</label>
-								</div>
-
-								<div class="input-checkbox">
-									<input type="checkbox" id="category-3">
-									<label for="category-3">
-										<span></span>
-										Cameras
-										<small>(1450)</small>
-									</label>
-								</div>
-
-								<div class="input-checkbox">
-									<input type="checkbox" id="category-4">
-									<label for="category-4">
-										<span></span>
-										Accessories
-										<small>(578)</small>
-									</label>
-								</div>
-
-								<div class="input-checkbox">
-									<input type="checkbox" id="category-5">
-									<label for="category-5">
-										<span></span>
-										Laptops
-										<small>(120)</small>
-									</label>
-								</div>
-
-								<div class="input-checkbox">
-									<input type="checkbox" id="category-6">
-									<label for="category-6">
-										<span></span>
-										Smartphones
-										<small>(740)</small>
-									</label>
-								</div>
-							</div>
+					<!-- Fillter By Price -->
+					<div class="sidebar-widget price_range range mb-30">
+						<div class="widget-header position-relative mb-20 pb-10">
+							<h5 class="widget-title mb-10">Fill by price</h5>
+							<div class="bt-1 border-color-1"></div>
 						</div>
-						<!-- /aside Widget -->
-
-						<!-- aside Widget -->
-						<div class="aside">
-							<h3 class="aside-title">Price</h3>
-							<div class="price-filter">
-								<div id="price-slider"></div>
-								<div class="input-number price-min">
-									<input id="price-min" type="number">
-									<span class="qty-up">+</span>
-									<span class="qty-down">-</span>
-								</div>
-								<span>-</span>
-								<div class="input-number price-max">
-									<input id="price-max" type="number">
-									<span class="qty-up">+</span>
-									<span class="qty-down">-</span>
-								</div>
-							</div>
-						</div>
-						<!-- /aside Widget -->
-
-						<!-- aside Widget -->
-						<div class="aside">
-							<h3 class="aside-title">Brand</h3>
-							<div class="checkbox-filter">
-								<div class="input-checkbox">
-									<input type="checkbox" id="brand-1">
-									<label for="brand-1">
-										<span></span>
-										SAMSUNG
-										<small>(578)</small>
-									</label>
-								</div>
-								<div class="input-checkbox">
-									<input type="checkbox" id="brand-2">
-									<label for="brand-2">
-										<span></span>
-										LG
-										<small>(125)</small>
-									</label>
-								</div>
-								<div class="input-checkbox">
-									<input type="checkbox" id="brand-3">
-									<label for="brand-3">
-										<span></span>
-										SONY
-										<small>(755)</small>
-									</label>
-								</div>
-								<div class="input-checkbox">
-									<input type="checkbox" id="brand-4">
-									<label for="brand-4">
-										<span></span>
-										SAMSUNG
-										<small>(578)</small>
-									</label>
-								</div>
-								<div class="input-checkbox">
-									<input type="checkbox" id="brand-5">
-									<label for="brand-5">
-										<span></span>
-										LG
-										<small>(125)</small>
-									</label>
-								</div>
-								<div class="input-checkbox">
-									<input type="checkbox" id="brand-6">
-									<label for="brand-6">
-										<span></span>
-										SONY
-										<small>(755)</small>
-									</label>
-								</div>
-							</div>
-						</div>
-						<!-- /aside Widget -->
-
-						<!-- aside Widget -->
-						<div class="aside">
-							<h3 class="aside-title">Top selling</h3>
-							<div class="product-widget">
-								<div class="product-img">
-									<img src="./img/product01.png" alt="">
-								</div>
-								<div class="product-body">
-									<p class="product-category">Category</p>
-									<h3 class="product-name"><a href="#">product name goes here</a></h3>
-									<h4 class="product-price">$980.00 <del class="product-old-price">$990.00</del></h4>
-								</div>
-							</div>
-
-							<div class="product-widget">
-								<div class="product-img">
-									<img src="./img/product02.png" alt="">
-								</div>
-								<div class="product-body">
-									<p class="product-category">Category</p>
-									<h3 class="product-name"><a href="#">product name goes here</a></h3>
-									<h4 class="product-price">$980.00 <del class="product-old-price">$990.00</del></h4>
-								</div>
-							</div>
-
-							<div class="product-widget">
-								<div class="product-img">
-									<img src="./img/product03.png" alt="">
-								</div>
-								<div class="product-body">
-									<p class="product-category">Category</p>
-									<h3 class="product-name"><a href="#">product name goes here</a></h3>
-									<h4 class="product-price">$980.00 <del class="product-old-price">$990.00</del></h4>
-								</div>
-							</div>
-						</div>
-						<!-- /aside Widget -->
-					</div>
-					<!-- /ASIDE -->
-
-					<!-- STORE -->
-					<div id="store" class="col-md-9">
-						<!-- store top filter -->
-						<div class="store-filter clearfix">
-							<div class="store-sort">
-								<label>
-									Sort By:
-									<select class="input-select">
-										<option value="0">Popular</option>
-										<option value="1">Position</option>
-									</select>
-								</label>
-
-								<label>
-									Show:
-									<select class="input-select">
-										<option value="0">20</option>
-										<option value="1">50</option>
-									</select>
-								</label>
-							</div>
-							<ul class="store-grid">
-								<li class="active"><i class="fa fa-th"></i></li>
-								<li><a href="#"><i class="fa fa-th-list"></i></a></li>
-							</ul>
-						</div>
-						<!-- /store top filter -->
-
-						<!-- store products -->
-						<div class="row">
-							<!-- product -->
-							{{#each product}}
-							<div class="col-md-4 col-xs-6">
-								<div class="product">
-									<div class="product-img">
-										<img src="/product-images/{{this._id}}.jpg" alt="">
-										<div class="product-label">
-											<span class="sale">-30%</span>
-											<span class="new">NEW</span>
-										</div>
-									</div>
-									<div class="product-body">
-										<p class="product-category">{{this.product_category}}</p>
-										<h3 class="product-name"><a href="#">{{this.product_name}}</a></h3>
-										<h4 class="product-price">${{this.product_price}} <del class="product-old-price">${{this.product_price}}</del></h4>
-										<div class="product-rating">
-											<i class="fa fa-star"></i>
-											<i class="fa fa-star"></i>
-											<i class="fa fa-star"></i>
-											<i class="fa fa-star"></i>
-											<i class="fa fa-star"></i>
-										</div>
-										<div class="product-btns">
-											<button class="add-to-wishlist"><i class="fa fa-heart-o"></i><span class="tooltipp">add to wishlist</span></button>
-											<button class="add-to-compare"><i class="fa fa-exchange"></i><span class="tooltipp">add to compare</span></button>
-											<button class="quick-view"><i class="fa fa-eye"></i><span class="tooltipp">quick view</span></button>
-										</div>
-									</div>
-									<div class="add-to-cart">
-										<a href="/product/{{this._id}}" class="add-to-cart-btn"><i class="fa fa-shopping-cart"></i> add to cart</a>
+						<div class="price-filter">
+							<div class="price-filter-inner">
+								<div id="slider-range"></div>
+								<div class="price_slider_amount">
+									<div class="label-input">
+										<span>Range:</span><input type="text" id="amount" name="price"
+											placeholder="Add Your Price" />
 									</div>
 								</div>
 							</div>
-							{{/each}}
-							<!-- /product -->
-
-						
-							<div class="clearfix visible-sm visible-xs"></div>
-
-						<!-- store bottom filter -->
-						<div class="store-filter clearfix">
-							<span class="store-qty">Showing 20-100 products</span>
-							<ul class="store-pagination">
-								<li class="active">1</li>
-								<li><a href="#">2</a></li>
-								<li><a href="#">3</a></li>
-								<li><a href="#">4</a></li>
-								<li><a href="#"><i class="fa fa-angle-right"></i></a></li>
-							</ul>
 						</div>
-						<!-- /store bottom filter -->
+						<div class="list-group">
+							<div class="list-group-item mb-10 mt-10">
+								<label class="fw-900">Color</label>
+								<div class="custome-checkbox">
+									<input class="form-check-input" type="checkbox" name="checkbox"
+										id="exampleCheckbox1" value="">
+									<label class="form-check-label" for="exampleCheckbox1"><span>Red (56)</span></label>
+									<br>
+									<input class="form-check-input" type="checkbox" name="checkbox"
+										id="exampleCheckbox2" value="">
+									<label class="form-check-label" for="exampleCheckbox2"><span>Green
+											(78)</span></label>
+									<br>
+									<input class="form-check-input" type="checkbox" name="checkbox"
+										id="exampleCheckbox3" value="">
+									<label class="form-check-label" for="exampleCheckbox3"><span>Blue
+											(54)</span></label>
+								</div>
+								<label class="fw-900 mt-15">Item Condition</label>
+								<div class="custome-checkbox">
+									<input class="form-check-input" type="checkbox" name="checkbox"
+										id="exampleCheckbox11" value="">
+									<label class="form-check-label" for="exampleCheckbox11"><span>New
+											(1506)</span></label>
+									<br>
+									<input class="form-check-input" type="checkbox" name="checkbox"
+										id="exampleCheckbox21" value="">
+									<label class="form-check-label" for="exampleCheckbox21"><span>Refurbished
+											(27)</span></label>
+									<br>
+									<input class="form-check-input" type="checkbox" name="checkbox"
+										id="exampleCheckbox31" value="">
+									<label class="form-check-label" for="exampleCheckbox31"><span>Used
+											(45)</span></label>
+								</div>
+							</div>
+						</div>
+						<a href="shop-grid-right.html" class="btn btn-sm btn-default"><i class="fi-rs-filter mr-5"></i>
+							Fillter</a>
 					</div>
-					<!-- /STORE -->
+					<!-- Product sidebar Widget -->
+					<div class="sidebar-widget product-sidebar  mb-30 p-30 bg-grey border-radius-10">
+						<div class="widget-header position-relative mb-20 pb-10">
+							<h5 class="widget-title mb-10">New products</h5>
+							<div class="bt-1 border-color-1"></div>
+						</div>
+						<div class="single-post clearfix">
+							<div class="image">
+								<img src="/imgs/shop/thumbnail-3.jpg" alt="#">
+							</div>
+							<div class="content pt-10">
+								<h5><a href="shop-product-detail.html">Chen Cardigan</a></h5>
+								<p class="price mb-0 mt-5">$99.50</p>
+								<div class="product-rate">
+									<div class="product-rating" style="width:90%"></div>
+								</div>
+							</div>
+						</div>
+						<div class="single-post clearfix">
+							<div class="image">
+								<img src="/imgs/shop/thumbnail-4.jpg" alt="#">
+							</div>
+							<div class="content pt-10">
+								<h6><a href="shop-product-detail.html">Chen Sweater</a></h6>
+								<p class="price mb-0 mt-5">$89.50</p>
+								<div class="product-rate">
+									<div class="product-rating" style="width:80%"></div>
+								</div>
+							</div>
+						</div>
+						<div class="single-post clearfix">
+							<div class="image">
+								<img src="/imgs/shop/thumbnail-5.jpg" alt="#">
+							</div>
+							<div class="content pt-10">
+								<h6><a href="shop-product-detail.html">Colorful Jacket</a></h6>
+								<p class="price mb-0 mt-5">$25</p>
+								<div class="product-rate">
+									<div class="product-rating" style="width:60%"></div>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="banner-img wow fadeIn mb-45 animated d-lg-block d-none">
+						<img src="/imgs/banner/banner-11.jpg" alt="">
+						<div class="banner-text">
+							<span>Women Zone</span>
+							<h4>Save 17% on <br>Office Dress</h4>
+							<a href="shop-grid-right.html">Shop Now <i class="fi-rs-arrow-right"></i></a>
+						</div>
+					</div>
 				</div>
-				<!-- /row -->
 			</div>
-			<!-- /container -->
 		</div>
-		<!-- /SECTION -->
-
-		<!-- NEWSLETTER -->
-		<div id="newsletter" class="section">
-			<!-- container -->
-			<div class="container">
-				<!-- row -->
-				<div class="row">
-					<div class="col-md-12">
-						<div class="newsletter">
-							<p>Sign Up for the <strong>NEWSLETTER</strong></p>
-							<form>
-								<input class="input" type="email" placeholder="Enter Your Email">
-								<button class="newsletter-btn"><i class="fa fa-envelope"></i> Subscribe</button>
-							</form>
-							<ul class="newsletter-follow">
-								<li>
-									<a href="#"><i class="fa fa-facebook"></i></a>
-								</li>
-								<li>
-									<a href="#"><i class="fa fa-twitter"></i></a>
-								</li>
-								<li>
-									<a href="#"><i class="fa fa-instagram"></i></a>
-								</li>
-								<li>
-									<a href="#"><i class="fa fa-pinterest"></i></a>
-								</li>
-							</ul>
-						</div>
-					</div>
-				</div>
-				<!-- /row -->
-			</div>
-			<!-- /container -->
-		</div>
-		<!-- /NEWSLETTER -->
-
-		<!-- FOOTER -->
-		<footer id="footer">
-			<!-- top footer -->
-			<div class="section">
-				<!-- container -->
-				<div class="container">
-					<!-- row -->
-					<div class="row">
-						<div class="col-md-3 col-xs-6">
-							<div class="footer">
-								<h3 class="footer-title">About Us</h3>
-								<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut.</p>
-								<ul class="footer-links">
-									<li><a href="#"><i class="fa fa-map-marker"></i>1734 Stonecoal Road</a></li>
-									<li><a href="#"><i class="fa fa-phone"></i>+021-95-51-84</a></li>
-									<li><a href="#"><i class="fa fa-envelope-o"></i>email@email.com</a></li>
-								</ul>
-							</div>
-						</div>
-
-						<div class="col-md-3 col-xs-6">
-							<div class="footer">
-								<h3 class="footer-title">Categories</h3>
-								<ul class="footer-links">
-									<li><a href="#">Hot deals</a></li>
-									<li><a href="#">Laptops</a></li>
-									<li><a href="#">Smartphones</a></li>
-									<li><a href="#">Cameras</a></li>
-									<li><a href="#">Accessories</a></li>
-								</ul>
-							</div>
-						</div>
-
-						<div class="clearfix visible-xs"></div>
-
-						<div class="col-md-3 col-xs-6">
-							<div class="footer">
-								<h3 class="footer-title">Information</h3>
-								<ul class="footer-links">
-									<li><a href="#">About Us</a></li>
-									<li><a href="#">Contact Us</a></li>
-									<li><a href="#">Privacy Policy</a></li>
-									<li><a href="#">Orders and Returns</a></li>
-									<li><a href="#">Terms & Conditions</a></li>
-								</ul>
-							</div>
-						</div>
-
-						<div class="col-md-3 col-xs-6">
-							<div class="footer">
-								<h3 class="footer-title">Service</h3>
-								<ul class="footer-links">
-									<li><a href="#">My Account</a></li>
-									<li><a href="#">View Cart</a></li>
-									<li><a href="#">Wishlist</a></li>
-									<li><a href="#">Track My Order</a></li>
-									<li><a href="#">Help</a></li>
-								</ul>
-							</div>
-						</div>
-					</div>
-					<!-- /row -->
-				</div>
-				<!-- /container -->
-			</div>
-			<!-- /top footer -->
-
-			<!-- bottom footer -->
-			<div id="bottom-footer" class="section">
-				<div class="container">
-					<!-- row -->
-					<div class="row">
-						<div class="col-md-12 text-center">
-							<ul class="footer-payments">
-								<li><a href="#"><i class="fa fa-cc-visa"></i></a></li>
-								<li><a href="#"><i class="fa fa-credit-card"></i></a></li>
-								<li><a href="#"><i class="fa fa-cc-paypal"></i></a></li>
-								<li><a href="#"><i class="fa fa-cc-mastercard"></i></a></li>
-								<li><a href="#"><i class="fa fa-cc-discover"></i></a></li>
-								<li><a href="#"><i class="fa fa-cc-amex"></i></a></li>
-							</ul>
-							<span class="copyright">
-								<!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
-								Copyright &copy;<script>document.write(new Date().getFullYear());</script> All rights reserved | This template is made with <i class="fa fa-heart-o" aria-hidden="true"></i> by <a href="https://colorlib.com" target="_blank">Colorlib</a>
-							<!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
-							</span>
-						</div>
-					</div>
-						<!-- /row -->
-				</div>
-				<!-- /container -->
-			</div>
-			<!-- /bottom footer -->
-		</footer>
-		<!-- /FOOTER -->
+	</section>
+</main>

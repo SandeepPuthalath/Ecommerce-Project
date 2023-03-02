@@ -12,8 +12,24 @@
         <div class="container">
             <div class="row">
                 <div class="col-12">
+                    {{#if cartIsEmpty}}
+                    <div class="container">
+                        <div class="col-md-12 d-flex justify-content-center">
+                            <img src="https://rukminim1.flixcart.com/www/800/800/promos/16/05/2019/d438a32e-765a-4d8b-b4a6-520b560971e8.png?q=90"
+                                alt="">
+                        </div>
+                         <div class="col-md-12 d-flex justify-content-center">
+                            <strong><p class="h3 my-4">Cart is Empty</p></strong> 
+                        </div>
+                        <div class="col-md-12 d-flex justify-content-center">
+                             <a class="btn  btn-sm" href="/">add product</a>
+                        </div>
+
+                    </div>
+                    {{else}}
                     <div class="table-responsive">
-                        <table class="table shopping-summery text-center clean">
+                        <h1 id="cartIsEmpty"></h1>
+                        <table id="cartTable" class="table shopping-summery text-center clean">
                             <thead>
                                 <tr class="main-heading">
                                     <th scope="col">Image</th>
@@ -57,9 +73,14 @@
 
                                 </tr>
                                 {{/each}}
+
                             </tbody>
                         </table>
+
                     </div>
+                    {{/if}}
+                    {{#if cartIsEmpty}}
+                    {{else}}
                     <div class="cart-action text-end">
                         <a class="btn  mr-10 mb-sm-15"><i class="fi-rs-shuffle mr-10"></i>Update Cart</a>
                         <a class="btn "><i class="fi-rs-shopping-bag mr-10"></i>Continue Shopping</a>
@@ -101,8 +122,9 @@
                                         <tbody>
                                             <tr>
                                                 <td class="cart_total_label">Cart Subtotal</td>
-                                                <td class="cart_total_amount"><span
-                                                     id="subTotalAmount"   class="font-lg fw-900 text-brand">Rs .{{totalAmount}}</span></td>
+                                                <td class="cart_total_amount"><span id="subTotalAmount"
+                                                        class="font-lg fw-900 text-brand">Rs .{{totalAmount}}</span>
+                                                </td>
                                             </tr>
                                             <tr>
                                                 <td class="cart_total_label">Shipping</td>
@@ -111,17 +133,19 @@
                                             </tr>
                                             <tr>
                                                 <td class="cart_total_label">Total</td>
-                                                <td class="cart_total_amount"><strong><span
-                                                        id="totalAmount" class="font-xl fw-900 text-brand">Rs.{{totalAmount}}</span></strong>
+                                                <td class="cart_total_amount"><strong><span id="totalAmount"
+                                                            class="font-xl fw-900 text-brand">Rs.{{totalAmount}}</span></strong>
                                                 </td>
                                             </tr>
                                         </tbody>
                                     </table>
                                 </div>
-                                <a href="/place-order" class="btn "> <i class="fi-rs-box-alt mr-10"></i> Proceed To CheckOut</a>
+                                <a href="/place-order" class="btn "> <i class="fi-rs-box-alt mr-10"></i> Proceed To
+                                    CheckOut</a>
                             </div>
                         </div>
                     </div>
+                    {{/if}}
                 </div>
             </div>
         </div>

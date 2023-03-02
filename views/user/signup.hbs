@@ -1,62 +1,322 @@
-<section class="vh-100 bg-image mt-5">
-  <div class="mask d-flex align-items-center h-100 gradient-custom-3">
-    <div class="container h-100">
-      <div class="row d-flex justify-content-center align-items-center h-100">
-        <div class="col-12 col-md-9 col-lg-7 col-xl-6">
-          <div class="card" style="border-radius: 15px;">
-            <div class="card-body p-5">
-              <h2 class="text-uppercase text-center mb-5">Create an account</h2>
-              {{#if signupErr}}
-              <div class="alert alert-danger" role="alert">
-                {{signupErr}}
+<style>
+  small{
+    color: red;
+  }
+</style>
+<main class="main">
+  <section class="pt-150 pb-150">
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-10 m-auto">
+          <div class="row">
+            <div class="col-lg-1"></div>
+            <div class="col-lg-6">
+              <div class="login_wrap widget-taber-content p-30 background-white border-radius-5">
+                <div class="padding_eight_all bg-white">
+                  <div class="heading_s1">
+                    <h3 class="mb-30">Create an Account</h3>
+                  </div>
+                  {{#if signupErr}}
+                  <div class="alert alert-danger" role="alert">
+                    {{signupErr}}
+                  </div>
+                  {{/if}}
+                  <form id="signup-form" action="/signup" method="post">
+                    <div class="form-group">
+                      <input id="form-name" type="text" required="" name="name" placeholder="Username">
+                      <small></small>
+                    </div>
+                    <div class="form-group">
+                      <input id="form-email" type="text" required="" name="email" placeholder="Email">
+                      <small></small>
+                    </div>
+                    <div class="form-group">
+                      <input id="form-mobile" type="text" required="" name="mobile" placeholder="mobile">
+                      <small></small>
+                    </div>
+                    <div class="form-group">
+                      <input id="form-password" required="" type="password" name="password" placeholder="Password">
+                      <small></small>
+                    </div>
+                    <div class="form-group">
+                      <input id="form-confirm-password" required="" type="password" name="re_password" placeholder="Confirm password">
+                      <small></small>
+                    </div>
+                    <div class="login_footer form-group">
+                      <div class="chek-form">
+                        <div class="custome-checkbox">
+                          <input class="form-check-input" type="checkbox" name="checkbox" id="exampleCheckbox12"
+                            value="">
+                          <label class="form-check-label" for="exampleCheckbox12"><span>I agree to terms &amp;
+                              Policy.</span></label>
+                        </div>
+                      </div>
+                      <a href="page-privacy-policy.html"><i class="fi-rs-book-alt mr-5 text-muted"></i>Lean more</a>
+                    </div>
+                    <div class="form-group">
+                      <button type="submit" id="form-submit" class="btn btn-fill-out btn-block hover-up" name="login">
+                        Register</button>
+                    </div>
+                  </form>
+                  <div class="divider-text-center mt-15 mb-15">
+                    <span> or</span>
+                  </div>
+                  <ul class="btn-login list_none text-center mb-15">
+                    <li><a href="#" class="btn btn-facebook hover-up mb-lg-0 mb-sm-4">Login With Facebook</a></li>
+                    <li><a href="#" class="btn btn-google hover-up">Login With Google</a></li>
+                  </ul>
+                  <div class="text-muted text-center">Already have an account? <a href="/login">Sign in now</a></div>
+                </div>
               </div>
-              {{/if}}
-              <form action="/signup" method="post">
-
-                <div class="form-outline mb-4">
-                  <label class="form-label" for="form3Example1cg">Your Name</label>
-                  <input name="name" type="text" id="form3Example1cg" class="form-control form-control-lg" required />
-                </div>
-                <div class="form-outline mb-4">
-                  <label class="form-label" for="form3Example1cg">Mobile.No</label>
-                  <input name="mobile" type="text" id="form3Example1cg" class="form-control form-control-lg" required />
-                  
-                </div>
-
-                <div class="form-outline mb-4">
-                   <label class="form-label" for="form3Example3cg">Your Email</label>
-                  <input name="email" type="email" id="form3Example3cg" class="form-control form-control-lg" required />
-                 
-                </div>
-
-                <div class="form-outline mb-4">
-                   <label class="form-label" for="form3Example4cg">Password</label>
-                  <input name="password" type="password" id="form3Example4cg" class="form-control form-control-lg"
-                    required />
-                 
-                </div>
-
-                <div class="form-outline mb-4">
-                  <label class="form-label" for="form3Example4cdg">Repeat your password</label>
-                  <input name="re_password" type="password" id="form3Example4cdg" class="form-control form-control-lg"
-                    required />
-                  
-                </div>
-
-                <div class="d-flex justify-content-center">
-                  <button type="submit"
-                    class="btn btn-success btn-block btn-lg gradient-custom-4 text-body">Register</button>
-                </div>
-
-                <p class="text-center text-muted mt-5 mb-0">Have already an account? <a href="/login"
-                    class="fw-bold text-body"><u>Login here</u></a></p>
-
-              </form>
-
             </div>
           </div>
         </div>
       </div>
     </div>
-  </div>
-</section>
+  </section>
+</main>
+<script>
+  //form validation start
+
+const formName = document.querySelector('#form-name');
+const emailEl = document.querySelector('#form-email');
+const formMobile = document.querySelector("#form-mobile");
+const formPassword = document.querySelector("#form-password");
+const formRePassword = document.querySelector("#form-confirm-password");
+
+
+const form = document.querySelector('#signup-form');
+
+
+const checkUsername = () => {
+
+    let valid = false;
+
+    const min = 3,
+        max = 25;
+
+    const username = formName.value.trim();
+
+    if (!isRequired(username)) {
+        showError(formName, 'Username cannot be blank.');
+    } else if (!isBetween(username.length, min, max)) {
+        showError(formName, `Username must be between ${min} and ${max} characters.`)
+    } else {
+        showSuccess(formName);
+        valid = true;
+    }
+    return valid;
+};
+const checkMobile = () => {
+
+    let valid = false;
+
+    const min = 10,
+        max = 10;
+
+    const userMobile = formMobile.value.trim();
+
+    if (!isRequired(userMobile)) {
+        showError(formMobile, 'Mobile cannot be blank.');
+    }
+    else if (!isPhoneNoValid(userMobile)) {
+        showError(formMobile, 'Mobile number is not valid')
+    } else if (!isBetween(userMobile.length, min, max)) {
+        showError(formMobile, `Mobile must be between ${min} and ${max} characters.`)
+    } else {
+        showSuccess(formMobile);
+        valid = true;
+    }
+    return valid;
+};
+
+const checkPassword = () => {
+    let valid = false;
+
+
+    const userPassword = formPassword.value.trim();
+
+    if (!isRequired(userPassword)) {
+        showError(formPassword, 'Password cannot be blank.');
+    } else if (!isPasswordSecure(userPassword)) {
+        showError(formPassword, 'Password must has at least 8 characters that include at least 1 lowercase character, 1 uppercase characters, 1 number, and 1 special character in (!@#$%^&*)');
+    } else {
+        showSuccess(formPassword);
+        valid = true;
+    }
+
+    return valid;
+
+
+};
+const checkRePassword = () => {
+    let valid = false;
+    // check confirm password
+    const confirmPassword = formRePassword.value.trim();
+    const password = formPassword.value.trim();
+
+    if (!isRequired(confirmPassword)) {
+        showError(formRePassword, 'Please enter the password again');
+    } else if (password !== confirmPassword) {
+        showError(formRePassword, 'The password does not match');
+    } else {
+        showSuccess(formRePassword);
+        valid = true;
+    }
+
+    return valid;
+
+
+
+}
+
+
+const checkEmail = () => {
+    let valid = false;
+    const email = emailEl.value.trim();
+    if (!isRequired(email)) {
+        showError(emailEl, 'Email cannot be blank.');
+    } else if (!isEmailValid(email)) {
+        showError(emailEl, 'Email is not valid.')
+    } else {
+        showSuccess(emailEl);
+        valid = true;
+    }
+    return valid;
+};
+
+
+const isEmailValid = (email) => {
+    const re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    return re.test(email);
+};
+
+const isPasswordSecure = (password) => {
+    const re = new RegExp("^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*])(?=.{8,})");
+    return re.test(password);
+};
+
+const isPhoneNoValid = (mobile) => {
+    const re = /^[6-9]\d{9}$/;
+    return re.test(mobile);
+}
+
+
+
+
+
+const isRequired = value => value === '' ? false : true;
+const isBetween = (length, min, max) => length < min || length > max ? false : true;
+
+
+const showError = (input, message) => {
+    // get the form-field element
+    const formField = input.parentElement;
+    // add the error class
+    formField.classList.remove('success');
+    formField.classList.add('error');
+
+    // show the error message
+    const error = formField.querySelector('small');
+    error.textContent = message;
+};
+
+const showSuccess = (input) => {
+    // get the form-field element
+    const formField = input.parentElement;
+
+    // remove the error class
+    formField.classList.remove('error');
+    formField.classList.add('success');
+
+    // hide the error message
+    const error = formField.querySelector('small');
+    error.textContent = '';
+}
+
+
+form.addEventListener('submit', function (e) {
+    // prevent the form from submitting
+    e.preventDefault();
+
+    // validate fields
+    let isUsernameValid = checkUsername(),
+        isEmailValid = checkEmail(),
+        isPasswordValid = checkPassword(),
+        isConfirmPasswordValid = checkRePassword(),
+        isMobileValid = checkRePassword();
+
+    let isFormValid = isUsernameValid &&
+        isEmailValid && isPasswordValid && isConfirmPasswordValid
+        && isMobileValid;
+
+    // submit to the server if the form is valid
+    if (isFormValid) {
+        $("#signup-form").submit((e) => {
+            e.preventDefault()
+            e.stopImmediatePropagation();
+            $.ajax({
+                url: "/signup",
+                data: $("#signup-form").serialize(),
+                method: "post",
+                success: function (response) {
+                    if (response) {
+
+                        location.href = '/login'
+                    }
+                    else {
+                        location.reload();
+                    }
+
+                },
+                error: function (err) {
+
+                    location.reload()
+                }
+            })
+
+        })
+    }
+    else {
+        swal("Unsuccessfull !", "Please fill the form properly !", "error")
+    }
+});
+
+
+const debounce = (fn, delay = 0) => {
+    let timeoutId;
+    return (...args) => {
+        // cancel the previous timer
+        if (timeoutId) {
+            clearTimeout(timeoutId);
+        }
+        // setup a new timer
+        timeoutId = setTimeout(() => {
+            fn.apply(null, args)
+        }, delay);
+    };
+};
+
+form.addEventListener('input', debounce(function (e) {
+    switch (e.target.id) {
+        case 'form-name':
+            checkUsername();
+            break;
+        case 'form-email':
+            checkEmail();
+            break;
+        case 'form-mobile':
+            checkMobile();
+            break;
+        case 'form-password':
+            checkPassword();
+            break;
+        case 'form-confirm-password':
+            checkRePassword();
+            break;
+    }
+}));
+
+// form validation endning
+</script>
+

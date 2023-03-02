@@ -18,7 +18,7 @@
                                 class="text-primary material-icons md-monetization_on"></i></span>
                         <div class="text">
                             <h6 class="mb-1 card-title">Revenue</h6>
-                            <span>$13,456.5</span>
+                            <span>$ {{totalRevenu}}</span>
                             <span class="text-sm">
                                 Shipping fees are not included
                             </span>
@@ -32,7 +32,7 @@
                         <span class="icon icon-sm rounded-circle bg-success-light"><i
                                 class="text-success material-icons md-local_shipping"></i></span>
                         <div class="text">
-                            <h6 class="mb-1 card-title">Orders</h6> <span>53.668</span>
+                            <h6 class="mb-1 card-title">Orders</h6> <span>{{totalOrders}}</span>
                             <span class="text-sm">
                                 Excluding orders in transit
                             </span>
@@ -46,7 +46,7 @@
                         <span class="icon icon-sm rounded-circle bg-warning-light"><i
                                 class="text-warning material-icons md-qr_code"></i></span>
                         <div class="text">
-                            <h6 class="mb-1 card-title">Products</h6> <span>9.856</span>
+                            <h6 class="mb-1 card-title">Products</h6> <span>{{totalQuantity}}</span>
                             <span class="text-sm">
                                 In 19 Categories
                             </span>
@@ -60,7 +60,7 @@
                         <span class="icon icon-sm rounded-circle bg-info-light"><i
                                 class="text-info material-icons md-shopping_basket"></i></span>
                         <div class="text">
-                            <h6 class="mb-1 card-title">Monthly Earning</h6> <span>$6,982</span>
+                            <h6 class="mb-1 card-title">Monthly Earning</h6> <span>${{totalRevenu}}</span>
                             <span class="text-sm">
                                 Based in your local time.
                             </span>
@@ -69,6 +69,8 @@
                 </div>
             </div>
         </div>
+        <p id="monthlyData" style="visibility: hidden;" >{{monthlyOrders}}</p>
+        <p id ="daylyData" style="visibility: hidden;">{{daylyOrders}}</p>
         <div class="row">
             <div class="col-xl-8 col-lg-12">
                 <div class="card mb-4">
@@ -79,7 +81,7 @@
                 </div>
                 <div class="row">
                     <div class="col-lg-5">
-                        <div class="card mb-4">
+                        {{!-- <div class="card mb-4">
                             <article class="card-body">
                                 <h5 class="card-title">New Members</h5>
                                 <div class="new-member-list">
@@ -121,9 +123,9 @@
                                     </div>
                                 </div>
                             </article>
-                        </div>
+                        </div> --}}
                     </div>
-                    <div class="col-lg-7">
+                    {{!-- <div class="col-lg-7">
                         <div class="card mb-4">
                             <article class="card-body">
                                 <h5 class="card-title">Recent activities</h5>
@@ -217,7 +219,7 @@
                                 </ul>
                             </article>
                         </div>
-                    </div>
+                    </div> --}}
                 </div>
             </div>
             <div class="col-xl-4 col-lg-12">
@@ -227,7 +229,7 @@
                         <canvas id="myChart2" height="217"></canvas>
                     </article>
                 </div>
-                <div class="card mb-4">
+                {{!-- <div class="card mb-4">
                     <article class="card-body">
                         <h5 class="card-title">Marketing Chanel</h5>
                         <span class="text-muted font-xs">Facebook</span>
@@ -251,11 +253,11 @@
                             <div class="progress-bar" role="progressbar" style="width: 80%"> 80%</div>
                         </div>
                     </article>
-                </div>
+                </div> --}}
             </div>
         </div>
         <div class="card mb-4">
-            <header class="card-header">
+            {{!-- <header class="card-header">
                 <h4 class="card-title">Latest orders</h4>
                 <div class="row align-items-center">
                     <div class="col-md-3 col-12 me-auto mb-md-0 mb-3">
@@ -290,8 +292,8 @@
                         </div>
                     </div>
                 </div>
-            </header>
-            <div class="card-body">
+            </header> --}}
+            {{!-- <div class="card-body">
                 <div class="table-responsive">
                     <div class="table-responsive">
                         <table class="table align-middle table-nowrap mb-0">
@@ -467,9 +469,9 @@
                         </table>
                     </div>
                 </div> <!-- table-responsive end// -->
-            </div>
+            </div> --}}
         </div>
-        <div class="pagination-area mt-30 mb-50">
+        {{!-- <div class="pagination-area mt-30 mb-50">
             <nav aria-label="Page navigation example">
                 <ul class="pagination justify-content-start">
                     <li class="page-item active"><a class="page-link" href="#">01</a></li>
@@ -482,6 +484,7 @@
                     </li>
                 </ul>
             </nav>
-        </div>
+        </div> --}}
     </section> <!-- content-main end// -->
+   
 </main>

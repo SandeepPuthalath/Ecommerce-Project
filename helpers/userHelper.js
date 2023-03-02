@@ -1,20 +1,42 @@
 const userSchema = require('../model/userModel');
 const bcrypt = require('bcrypt');
-const twilio = require('../middleware/twillioOtpSending');
-const { loginPost } = require('../controllers/userControllers');
 const cartSchema = require('../model/cartModel');
-const productSchema = require('../model/productModel');
-const { response } = require('../app');
 const orderSchema = require('../model/orderModel');
-var objectId = require('mongodb').ObjectId
+const addressSchema = require('../model/addressModel')
+const wishlistSchema = require('../model/wishlistModel');
+const productSchema = require('../model/productModel');
+const userInfoSchema = require('../model/userInfoModel');
+const objectId = require('mongodb').ObjectId
+
+function orderDate() {
+    const date = new Date(); // create a new Date object with the current date and time
+
+    // format the date and time in a string
+    const formattedDate = `${date.getDate().toString().padStart(2, '0')}-${(date.getMonth() + 1).toString().padStart(2, '0')}-${date.getFullYear()}`;
+    const formattedTime = `${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}:${date.getSeconds().toString().padStart(2, '0')}`;
+
+    return formattedDate
+    
+}
+
+function deliveryDate() {
+    const date = new Date(); // create a new Date object with the current date and time
+
+    // format the date and time in a string
+    const formattedDate = `${date.getFullYear()}-${(date.getMonth() + 1).toString().padStart(2, '0')}-${date.getDate().toString().padStart(2, '0')}`;
+    const formattedTime = `${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}:${date.getSeconds().toString().padStart(2, '0')}`;
+  
+    return formattedDate;
+    
+}
 
 module.exports = {
     doSignup: (userData) => {
         return new Promise(async (resolve, reject) => {
 
-            let check = await userSchema.findOne({ email: userData.email })
+            let check = await userSchema.findOne({ $or: [{ email: userData.email }, { mobile: userData.mobile }] })
             if (check) {
-                reject({ exists: true })
+                reject()
             }
             else {
                 userData.password = await bcrypt.hash(userData.password, 10);
@@ -82,13 +104,13 @@ module.exports = {
 
                 if (prodExist != -1) {
                     cartSchema.updateOne({ user: objectId(userId), "product.item": objectId(productId) }, { $inc: { 'product.$.quantity': 1 } }, { upsert: true }).then((response) => {
-                        resolve()
+                        resolve(response)
                     })
                 }
                 else {
                     cartSchema.updateOne({ user: objectId(userId) }, { $push: { product: productObj } }).then((response) => {
 
-                        resolve();
+                        resolve(response);
                     })
                 }
             }
@@ -98,16 +120,52 @@ module.exports = {
                     product: productObj
                 })
                 await cart.save();
-                resolve()
+                resolve(cart)
             }
 
+        })
+    },
+    // adding product from wish list to cart
+    wishlistToCart: (prodId, userId) => {
+        let prodObj = {
+            item: objectId(prodId),
+            quantity: 1
+        }
+        return new Promise(async (resolve, reject) => {
+            let userCart = await cartSchema.findOne({ userId: objectId(userId) });
+
+            if (userCart) {
+                let prodExist = userCart.product.findIndex(product => product.item == prodId)
+                if (prodExist != -1) {
+                    cartSchema.updateOne({ user: objectId(userId), "product.item": objectId(prodId) }, { $inc: { 'product.$.quantity': 1 } }, { upsert: true }).then((response) => {
+
+                        resolve({ status: true })
+                    })
+                }
+                else {
+                    cartSchema.updateOne({ user: objectId(userId) }, { $push: { product: prodObj } }).then((response) => {
+
+                        resolve({ status: true });
+                    })
+                }
+
+            }
+            else {
+                let cart = new cartSchema({
+                    user: objectId(userId),
+                    product: prodObj
+                })
+                await cart.save();
+                resolve({ status: true })
+            }
+            await wishlistSchema.updateOne({ userId: objectId(userId) }, { $pull: { product: objectId(prodId) } })
         })
     },
     // getting user cart...
     getUserCart: (userId) => {
 
         return new Promise(async (resolve, reject) => {
-            
+
             let cartItems = await cartSchema.aggregate([
                 {
                     $match: { user: objectId(userId) }
@@ -188,7 +246,7 @@ module.exports = {
     },
     getTotalAmount: (userId) => {
         return new Promise(async (resolve, reject) => {
-            
+
             let total = await cartSchema.aggregate([
                 {
                     $match: { user: objectId(userId) }
@@ -222,32 +280,34 @@ module.exports = {
                     }
                 }
             ]);
-
-
-            resolve(total[0].total);
-
-
+            if (total.length == 1) {
+                resolve(total[0].total)
+            }
+            else {
+                total = 0;
+                resolve(total);
+            }
         })
     },
     placingOrder: (order, products, totalPrice) => {
         return new Promise(async (resolve, reject) => {
             let status = order.payment_option == 'cod' ? 'placed' : 'pending';
-            let orderDate = new Date();
-            let fullfildate = orderDate.setDate(orderDate.getDate() + 3);
+            let date = orderDate();
+            let delivDate = deliveryDate();
+            let address = await addressSchema.findOne({ _id: objectId(order.address) })
             let orderDetails = new orderSchema({
-                dateOfOrder: orderDate,
-                dateOfFullfilment: fullfildate,
+                dateOfOrder: date,
+                dateOfFullfilment: delivDate,
                 userId: order.userId,
                 address: {
-                    full_name: order.fname,
-                    last_name: order.lname,
-                    country: order.country,
-                    address_line_1: order.billing_address,
-                    address_line_2: order.billing_address2,
-                    city: order.city,
-                    state: order.state,
-                    pin_code: order.zipcode,
-                    phone_number: order.phone
+                    name: address.full_name,
+                    phoneNumber: address.phone_number,
+                    country: address.country,
+                    address_line: address.address_line_1,
+                    city: address.city,
+                    state: address.state,
+                    pin_code: address.zipcode,
+                    phone_number: order.phone,
                 },
                 totalAmount: totalPrice,
                 paymentMethod: order.payment_option,
@@ -271,26 +331,203 @@ module.exports = {
         })
 
     },
-    orderDetails :(userId) =>{
-        return new Promise ((resolve, reject) =>{
-            orderSchema.find({$and : [{userId : objectId(userId)},{status: { $not  : {$regex : "cancelled"}}}]}).then((response) =>{
+    orderDetails: (userId) => {
+        return new Promise((resolve, reject) => {
+            orderSchema.find({ $and: [{ userId: objectId(userId) }, { status: { $not: { $regex: "cancelled" } } }] }).then((response) => {
                 resolve(response);
             })
         })
     },
-    removeOrder :(orderId) =>{
-        return new Promise((resolve, reject) =>{
-           orderSchema.updateOne({_id : objectId(orderId)}, {$set :{status : 'cancelled'}}).then((response) =>{
-            resolve(true)
-           })
+    removeOrder: (orderId) => {
+        return new Promise((resolve, reject) => {
+            orderSchema.updateOne({ _id: objectId(orderId) }, { $set: { status: 'cancelled' } }).then((response) => {
+                resolve(true)
+            })
         })
     },
-    orderHistory :(userId) =>{
-        return new Promise ((resolve, reject) =>{
-            orderSchema.find({$and : [{userId : objectId(userId)},{status:"cancelled"}]}).then((response) =>{
-                console.log(response);
+    orderHistory: (userId) => {
+        return new Promise((resolve, reject) => {
+            orderSchema.find({ $and: [{ userId: objectId(userId) }, { status: "cancelled" }] }).then((response) => {
                 resolve(response);
+            })
+        })
+    },
+    // adding address to database
+    addTheAddress: (address) => {
+        console.log(address);
+        return new Promise(async (resolve, reject) => {
+            let userAddress = new addressSchema({
+                full_name: address.fname,
+                phone_number: address.phone,
+                email_id: address.email,
+                address_line_1: address.address,
+                city: address.city,
+                state: address.state,
+                country: address.country,
+                pin_code: address.zipcode,
+                userId: address.userId
+
+            })
+
+            await userAddress.save();
+            resolve(userAddress);
+        });
+    },
+    //getting and adding wishlist items
+    getUserWishlist: (userId) => {
+        return new Promise(async (resolve, reject) => {
+            let wishlist = await wishlistSchema.aggregate([
+                {
+                    $match: { userId: objectId(userId) },
+
+                },
+                {
+                    $lookup: {
+                        from: 'products',
+                        let: {
+                            prodList: '$product'
+                        },
+                        pipeline: [
+                            {
+                                $match: {
+                                    $expr: {
+                                        $in: ['$_id', '$$prodList']
+                                    }
+                                }
+                            }
+                        ],
+                        as: 'wishlist'
+                    }
+                }
+
+
+            ]);
+            if (wishlist.length != 0) {
+                resolve(wishlist[0].wishlist);
+            }
+
+        })
+    },
+    addItemToWishlist: (details) => {
+        return new Promise(async (resolve, reject) => {
+            let wishlist = await wishlistSchema.findOne({ userId: objectId(details.userId) })
+            if (wishlist) {
+                wishlistSchema.updateOne({
+                    userId: objectId(details.userId)
+                },
+                    {
+                        $addToSet: {
+                            product: objectId(details.prodId)
+                        }
+                    }).then((response) => {
+                        resolve(response)
+                    })
+            }
+            else {
+                let userWishlist = new wishlistSchema({
+                    userId: objectId(details.userId),
+                    product: objectId(details.prodId)
+                })
+
+                await userWishlist.save();
+                resolve(userWishlist);
+            }
+        })
+    },
+    // changeing stock quantity of products
+    changeStockQuantity: (prodId) => {
+        return new Promise(async (resolve, reject) => {
+            let product = await productSchema.findOne({ _id: objectId(prodId) })
+            if (product.product_quantity <= 0) {
+                reject()
+            } else {
+                await productSchema.updateOne({ _id: objectId(prodId) }, { $inc: { product_quantity: -1 } });
+                resolve(true)
+            }
+
+        })
+    },
+
+    //deleting use address
+
+    deleteAddress: (addressId) => {
+        return new Promise((res, rej) => {
+            addressSchema.deleteOne({ _id: objectId(addressId) }).then((status) => {
+                res(status);
+            })
+        })
+    },
+
+    getUserInfo: (userId) => {
+        return new Promise((resolve, reject) => {
+            userInfoSchema.findOne({ownerId : objectId(userId) }).then((userInfo) => {
+                resolve(userInfo)
             })
         })
     }
+    ,
+
+    userInfoUpdating: (userDetails, userId) => {
+        console.log(userDetails, userId);
+        return new Promise(async (resolve, reject) => {
+            let userInfoExist = await userInfoSchema.exists({ ownerId: objectId(userId) });
+            console.log(userInfoExist);
+            if (userInfoExist != null) {
+                userInfoSchema.updateOne({ ownerId: objectId(userId) }, {
+                    $set: {
+                        fname: userDetails.fname,
+                        lname: userDetails.lname,
+                        email: userDetails.email,
+                        tel: userDetails.tel,
+                        address: userDetails.address,
+                        dob: userDetails.dob
+                    }
+                }).then((response) =>{
+                    resolve({status : true})
+                })
+
+            } else  {
+                let userInfo = new userInfoSchema({
+                    ownerId: objectId(userId),
+                    fname: userDetails.fname,
+                    lname: userDetails.lname,
+                    email: userDetails.email,
+                    tel: userDetails.tel,
+                    address: userDetails.address,
+                    dob: userDetails.dob
+                })
+
+                await userInfo.save();
+
+                resolve({ satus: true })
+            }
+        })
+    },
+
+    // verifying the payment
+
+    verifyingPayment : (details) =>{
+        return new Promise ((resolve, reject) =>{
+            const crypto = require('crypto');
+            let hmac = crypto.createHmac('sha256', 'VTe4tcPjxXRWHLbvpysPjnMJ');
+            hmac.update(details['payment[razorpay_order_id]'] + '|' + details['payment[razorpay_payment_id]'])
+            hmac = hmac.digest('hex')
+            if(hmac == details[ 'payment[razorpay_signature]']){
+                resolve();
+            }
+            else{
+                reject();
+            }
+        })
+    },
+    changePaymentStatus : (orderId) =>{
+        return new Promise((resolve, reject) =>{
+            orderSchema.updateOne({_id :objectId(orderId)}, {$set:{status : 'placed'}}).then(()=>{
+                resolve()
+            })
+        })
+      
+    }
+
 }
+

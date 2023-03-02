@@ -10,7 +10,7 @@ module.exports = {
         }
 
     },
-// checking for usr session 
+// checking for user session 
 
     userChecking :(req, res, next) =>{
         if(req.session.user && req.cookies.user_sid){

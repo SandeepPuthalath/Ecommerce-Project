@@ -14,14 +14,6 @@
                 </div>
                 <div class="col-xl-6 col-lg-4">
                     <div class="text-center">
-                        <div id="news-flash" class="d-inline-block">
-                            <ul>
-                                <li>Get great devices up to 50% off <a href="shop-grid-right.html">View details</a></li>
-                                <li>Supper Value Deals - Save more with coupons</li>
-                                <li>Trendy 25silver jewelry, save up 35% off today <a href="shop-grid-right.html">Shop
-                                        now</a></li>
-                            </ul>
-                        </div>
                     </div>
                 </div>
                 <div class="col-xl-3 col-lg-4">
@@ -80,10 +72,10 @@
                                     <li class="dropdown nav-item">
                                         <a class="dropdown-toggle" data-bs-toggle="dropdown" href="#"
                                             id="dropdownAccount" aria-expanded="false"> <img
-                                            style="height: 3rem;"    class="img-xs rounded-circle" src="/assets/imgs/people/avatar2.jpg"
+                                            style="height: 3rem;"    class="img-xs rounded-circle" src="/user-images/{{user._id}}.jpg"
                                                 alt="User"></a>
                                         <div class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownAccount">
-                                            <a class="dropdown-item" href="#"><i
+                                            <a class="dropdown-item" href="/user-profile-edit"><i
                                                     class="material-icons md-perm_identity"></i>Edit
                                                 Profile</a>
                                             <a class="dropdown-item" href="/user/user-details"><i
@@ -103,7 +95,7 @@
                             </div>
                             {{/if}}
                             <div class="header-action-icon-2">
-                                <a href="shop-wishlist.html">
+                                <a href="/user-wishlist">
                                     <img class="svgInject" alt="Evara" src="/imgs/theme/icons/icon-heart.svg">
                                     <span class="pro-count blue">4</span>
                                 </a>
@@ -531,7 +523,7 @@
                 <div class="header-action-right d-block d-lg-none">
                     <div class="header-action-2">
                         <div class="header-action-icon-2">
-                            <a href="shop-wishlist.html">
+                            <a href="/user-wishlist">
                                 <img alt="Evara" src="/imgs/theme/icons/icon-heart.svg">
                                 <span class="pro-count white">4</span>
                             </a>

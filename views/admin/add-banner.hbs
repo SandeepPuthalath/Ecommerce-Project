@@ -1,0 +1,85 @@
+<main class="main-wrap">
+  <section class="content-main">
+    <div class="row">
+      <div class="col-9">
+        <div class="content-header">
+          <h2 class="content-title">Add New Product</h2>
+          
+        </div>
+      </div>
+      <form id="add-banner" action="/admin/add-banner" method="post" enctype="multipart/form-data">
+      <div class="row">
+         <div class="col-lg-6">
+          <div class="card mb-4">
+            <div class="card-header">
+              <h4>Basic</h4>
+            </div>
+            <div class="card-body">
+              <div class="mb-4">
+                <label for="product_name" class="form-label">Banner Title1</label>
+                <input type="text" name="title1" placeholder="Type here" class="form-control" id="product_name">
+              </div>
+               <div class="mb-4">
+                <label for="product_name" class="form-label">Banner Title2</label>
+                <input type="text" name="title2" placeholder="Type here" class="form-control" id="product_name">
+              </div>
+               <div class="mb-4">
+                <label for="product_name" class="form-label">Banner Title3</label>
+                <input type="text" name="title3" placeholder="Type here" class="form-control" id="product_name">
+              </div>
+                <div class="row">
+                <div class="col-lg-4">
+                  <div class="mb-4">
+                    <label class="form-label">Offer percentage</label>
+                    <div class="row gx-2">
+                      <input placeholder="%" name="discount" type="text" class="form-control">
+                    </div>
+                  </div>
+                </div>
+                <div class="col-lg-4">
+                  <div class="mb-4">
+                    <label class="form-label">Tag name</label>
+                    <input placeholder="" name="tag" type="text" class="form-control">
+                  </div>
+                </div>
+              </div>
+              <div class="mb-4">
+                <label class="form-label">Banner description</label>
+                <textarea name="description" placeholder="Type here" class="form-control" rows="4"></textarea>
+              </div>
+            </div>
+          </div> <!-- card end// -->
+        </div>
+        <div class="col-lg-4">
+          <div class="card mb-5">
+            <div class="card-header">
+              <h4>Media</h4>
+            </div>
+            <div class="card-body">
+              <div class="input-upload">
+                <img src="/assets/imgs/theme/upload.svg" id="imgView" alt="">
+                <input class="form-control" name="image" onchange="viewImage(event)" value="upload" type="file" multiple>
+              </div>
+            </div>
+          </div> <!-- card end// -->
+        </div>
+        <div>
+            <button class="btn btn-light rounded font-sm mr-5 text-body hover-up">Save to draft</button>
+            <button type="submit" class="btn btn-md rounded font-sm hover-up">Publich</button>
+          </div>
+      </div>
+       
+      </form>
+    </div>
+    <script>
+
+      let form = document.getElementById('form');
+      form.addEventListener('submit', (e) => {
+        e.defaultPrevented()// prevent form from auto submitting..\
+      })
+      function viewImage(event) {
+        document.getElementById('imgView').src = URL.createObjectURL(event.target.files[0])
+      }
+    </script>
+  </section> <!-- content-main end// -->
+</main>

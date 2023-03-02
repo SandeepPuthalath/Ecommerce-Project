@@ -1,4 +1,4 @@
-
+var objectId = require('mongodb').ObjectId
 // user payment details
 const paymentShema = new mongoose.Schema({
     card :{
@@ -7,7 +7,7 @@ const paymentShema = new mongoose.Schema({
         expireDate : String,
         cardNo : String,
     },
-    user : String,
+    user : objectId,
     UPI : String
     
 })

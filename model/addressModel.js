@@ -1,17 +1,16 @@
-
+const { default: mongoose } = require('mongoose');
+const objectId = require('mongodb').ObjectId
 // user address details
 const addressSchema = new mongoose.Schema({
     full_name : String,
-    last_name : String,
-    country : String,
+    phone_number : Number,
+    email_id : String,
     address_line_1 : String,
-    address_line_2 : String,
     city : String,
     state : String,
+    country : String,
     pin_code : Number,
-    phone_number : Number
-   
-    
+    userId : objectId
 });
 
 module.exports = mongoose.model('address', addressSchema);

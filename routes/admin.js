@@ -54,7 +54,11 @@ router.get('/unlist-category/:id', admin_controller.unlistCategory);
 
 // All order details listing page loading..
 
-router.get('/all-order-details',session_check.checkingAdmin,admin_controller.usersOrderDetails)
+router.get('/all-order-details',session_check.checkingAdmin,admin_controller.usersOrderDetails);
+
+// banner Adding
+
+router.route('/add-banner').get(session_check.checkingAdmin,admin_controller.addBanner).post(admin_controller.addingBanner);
 
 //admin logout..
 

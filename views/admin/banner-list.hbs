@@ -1,0 +1,324 @@
+<!-- Add the Bootstrap JavaScript -->
+
+<main class="main-wrap">
+  <section class="content-main">
+    <div class="content-header">
+      <div>
+        <h2 class="content-title card-title">Products grid</h2>
+        <p>Lorem ipsum dolor sit amet.</p>
+      </div>
+      <div>
+        <a href="#" class="btn btn-light rounded font-md">Export</a>
+        <a href="#" class="btn btn-light rounded font-md">Import</a>
+        <a href="/admin/add-banner" class="btn btn-primary btn-sm rounded">Create new</a>
+      </div>
+    </div>
+    <header class="card card-body mb-4">
+      <div class="row gx-3">
+        <div class="col-lg-4 col-md-6 me-auto">
+          <input type="text" placeholder="Search..." class="form-control" />
+        </div>
+        <div class="col-lg-2 col-6 col-md-3">
+          <select class="form-select">
+            <option>All category</option>
+            <option>Electronics</option>
+            <option>Clothings</option>
+            <option>Something else</option>
+          </select>
+        </div>
+        <div class="col-lg-2 col-6 col-md-3">
+          <select class="form-select">
+            <option>Latest added</option>
+            <option>Cheap first</option>
+            <option>Most viewed</option>
+          </select>
+        </div>
+      </div>
+    </header>
+    <!-- card-header end// -->
+    <div class="row">
+      {{#each banners}}
+      <div id="{{this._id}}" class="col-xl-3 col-lg-4 col-md-6">
+        <div class="card card-product-grid">
+          <a href="#" class="img-wrap">
+            <img src="/{{this.bannerImg}}" alt="Product" />
+          </a>
+          <div class="info-wrap">
+            <div class="dropdown float-end">
+              <button id="myButton" data-value="{{this._id}}" class="btn btn-sm font-sm rounded btn-brand myButton">
+                <i class="material-icons md-edit"></i>
+                Edit
+              </button>
+              <button data-value="{{this._id}}" class="btn btn-sm font-sm btn-light rounded delete-banner">
+                <i class="material-icons md-delete_forever"></i>
+                Delete
+              </button>
+              <div class="dropdown-menu dropdown-menu-end">
+                <a class="dropdown-item" href="">Edit info</a>
+                <a class="dropdown-item text-danger" href="#">Delete</a>
+              </div>
+            </div>
+            <div class="price mt-1">{{this.title1}}</div>
+            <!-- price-wrap.// -->
+            <a href="#" class="title">{{this.title2}}</a>
+          </div>
+        </div>
+        <!-- card-product  end// -->
+      </div>
+      <!-- col.// -->
+      {{/each}}
+    </div>
+    <!-- row.// -->
+    <div class="pagination-area mt-15 mb-50">
+      <nav aria-label="Page navigation example">
+        <ul class="pagination justify-content-start">
+          <li class="page-item active"><a class="page-link" href="#">01</a></li>
+          <li class="page-item"><a class="page-link" href="#">02</a></li>
+          <li class="page-item"><a class="page-link" href="#">03</a></li>
+          <li class="page-item"><a class="page-link dot" href="#">...</a></li>
+          <li class="page-item"><a class="page-link" href="#">16</a></li>
+          <li class="page-item"><a class="page-link" href="#"><i class="material-icons md-chevron_right"></i></a></li>
+        </ul>
+      </nav>
+    </div>
+  </section>
+  <!-- content-main end// -->
+
+</main>
+<style>
+  #myModal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    margin: auto;
+    z-index: 9999;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.5);
+  }
+
+
+  .modal-content {
+    background-color: #fefefe;
+    margin: 15% auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%;
+    max-width: 600px;
+  }
+
+  .modal {
+    max-width: 100%;
+  }
+
+  .close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+  }
+
+  .close:hover,
+  .close:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+  }
+</style>
+
+<div id="myModal" class="modal">
+  <div class="modal-content">
+    <span class="close">&times;</span>
+    <section class="content-main">
+      <div class="row">
+        <div class="col-9">
+          <div class="content-header">
+            <h2 class="content-title">Add New Product</h2>
+
+          </div>
+        </div>
+        <form id="update-banner" method="post" enctype="multipart/form-data">
+          <div class="row">
+            <div class="col-lg-12">
+              <div class="card mb-4">
+                <div class="card-header">
+                  <h4>Basic</h4>
+                </div>
+                <div class="card-body">
+                  <div class="mb-4">
+                    <label for="product_name" class="form-label">Banner Title1</label>
+                    <input type="text" name="title1" placeholder="Type here" class="form-control" id="title1">
+                  </div>
+                  <div class="mb-4">
+                    <label for="product_name" class="form-label">Banner Title2</label>
+                    <input type="text" name="title2" placeholder="Type here" class="form-control" id="title2">
+                  </div>
+                  <div class="mb-4">
+                    <label for="product_name" class="form-label">Banner Title3</label>
+                    <input type="text" name="title3" placeholder="Type here" class="form-control" id="title3">
+                  </div>
+                  <div class="row">
+                    <div class="col-lg-4">
+                      <div class="mb-4">
+                        <label class="form-label">Offer percentage</label>
+                        <div class="row gx-2">
+                          <input placeholder="%" id="discount" name="discount" type="text" class="form-control">
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-lg-4">
+                      <div class="mb-4">
+                        <label class="form-label">Tag name</label>
+                        <input placeholder="" id="tag" name="tag" type="text" class="form-control">
+                        <input style="visibility: hidden" placeholder="" id="bannerId" name="bannerId" type="text"
+                          class="form-control">
+                      </div>
+                    </div>
+                  </div>
+                  <div class="mb-4">
+                    <label class="form-label">Banner description</label>
+                    <textarea id="description" name="description" placeholder="Type here" class="form-control"
+                      rows="4"></textarea>
+                  </div>
+                </div>
+              </div> <!-- card end// -->
+            </div>
+            <div class="col-lg-9">
+              <div class="card mb-10">
+                <div class="card-header">
+                  <h4>Media</h4>
+                </div>
+                <div class="card-body">
+                  <div class="input-upload">
+                    <img src="" id="imgView" alt="">
+                    <input class="form-control" id="image" name="image" onchange="viewImage(event)" value="upload"
+                      type="file">
+                  </div>
+                </div>
+              </div> <!-- card end// -->
+            </div>
+            <div>
+              <button class="btn btn-light rounded font-sm mr-5 text-body hover-up">Save to draft</button>
+              <button type="submit" class="btn btn-md rounded font-sm hover-up">Publich</button>
+            </div>
+          </div>
+
+        </form>
+      </div>
+      <script>
+        function viewImage(event) {
+          document.getElementById('imgView').src = URL.createObjectURL(event.target.files[0])
+        }
+      </script>
+    </section> <!-- content-main end// -->
+
+  </div>
+</div>
+<script>
+  $(document).ready(function () {
+    // Get the modal
+    var modal = $("#myModal");
+
+    // Get the <span> element that closes the modal
+    var span = $(".close");
+
+    // When the user clicks on <span> (x), close the modal
+    span.click(function () {
+      modal.hide();
+    });
+
+    // When the user clicks anywhere outside of the modal, close it
+    $(window).click(function (event) {
+      if (event.target == modal[0]) {
+        modal.hide();
+      }
+    });
+
+    // Show the modal when a button is clicked
+    $(".myButton").click(function () {
+      const bannerId = $(this).data('value');
+
+      $.ajax({
+        url: '/admin/get-banner/' + bannerId,
+        method: 'get',
+      }).done((res) => {
+        $("#bannerId").val(res._id);
+        $('#title1').val(res.title1);
+        $('#title2').val(res.title2);
+        $('#title3').val(res.title3);
+        $('#discount').val(res.discount);
+        $('#tag').val(res.tagName);
+        $('#bannerId').val(res._id);
+        $('#description').text(res.description);
+        const imageUrl = `/${res.bannerImg}`;
+        $("#imgView").attr('src', imageUrl);
+      })
+      modal.show();
+    });
+
+
+    $("#update-banner").submit((e) => {
+      e.preventDefault();
+      e.stopImmediatePropagation();
+
+      let formData = new FormData($("#update-banner")[0]);
+
+      swal("Are you sure you want to do this?", {
+        buttons: ["Oh noez!", "Aww yiss!"],
+      }).then((res) => {
+        if (res) {
+          $.ajax({
+            url: "/admin/update-banner",
+            method: "post",
+            data: formData,
+            caches: false,
+            contentType: false,
+            processData: false,
+          }).done((res) => {
+            swal("Good job!", "You clicked the button!", "success").then(() => {
+              location.href = "/admin/banner-list"
+            })
+          }).fail((err) => {
+            swal("Error", "Somthing went wrong!", "error");
+          })
+        }
+      })
+    })
+
+    $(".delete-banner").click(function () {
+      const bannerId = $(this).data("value");
+      swal("Are you sure you want to do this?", {
+        buttons: ["No!", "Yes!"],
+      }).then((res) => {
+        if (res) {
+          console.log(bannerId)
+          $.ajax({
+            url: '/admin/delete-banner/' + bannerId,
+            type: "delete",
+          }).then((status) => {
+            $('#' + bannerId).remove();
+            swal({
+              title: "Successfull!",
+              text: "Banner has been deleted!",
+              icon: "success",
+            });
+          }).fail((err) => {
+            swal({
+              title: "Error!",
+              text: "Somthing went wrong!",
+              icon: "error",
+            });
+          })
+        }
+      })
+
+    })
+
+  });
+
+
+</script>

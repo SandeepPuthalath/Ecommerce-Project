@@ -1,11 +1,11 @@
 (function ($) {
     "use strict";
-
+    $(document).ready
     /*Sale statistics Chart*/
     if ($('#myChart').length) {
+        const monthlyDataStr = $('#myChartData').data('monthly');
+        const monthlyData = monthlyDataStr.split(",").map(Number);
         let ctx = document.getElementById('myChart').getContext('2d');
-        let values = document.getElementById('monthlyData').innerHTML;
-        let monthlyData = values.split(",").map(item => parseInt(item.replace(/<\/?li>/g, "")));
         let chart = new Chart(ctx, {
             // The type of chart we want to create
             type: 'line',
@@ -14,7 +14,7 @@
             data: {
                 labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
                 datasets: [{
-                        label: 'Sales',
+                        label: 'Monthly Sales',
                         tension: 0.3,
                         fill: true,
                         backgroundColor: 'rgba(44, 120, 220, 0.2)',
@@ -30,7 +30,7 @@
                     //     data: [40, 20, 17, 9, 23, 35, 39, 30, 34, 25, 27, 17]
                     // },
                     {
-                        label: 'Products',
+                        label: 'Daily Sales',
                         tension: 0.3,
                         fill: true,
                         backgroundColor: 'rgba(380, 200, 230, 0.2)',
@@ -55,9 +55,9 @@
     /*Sale statistics Chart*/
     if ($('#myChart2').length) {
         let ctx = document.getElementById("myChart2");
-        let daylyDetails = document.getElementById("daylyData").innerHTML;
-        let daylyData = daylyDetails.split(",").map(item => parseInt(item.replace(/<\/?li>/g, "")));
-        console.log(daylyData);
+        const dailyDataStr = $('#myChartData').data("daily");
+        const dailyData = dailyDataStr.split(",").map(Number);
+        console.log(dailyData);
         let barColors = [
             "#b91d47",
             "#00aba9",
@@ -77,7 +77,7 @@
                     label: "Sale",
                     backgroundColor: barColors,
                     barThickness:10,
-                    data: daylyData
+                    data: dailyData
                 }, 
             ]
             },

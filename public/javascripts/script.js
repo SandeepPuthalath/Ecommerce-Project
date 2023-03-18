@@ -11,21 +11,76 @@ function zoomOut() {
   main_image.style.width = curr_width - 100 + "px";
 }
 
+//paypalPayment initializer function
+function paypalPayment(total) {
+  paypal_sdk
+    .Buttons({
+      createOrder: async function () {
+        return fetch('/create_order', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            total: total,
+            items: [
+              {
+                id: 1,
+              },
+            ],
+          }),
+        })
+          .then((res) => {
+            if (res.ok) return res.json();
+            return res.json().then((json) => Promise.reject(json));
+          })
+          .then(({ id }) => {
+            return id;
+          })
+          .catch((e) => {
+            console.error(e.error);
+          });
+      },
+      onApprove: function (data, actions) {
+        return actions.order.capture().then(() => {
+          console.log(data);
+          $.ajax({
+            url: '/paypal_success',
+            method: 'get',
+            success: (response) => {
+              if (response.status) {
+                location.replace('/');
+              } else {
+                Swal.fire({
+                  icon: 'error',
+                  title: 'Oops...',
+                  text: 'Something went wrong!',
+                  footer: '<a href="/">Goto home page</a>',
+                });
+              }
+            },
+          });
+        });
+      },
+    })
+    .render('#paypal');
+}
+
 function razorpayPayment(orderInfo) {
   var options = {
     key: "rzp_test_dT2hX9gH8hyKFB", // Enter the Key ID generated from the Dashboard
-    amount: `${orderInfo.order.amount}`, // Amount is in currency subunits. Default currency is INR. Hence, 50000 refers to 50000 paise
+    amount: orderInfo.order.amount, // Amount is in currency subunits. Default currency is INR. Hence, 50000 refers to 50000 paise
     currency: "INR",
     name: "Acme Corp", //your business name
     description: "Test Transaction",
     image: "https://example.com/your_logo",
     order_id: `${orderInfo.order.id}`, //This is a sample Order ID. Pass the `id` obtained in the response of Step 1
     handler: function (response) {
-        swal(response.razorpay_payment_id).then(() => {
-          swal(response.razorpay_order_id).then(() => {
-            swal(response.razorpay_order_id);
-          });
+      swal(response.razorpay_payment_id).then(() => {
+        swal(response.razorpay_order_id).then(() => {
+          swal(response.razorpay_order_id);
         });
+      });
 
       verifyPayment(response, orderInfo.order);
     },
@@ -60,20 +115,20 @@ function verifyPayment(payment, order) {
           text: "Payment successfull!",
           icon: "success",
           button: "Ok!",
-        }).then(() =>{
-          location.href = '/'
+        }).then(() => {
+          location.href = '/api/cart'
         })
 
       } else {
         swal({
-          title: "Good job!",
+          title: "sorry!",
           text: "Payment failed",
           icon: "error",
           button: "Ok!",
-        }).then(() =>{
-          location.href = '/'
+        }).then(() => {
+          location.href = '/api/cart'
         })
-        
+
       }
     },
   });
@@ -81,11 +136,13 @@ function verifyPayment(payment, order) {
 
 // ajax function for adding product ot cart
 function addToCart(prodId) {
+  const iconQtycount = document.getElementById('cartCount')
   $.ajax({
-    url: "/user/add-to-cart/" + prodId,
-    method: "get",
+    url: "/api/cart/add-to-cart/" + prodId,
+    method: "put",
     success: (response) => {
       if (response.status) {
+        iconQtycount.innerHTML = parseInt(iconQtycount.innerHTML) + 1;
         swal("Successfull !", "Prodcut added to cart !", "success");
       } else {
         location.href = "/login";
@@ -96,12 +153,13 @@ function addToCart(prodId) {
 
 //ajax function for increasing product quantity
 function changeQuantity(cartId, prodId, userId, count) {
-  let quantity = parseInt(document.getElementById(prodId).innerHTML);
+  const quantity = parseInt(document.getElementById(prodId).innerHTML);
+  const iconQtycount = parseInt(document.getElementById('cartCount').innerHTML)
 
   count = parseInt(count);
 
   $.ajax({
-    url: "/change-product-quantity",
+    url: "/api/cart/change-product-quantity",
     data: {
       user: userId,
       cart: cartId,
@@ -109,7 +167,7 @@ function changeQuantity(cartId, prodId, userId, count) {
       count: count,
       quantity: quantity,
     },
-    method: "post",
+    method: "patch",
     success: (response) => {
       if (response.removeProduct) {
         let productId = "row" + prodId;
@@ -120,6 +178,7 @@ function changeQuantity(cartId, prodId, userId, count) {
         swal("Sorry !", "Product is out of stock!", "error");
       } else {
         document.getElementById(prodId).innerHTML = quantity + count;
+        document.getElementById('cartCount').innerHTML = iconQtycount + count;
         document.getElementById("totalAmount").innerHTML =
           "Rs. " + response.totalAmount;
         document.getElementById("subTotalAmount").innerHTML =
@@ -134,12 +193,12 @@ function removeCartProduct(cartId, prodId) {
     buttons: ["No", "Yes"],
   }).then(() => {
     $.ajax({
-      url: "/remove-cart-product",
+      url: "/api/cart/remove-cart-product",
       data: {
         cart: cartId,
         product: prodId,
       },
-      method: "post",
+      method: "delete",
       success: (response) => {
         let productId = "row" + prodId;
         swal("Successfull !", "Prodcut removed from cart !", "success").then(
@@ -181,7 +240,7 @@ $("#checkout-form").submit((e) => {
                 location.href = `${response.redirect_urls}`;
               });
             case "paypal":
-              location.href = `${response.redirect_urls}`;
+              paypalPayment(response.value);
 
             case "razorpay":
               razorpayPayment(response);
@@ -237,6 +296,7 @@ $("#add-address").submit((e) => {
     success: (response) => {
       swal("Successfull !", "Address has been added!", "success").then(
         (response) => {
+
           location.reload();
         }
       );
@@ -307,27 +367,3 @@ function addFromWishlist(prodId) {
     },
   });
 }
-
-$("#user-info").submit((e) => {
-  e.preventDefault();
-  e.stopImmediatePropagation();
-  let formData = new FormData(document.getElementById("user-info"));
-
-  swal("Are you sure you want to do this?", {
-    buttons: ["No", "Yes"],
-  }).then(() => {
-    $.ajax({
-      url: "/update-user-info",
-      method: "post",
-      data: formData,
-      success: (response) => {
-        swal("Successfull !", "Info has been updated", "success").then(() => {
-          location.reload();
-        });
-      },
-      caches: false,
-      contentType: false,
-      processData: false,
-    });
-  });
-});

@@ -16,14 +16,9 @@
                   <div class="heading_s1">
                     <h3 class="mb-30">Create an Account</h3>
                   </div>
-                  {{#if signupErr}}
-                  <div class="alert alert-danger" role="alert">
-                    {{signupErr}}
-                  </div>
-                  {{/if}}
                   <form id="signup-form" action="/signup" method="post">
                     <div class="form-group">
-                      <input id="form-name" type="text" required="" name="name" placeholder="Username">
+                      <input id="form-name" type="text" required="" name="firstName" placeholder="Username">
                       <small></small>
                     </div>
                     <div class="form-group">
@@ -31,7 +26,7 @@
                       <small></small>
                     </div>
                     <div class="form-group">
-                      <input id="form-mobile" type="text" required="" name="mobile" placeholder="mobile">
+                      <input id="form-mobile" type="text" required="" name="phone" placeholder="mobile">
                       <small></small>
                     </div>
                     <div class="form-group">
@@ -253,26 +248,21 @@ form.addEventListener('submit', function (e) {
     // submit to the server if the form is valid
     if (isFormValid) {
         $("#signup-form").submit((e) => {
+          console.log('clicked')
             e.preventDefault()
             e.stopImmediatePropagation();
             $.ajax({
                 url: "/signup",
                 data: $("#signup-form").serialize(),
                 method: "post",
-                success: function (response) {
-                    if (response) {
-
-                        location.href = '/login'
-                    }
-                    else {
-                        location.reload();
-                    }
-
-                },
-                error: function (err) {
-
-                    location.reload()
-                }
+            }).done((res) =>{
+              console.log('user created')
+              new swal("Good job!",`${res}`,"success").then(() =>{
+                location.href = '/login'
+              })
+            }).fail((err) =>{
+              console.log('user is not created')
+              new swal("Unsuccessfull",`${err.responseJSON.error}`, "error");
             })
 
         })

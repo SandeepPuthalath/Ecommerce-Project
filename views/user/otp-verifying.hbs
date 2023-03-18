@@ -11,17 +11,7 @@
                                     <div class="heading_s1">
                                         <h3 class="mb-30">Enter OTP</h3>
                                     </div>
-                                    {{#if otpStatus}}
-                                    <div class="alert alert-success" role="alert">
-                                        {{otpStatus}}
-                                    </div>
-                                    {{/if}}
-                                    {{#if otpErr}}
-                                    <div class="alert alert-danger" role="alert">
-                                        {{otpErr}}
-                                    </div>
-                                    {{/if}}
-                                    <form action="/otp-verifying" method="post">
+                                    <form id="verify-otp" method="post">
                                         <div class="form-group">
                                             <input type="text" required="" name="otp" placeholder="Enter the OTP">
                                         </div>
@@ -40,3 +30,23 @@
         </div>
     </section>
 </main>
+<script>
+    $(document).ready(function(){
+        $('#verify-otp').submit((e) =>{
+            e.preventDefault();
+            $.ajax({
+                url : '/otp-verifying',
+                type: 'post',
+                data:  $('#verify-otp').serialize(),
+            }).done((res) =>{
+                new swal("Successfull", `${res.message}`, "success").then(() => {
+                    location.reload();
+                })
+            }).fail((er) =>{
+               new swal("Error", `${err.responseJSON.message}`, "error").then(() => {
+                    location.reload();
+                })
+            })
+        })
+    })
+</script>

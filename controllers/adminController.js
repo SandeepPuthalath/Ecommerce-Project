@@ -1,21 +1,19 @@
-const admin_helper = require("../helpers/adminHelper");
-
+const adminHelper = require("../helpers/adminHelper");
 
 module.exports = {
   // rendering admin dashboard...
-  adminDashboard: (req, res) => {
+  adminDashboard: async (req, res) => {
     try {
       let admin = req.session.admin;
-      admin_helper.getDashboardDetails().then((response) => {
-       
-        res.render("admin/dashboard", {
-          admin,
-          totalOrders: response.totalOrders,
-          totalRevenu: response.totalRevenu,
-          totalQuantity: response.totalQuantity,
-          monthlyOrders : response.monthlyCounts,
-          daylyOrders : response.daylyCount
-        });
+      const dashboardDetails = await adminHelper.getDashboardDetails();
+      const chartData = await adminHelper.getChartDetails();
+      res.render("admin/dashboard", {
+        admin,
+        totalOrders: dashboardDetails.totalOrders,
+        totalRevenue: dashboardDetails.totalRevenue,
+        monthlyRevenue: dashboardDetails.monthlyRevenue,
+        totalProduct: dashboardDetails.totalProduct,
+        chartData
       });
     } catch (err) {
       res.status(500);
@@ -24,61 +22,68 @@ module.exports = {
 
   // getting all user data in a table format page rendering
   adminAllUser: (req, res) => {
-    admin_helper.getAllUserDetails().then((userInfo) => {
-      userInfo = JSON.parse(JSON.stringify(userInfo));
-      let admin = req.session.admin;
-      res.render("admin/all-user", { admin, userInfo });
-    });
+    try {
+      adminHelper.getAllUserDetails().then((userInfo) => {
+        userInfo = JSON.parse(JSON.stringify(userInfo));
+        let admin = req.session.admin;
+        res.render("admin/all-user", { admin, userInfo });
+      });
+    }
+    catch (err) {
+      res.status(500);
+    }
   },
   // for blocking the user
-  userBlocking: (req, res) => {
+  accessRestricter : (req, res) => {
     let userId = req.params.id;
-    admin_helper.blockUser(userId).then((status) => {
-      console.log("user blocked");
+    adminHelper.blockUser(userId).then(() => {
       res.redirect("/admin/all-user");
     });
   },
-  // Unblocking the user
-  userUnblocking: (req, res) => {
-    let userId = req.params.id;
-    admin_helper.unblockUser(userId).then((status) => {
-      console.log("user unblocked");
-      res.redirect("/admin/all-user");
-    });
-  },
-
   // add product page rendering ...
   addProduct: (req, res) => {
-    admin_helper.getAllCategory().then((category) => {
-      category = JSON.parse(JSON.stringify(category));
-      let admin = req.session.admin;
-      res.render("admin/add-product", {
-        admin,
-        productStatus: req.session.productStatus,
-        category,
+    try {
+      adminHelper.getAllCategory().then((category) => {
+        category = JSON.parse(JSON.stringify(category));
+        let admin = req.session.admin;
+        res.render("admin/add-product", {
+          admin,
+          productStatus: req.session.productStatus,
+          category,
+        });
+        req.session.productStatus = false;
       });
-      req.session.productStatus = false;
-    });
+    } catch (error) {
+      res.status(500);
+    }
   },
   // post method for adding products
   postAddProduct: (req, res) => {
-    admin_helper.addProduct(req.body).then((id) => {
-      req.session.productStatus = "Product Add";
+    try {
+      let images;
       if (req.files) {
-        let image = req.files.image;
-        image.mv("./public/product-images/" + id + ".jpg", (err) => {
-          if (!err) {
-            res.redirect("/admin/add-product");
-          } else {
-            console.log(err);
+        let imagesArray = (Object.values(req.files)).flat(1);
+        images = imagesArray.map(files => {
+          return {
+            filename: files.filename,
+            orignalname: files.originalname,
+            mimetype: files.mimetype,
+            path: files.path,
+            size: files.size
           }
-        });
+        })
       }
-    });
+      adminHelper.addProduct(req.body, images).then((id) => {
+        req.session.productStatus = "Product Added";
+        res.redirect("/admin/add-product");
+      });
+    } catch (error) {
+      res.status(500);
+    }
   },
   // product listing page rendering
   productListing: (req, res) => {
-    admin_helper.getAllProducts().then((product) => {
+    adminHelper.getAllProducts().then((product) => {
       console.log(product);
       let admin = req.session.admin;
       product = JSON.parse(JSON.stringify(product));
@@ -87,29 +92,41 @@ module.exports = {
   },
   // for editing the information about the products
   editProduct: async (req, res) => {
-    let category = await admin_helper.getAllCategory();
+    let category = await adminHelper.getAllCategory();
     category = JSON.parse(JSON.stringify(category));
-    admin_helper.getProductDetails(req.params.id).then((product) => {
+    adminHelper.getProductDetails(req.params.id).then((product) => {
       const [product1] = product;
       product = JSON.parse(JSON.stringify(product1));
       let admin = req.session.admin;
-      res.render("admin/edit-product", { admin, product, category });
+      res.render("admin/edit-product", { admin, product, category, "productStatus": req.session.productStatus });
+      req.session.productStatus = false;
     });
   },
+
   // post method for the editting
   postEditProduct: (req, res) => {
-    admin_helper.updateProduct(req.body, req.params.id).then(() => {
-      let id = req.params.id;
-      res.redirect("/admin/all-product");
-      if (req.files) {
-        let image = req.files.image;
-        image.mv("./public/product-images/" + id + ".jpg");
-      }
+    let images = null;
+    if (req.files) {
+      let imagesArray = (Object.values(req.files)).flat(1);
+      images = imagesArray.map(files => {
+        return {
+          filename: files.filename,
+          orignalname: files.originalname,
+          mimetype: files.mimetype,
+          path: files.path,
+          size: files.size
+        }
+      })
+    }
+    adminHelper.updateProduct(req.body, req.params.id, images).then((updatedProduct) => {
+      req.session.productStatus = "Product info has been edited"
+      res.redirect(`/admin/edit-product/${updatedProduct._id}`);
     });
+
   },
   // getting all categorys in the category collection page rendering
   getAllCategory: (req, res) => {
-    admin_helper.getAllCategory().then((category) => {
+    adminHelper.getAllCategory().then((category) => {
       category = JSON.parse(JSON.stringify(category));
       let admin = req.session.admin;
       res.render("admin/category-list", { admin, category });
@@ -117,7 +134,7 @@ module.exports = {
   },
   // bothe category adding and listing are in the same page this the post method for adding category
   addCategory: (req, res) => {
-    admin_helper
+    adminHelper
       .categoryListing(req.body)
       .then((category) => {
         res.redirect("/admin/category-list");
@@ -129,27 +146,31 @@ module.exports = {
   // listing and unlisting categorys..
   listCategory: (req, res) => {
     let categoryId = req.params.id;
-    admin_helper.list_category(categoryId).then(() => {
+    adminHelper.list_category(categoryId).then(() => {
       res.redirect("/admin/category-list");
     });
   },
   unlistCategory: (req, res) => {
     let categoryId = req.params.id;
-    admin_helper.unlist_category(categoryId).then(() => {
+    adminHelper.unlist_category(categoryId).then(() => {
       res.redirect("/admin/category-list");
     });
   },
   // deleting products from the database
   changeStatusProduct: (req, res) => {
-    let productId = req.params.id;
-    admin_helper
-      .productStatusChanger(productId)
-      .then(() => {
-        res.redirect("/admin/all-product");
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+    try {
+      let productId = req.params.id;
+      adminHelper
+        .productStatusChanger(productId)
+        .then((result) => {
+          res.json(true);
+        })
+        .catch((err) => {
+          res.json(err)
+        });
+    } catch (error) {
+      res.status(500);
+    }
   },
 
   //adming authentication page rendering  ...
@@ -165,7 +186,7 @@ module.exports = {
   },
   // verifying the cridentials given by the user
   adminLoginPost: (req, res) => {
-    admin_helper
+    adminHelper
       .admin_login(req.body)
       .then((data) => {
         req.session.admin = data;
@@ -186,28 +207,89 @@ module.exports = {
     res.redirect("/admin/admin-login");
   },
   usersOrderDetails: async (req, res) => {
-    let admin = req.session.admin;
-    let orderDetails = await admin_helper.getAllOrders();
-    orderDetails = JSON.parse(JSON.stringify(orderDetails));
-    res.render("admin/all-order-details", { admin, orderDetails });
-  },
-
-  // Banner controller functions
-  addBanner: (req, res) => {
-    let admin = req.session.admin;
-    res.render("admin/add-banner", { admin });
+    try {
+      let admin = req.session.admin;
+      let orders = await adminHelper.getAllOrders();
+      res.render("admin/all-order-details", { admin, orders });
+    } catch (err) {
+      res.status(500);
+    }
   },
   addingBanner: (req, res) => {
     try {
-      admin_helper.postBanner(req.body).then((id) => {
+      adminHelper.postBanner(req.body, req.file).then((id) => {
         res.json(true);
-        if (req.files) {
-          let image = req.files.image;
-          image.mv("./public/banner-images/" + id + ".jpg");
-        }
       });
     } catch (err) {
       res.status(500);
     }
   },
+  getOrderDetails: async (req, res) => {
+    try {
+      let admin = req.session.admin;
+      let orderId = req.params.id;
+      let orderItems = await adminHelper.getAllOrderItem(orderId);
+      let orderDetails = await adminHelper.getOrderDetails(orderId);
+      res.render("admin/order-details", {
+        admin,
+        orderItems,
+        orderId,
+        orderDetails,
+      });
+    } catch (err) {
+      res.status(500);
+    }
+  },
+
+  // getting all banner detail
+
+  addBanner: (req, res) => {
+    let admin = req.session.admin;
+    res.render("admin/add-banner", { admin });
+  },
+
+  getAllBannerDetails: async (req, res) => {
+    try {
+      console.log('got to banner list')
+      let admin = req.session.admin;
+      let banners = await adminHelper.getAllBanners();
+      res.render("admin/banner-list", { admin, banners });
+    } catch (error) {
+      res.status(500);
+    }
+  },
+  getBanner: (req, res) => {
+    try {
+      let bannerId = req.params.id;
+      adminHelper.getBannerDetails(bannerId).then((result) => {
+        if (result) {
+          res.json(result);
+        }
+      });
+    } catch (error) {
+      res.status(500);
+    }
+  },
+  updateBanner: (req, res) => {
+    console.log(req.file);
+    console.log(req.body);
+    try {
+      adminHelper.bannerUpdater(req.body, req.file).then(() => {
+        res.json(true)
+      }).catch((err) =>{
+        res.json(err);
+      });
+      
+    } catch (error) {
+      res.status(500);
+    }
+  },
+  deleteBanner : (req, res) =>{
+    let bannerId = req.params.id;
+    adminHelper.bannerDeleter(bannerId).then((status) =>{
+      res.json(true)
+    }).catch((err) =>{
+      res.json(err);
+    })
+  }
 };

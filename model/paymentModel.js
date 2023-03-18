@@ -1,6 +1,10 @@
 var objectId = require('mongodb').ObjectId
 // user payment details
 const paymentShema = new mongoose.Schema({
+    createdAt : {
+        type : Date,
+        default : Date.now()
+    },
     card :{
         holderName : String,
         cardCVV : String,

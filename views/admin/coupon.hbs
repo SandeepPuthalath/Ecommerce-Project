@@ -1,0 +1,299 @@
+<main class="main-wrap">
+    <section class="content-main">
+        <div class="content-header">
+            <div>
+                <h2 class="content-title card-title">Categories </h2>
+                <p>Add, edit or delete a Coupon</p>
+            </div>
+            <div>
+                <input type="text" placeholder="Search Categories" class="form-control bg-white">
+            </div>
+        </div>
+        <div class="card">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-3">
+                        <form id="coupon-form">
+                            <div class="mb-4">
+                                <label for="product_name" class="form-label">Code</label>
+                                <input type="text" placeholder="Type here" name="code" class="form-control"
+                                    id="product_name" />
+                            </div>
+                            <div class="mb-4">
+                                <label for="product_slug" class="form-label">Discount</label>
+                                <input type="number" placeholder="Type here" name="discount" class="form-control"
+                                    id="product_slug" />
+                            </div>
+                            <div class="mb-4">
+                                <label class="form-label">Expiration date</label>
+                                <input class="form-control" name="expirationDate" type="date">
+                            </div>
+                            <div class="mb-4">
+                                <label class="form-label">Description</label>
+                                <textarea placeholder="Type here" name="description" class="form-control"></textarea>
+                            </div>
+                            <div class="d-grid">
+                                <button class="btn btn-primary" type="submit">Create coupon</button>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="col-md-9">
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th class="text-center">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" value="" />
+                                            </div>
+                                        </th>
+                                        <th>Sl.No</th>
+                                        <th>Code</th>
+                                        <th>Discount</th>
+                                        <th>description</th>
+                                        <th>Created date</th>
+                                        <th class="text-end">Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {{#if coupons}}
+                                    {{#each coupons}}
+                                    <tr>
+                                        <td class="text-center">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" value="" />
+                                            </div>
+                                        </td>
+                                        <td>{{inc @index}}</td>
+                                        <td><b>{{this.code}}</b></td>
+                                        <td>{{this.discount}}</td>
+                                        <td>{{this.description}}</td>
+                                        <td><span class="badge rounded-pill alert-{{checkStatus this.isActive}}">{{this.isActive}}</span></td>
+                                        <td class="text-end">
+                                            <div class="dropdown">
+                                                <a href="#" data-bs-toggle="dropdown"
+                                                    class="btn btn-light rounded btn-sm font-sm"> <i
+                                                        class="material-icons md-more_horiz"></i> </a>
+                                                <div class="dropdown-menu">
+                                                    <a class="dropdown-item couponEdit" data-value="{{this._id}}"
+                                                        href="#">Edit info</a>
+                                                    {{#if this.isActive}}
+                                                    <a class="dropdown-item text-danger" href="#">Deactivate</a>
+                                                    {{else}}
+                                                    <a class="dropdown-item text-success" href="#">Activate</a>
+                                                    {{/if}}
+                                                </div>
+                                            </div> <!-- dropdown //end -->
+                                        </td>
+                                    </tr>
+                                    {{/each}}
+                                    {{else}}
+                                    <tr>
+                                        <td class="text-center">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" value="" />
+                                            </div>
+                                        </td>
+                                        <td>Nil</td>
+                                        <td><b>Nil</b></td>
+                                        <td>Nil</td>
+                                        <td>Nil</td>
+                                        <td>Nil</td>
+                                        <td class="text-end">
+                                            <div class="dropdown">
+                                                <a href="#" data-bs-toggle="dropdown"
+                                                    class="btn btn-light rounded btn-sm font-sm"> <i
+                                                        class="material-icons md-more_horiz"></i> </a>
+                                                <div class="dropdown-menu">
+                                                    <a class="dropdown-item" href="#">Nil</a>
+                                                    <a class="dropdown-item" href="#">Edit info</a>
+                                                    <a class="dropdown-item text-danger" href="#">Delete</a>
+                                                </div>
+                                            </div> <!-- dropdown //end -->
+                                        </td>
+                                    </tr>
+                                    {{/if}}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div> <!-- .col// -->
+                </div> <!-- .row // -->
+            </div> <!-- card body .// -->
+        </div> <!-- card .// -->
+    </section> <!-- content-main end// -->
+</main>
+
+{{!-- modal section --}}
+<style>
+    #myModal {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        margin: auto;
+        z-index: 9999;
+        width: 100%;
+        height: 100%;
+        overflow: auto;
+        background-color: rgba(0, 0, 0, 0.5);
+    }
+
+
+    .modal-content {
+        background-color: #fefefe;
+        margin: 15% auto;
+        padding: 20px;
+        border: 1px solid #888;
+        width: 80%;
+        max-width: 400px;
+    }
+
+    .modal {
+        max-width: 100%;
+    }
+
+    .close {
+        color: #aaa;
+        float: right;
+        font-size: 28px;
+        font-weight: bold;
+    }
+
+    .close:hover,
+    .close:focus {
+        color: black;
+        text-decoration: none;
+        cursor: pointer;
+    }
+</style>
+
+<div id="myModal" class="modal">
+    <div class="modal-content">
+        <span class="close">&times;</span>
+        <div class="content-header">
+            <div>
+                <h2 class="content-title card-title">Coupon </h2>
+                <p> Update coupon</p>
+            </div>
+        </div>
+        <div class="card">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-9">
+                        <form id="coupon-update">
+                            <div class="mb-4">
+                                <label for="product_name" class="form-label">Code</label>
+                                <input type="text" placeholder="Type here" name="code" class="form-control" id="code" />
+                                <input type="text" style="visibility: hidden;" id="id" name="couponId">
+                            </div>
+                            <div class="mb-4">
+                                <label for="product_slug" class="form-label">Discount</label>
+                                <input type="number" placeholder="Type here" name="discount" class="form-control"
+                                    id="discount" />
+                            </div>
+                            <div class="mb-4">
+                                <label class="form-label">Expiration date</label>
+                                <input class="form-control" name="expirationDate" type="date" id="expirationDate">
+                            </div>
+                            <div class="mb-4">
+                                <label class="form-label">Description</label>
+                                <textarea placeholder="Type here" id="description" name="description"
+                                    class="form-control"></textarea>
+                            </div>
+                            <div class="d-grid">
+                                <button class="btn btn-primary" type="submit">Create coupon</button>
+                            </div>
+                        </form>
+                    </div>
+                </div> <!-- .row // -->
+            </div> <!-- card body .// -->
+        </div> <!-- card .// -->
+    </div>
+</div>
+<script>
+    $(document).ready(function () {
+        // adding new coupons
+        $("#coupon-form").submit(e => {
+            e.preventDefault();
+            swal("Are you sure you want to do this?", {
+                buttons: ["No!", "Yes!"],
+            }).then((res) => {
+                if (res) {
+                    $.ajax({
+                        url: "/api/coupon",
+                        type: 'post',
+                        data: $("#coupon-form").serialize()
+                    }).done(res => {
+                        console.log(res)
+                        swal("Successfull!", `${res.code}`, "success");
+                        location.reload();
+                    }).fail(err => {
+                        swal("Error", `${err.responseJSON.error}`, "error")
+                    })
+                }
+            })
+        })
+
+        var modal = $("#myModal");
+
+        // Get the <span> element that closes the modal
+        var span = $(".close");
+
+        // When the user clicks on <span> (x), close the modal
+        span.click(function () {
+            modal.hide();
+        });
+
+        // When the user clicks anywhere outside of the modal, close it
+        $(window).click(function (event) {
+            if (event.target == modal[0]) {
+                modal.hide();
+            }
+        });
+
+        // updating and viewing the coupon details
+        $(".couponEdit").click(function () {
+            const couponId = $(this).data('value');
+            $.ajax({
+                url: '/api/coupon/' + couponId,
+                type: 'get'
+            }).done((res) => {
+                $('#code').val(res.code);
+                $('#discount').val(res.discount);
+                const expDate = new Date(res.expirationDate)
+                $('#expirationDate').val(expDate.toISOString().substring(0, 10));
+                $('#description').val(res.description);
+                $("#id").val(res._id);
+
+                modal.show()
+            }).fail((err) => {
+                swal("Error", `${err.responseJSON.error}`, "error");
+            })
+
+        })
+
+        $("#coupon-update").submit((e) => {
+            e.preventDefault();
+            swal("Are you sure you want to do this?", {
+                buttons: ["No!", "Yes!"],
+            }).then((res) => {
+                if (res) {
+                    $.ajax({
+                        url: '/api/coupon/edit',
+                        type: "patch",
+                        data: $('#coupon-update').serialize(),
+                    }).done(update => {
+                        swal("Successfull", `${update.code}`, "success");
+                        location.reload()
+                    }).fail(err => {
+                        swal("Error", `${err.responseJSON.error}`, "error");
+                    })
+                }
+            })
+
+        })
+
+    })
+</script>

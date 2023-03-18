@@ -16,13 +16,12 @@
                                         {{otpLoginErr}}
                                     </div>
                                     {{/if}}
-                                    <form action="/otp-login" method="post">
+                                    <form id="send-otp-form" method="post">
                                         <div class="form-group">
-                                            <input type="number" required="" name="mobile" placeholder="Enter the OTP">
+                                            <input type="number" id="mobile" required="" name="phone" placeholder="Enter the OTP">
                                         </div>
                                         <div class="form-group">
-                                            <button type="submit" class="btn btn-fill-out btn-block hover-up"
-                                                name="login">Send OTP</button>
+                                            <button type="submit" class="btn btn-fill-out btn-block hover-up">Send OTP</button>
                                         </div>
                                     </form>
                                     {{!-- <h3 style="margin-top: 20px;">OR</h3>
@@ -40,3 +39,25 @@
         </div>
     </section>
 </main>
+<script>
+    $(document).ready(function(){
+        $('#send-otp-form').submit((e) =>{
+            e.preventDefault();
+            $.ajax({
+                url: '/otp-login',
+                type: 'post',
+                data: $('#send-otp-form').serialize()
+            }).done((res) =>{
+                console.log('success')
+                new swal("Successfull", `${res.message}`, "success").then(() => {
+                    location.href= '/otp-verifying';
+                })
+            }).fail((err) =>{
+              new swal("Error", `${err.responseJSON.message}`, "error").then(() => {
+                    location.reload();
+                })
+
+            })
+        })
+    })
+</script>

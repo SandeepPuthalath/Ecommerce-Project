@@ -22,11 +22,10 @@
 	<!-- Template CSS -->
 	<link href="/assets/css/main.css" rel="stylesheet" type="text/css" />
 
-	
-	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-modal/0.9.1/jquery.modal.min.css" />
 
-	<script  src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script> 
-	<script  src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-modal/0.9.1/jquery.modal.min.css" />
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+	<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
 
 
 </head>
@@ -48,13 +47,14 @@
 	<link rel="shortcut icon" type="image/x-icon" href="/imgs/theme/favicon.svg">
 	<!-- Template CSS -->
 	<link rel="stylesheet" href="/css/main.css">
+	<link href="/assets/css/main.css" rel="stylesheet" type="text/css" />
 
 	{{!-- my links --}}
-	
+
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-modal/0.9.1/jquery.modal.min.css" />
 
-	<script  src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script> 
-	<script  src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+	<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
 	{{!-- payment intergration linkes --}}
 	<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 
@@ -93,14 +93,13 @@
 	{{/if}}
 	{{/if}}
 
-	
+
 	{{#if admin}}
 
 	{{!-- my script --}}
 	<script src="/javascripts/adminScript.js"></script>
 	<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-modal/0.9.1/jquery.modal.min.js"></script>
-	
 	<script src="/assets/js/vendors/jquery-3.6.0.min.js"></script>
 	<script src="/assets/js/vendors/bootstrap.bundle.min.js"></script>
 	<script src="/assets/js/vendors/select2.min.js"></script>
@@ -110,15 +109,17 @@
 	<!-- Main Script -->
 	<script src="/assets/js/main.js" type="text/javascript"></script>
 	<script src="/assets/js/custom-chart.js" type="text/javascript"></script>
-	
+
 	{{else}}
 	{{!-- my script --}}
 	<script src="/javascripts/script.js"></script>
 	<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-modal/0.9.1/jquery.modal.min.js"></script>
-	
-	
-	
+	<script
+		src="https://www.paypal.com/sdk/js?client-id=AVAoNPU15zJqf5MRI8KJpDLKK-kmlm3RR6F8RN9MLb1pkW7xSEXS2POZsHZcsxYZopqXMQhiS5MIOnBY&disable-funding=credit,card "
+		data-namespace="paypal_sdk"></script>
+	<script src="https://unpkg.com/easyinvoice/dist/easyinvoice.min.js"></script>
+
 	<!-- Vendor JS-->
 	<script src="/js/vendor/modernizr-3.6.0.min.js"></script>
 	<script src="/js/vendor/jquery-3.6.0.min.js"></script>

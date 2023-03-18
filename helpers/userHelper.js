@@ -1,4 +1,4 @@
-const userSchema = require('../model/userModel');
+const userSchema = require('../model/userModel').default;
 const bcrypt = require('bcrypt');
 const cartSchema = require('../model/cartModel');
 const orderSchema = require('../model/orderModel');
@@ -6,6 +6,7 @@ const addressSchema = require('../model/addressModel')
 const wishlistSchema = require('../model/wishlistModel');
 const productSchema = require('../model/productModel');
 const userInfoSchema = require('../model/userInfoModel');
+const walletSchema = require('../model/userWalletModel');
 const objectId = require('mongodb').ObjectId
 
 function orderDate() {
@@ -281,6 +282,7 @@ module.exports = {
                 }
             ]);
             if (total.length == 1) {
+                
                 resolve(total[0].total)
             }
             else {
@@ -309,6 +311,7 @@ module.exports = {
                     pin_code: address.zipcode,
                     phone_number: order.phone,
                 },
+                orderedItems : products.product,
                 totalAmount: totalPrice,
                 paymentMethod: order.payment_option,
                 status: status
@@ -320,7 +323,7 @@ module.exports = {
     },
     getCartProductList: (userId) => {
         return new Promise(async (resolve, reject) => {
-            let products = await cartSchema.findOne({ user: objectId(userId) });
+            let products = await cartSchema.findOne({ user: objectId(userId) }).select('product');
             resolve(products);
         })
     },
@@ -340,8 +343,44 @@ module.exports = {
     },
     removeOrder: (orderId) => {
         return new Promise((resolve, reject) => {
-            orderSchema.updateOne({ _id: objectId(orderId) }, { $set: { status: 'cancelled' } }).then((response) => {
-                resolve(true)
+            orderSchema.findOneAndUpdate({ _id: objectId(orderId) }, { $set: { status: 'cancelled' } }).then( async(res) => {
+                console.log(res);
+                if((res.paymentMethod === "paypal" || res.paymentMethod === "razorpay") && res.status === "placed"){
+                    let transaction = {
+                        transactionDate : Date.now(),
+                        description : "order cancellation refund" ,
+                        amount : res.totalAmount
+                    }
+                    let wallet = await walletSchema.findOne({ownerId : objectId(res.userId)});
+                    if(wallet){
+                        let newWalletBalance = res.totalAmount + wallet.walletBalance;
+                        await walletSchema.updateOne(
+                            {
+                                ownerId : objectId(res.userId)
+                            },
+                            {
+                                $set : {
+                                    walletBalance : newWalletBalance
+                                },
+                                $push : {
+                                    transactions : transaction
+                                }
+                            }
+                        )
+                        resolve(true);
+                    }
+                    else{
+                        let wallet = new walletSchema({
+                            ownerId : objectId(res.userId),
+                            walletBalance : res.totalAmount,
+                            transactions : transaction
+                        })
+                        await wallet.save();
+
+                        resolve(true)
+                    }
+                }
+                
             })
         })
     },
@@ -402,6 +441,7 @@ module.exports = {
 
 
             ]);
+            console.log(wishlist);
             if (wishlist.length != 0) {
                 resolve(wishlist[0].wishlist);
             }
@@ -467,24 +507,44 @@ module.exports = {
     }
     ,
 
-    userInfoUpdating: (userDetails, userId) => {
-        console.log(userDetails, userId);
+    userInfoUpdating: (userDetails, userId, image) => {
         return new Promise(async (resolve, reject) => {
             let userInfoExist = await userInfoSchema.exists({ ownerId: objectId(userId) });
-            console.log(userInfoExist);
             if (userInfoExist != null) {
-                userInfoSchema.updateOne({ ownerId: objectId(userId) }, {
-                    $set: {
-                        fname: userDetails.fname,
-                        lname: userDetails.lname,
-                        email: userDetails.email,
-                        tel: userDetails.tel,
-                        address: userDetails.address,
-                        dob: userDetails.dob
-                    }
-                }).then((response) =>{
-                    resolve({status : true})
-                })
+                if(image){
+                    userInfoSchema.findOneAndUpdate({ ownerId: objectId(userId) }, {
+                        $set: {
+                            fname: userDetails.fname,
+                            lname: userDetails.lname,
+                            email: userDetails.email,
+                            tel: userDetails.tel,
+                            address: userDetails.address,
+                            dob: userDetails.dob,
+                            userImage : image.path,
+                        },
+                        },
+                        { new: true, upsert: true } // options
+                    ).then((response) =>{
+                        resolve(response)
+                    })
+                }
+                else{
+                    userInfoSchema.findOneAndUpdate({ ownerId: objectId(userId) }, {
+                        $set: {
+                            fname: userDetails.fname,
+                            lname: userDetails.lname,
+                            email: userDetails.email,
+                            tel: userDetails.tel,
+                            address: userDetails.address,
+                            dob: userDetails.dob,
+                        },
+                        },
+                        { new: true, upsert: true } // options
+                    ).then((response) =>{
+                        resolve(response)
+                    })
+                }
+               
 
             } else  {
                 let userInfo = new userInfoSchema({
@@ -494,7 +554,8 @@ module.exports = {
                     email: userDetails.email,
                     tel: userDetails.tel,
                     address: userDetails.address,
-                    dob: userDetails.dob
+                    dob: userDetails.dob,
+                    userImage: image.path
                 })
 
                 await userInfo.save();
@@ -527,6 +588,19 @@ module.exports = {
             })
         })
       
+    },
+
+    getUserWallet : (userId) =>{
+        return new Promise (async (resolve, reject) =>{
+            const wallet =  await walletSchema.findOne({ownerId : objectId(userId)})
+            if(wallet){
+                resolve(wallet.walletBalance);
+            }
+            else{
+                resolve(0);
+            }
+
+         })
     }
 
 }

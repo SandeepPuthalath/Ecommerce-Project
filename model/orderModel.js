@@ -12,7 +12,7 @@ const orderSchema = new mongoose.Schema({
     dateOfFullfilment : String,
     userId : objectId,
     address : Object,
-    orderedItems : Object,
+    orderedItems : Array,
     totalAmount : Number,
     paymentMethod : String,
     status : String

@@ -52,7 +52,7 @@
             <div class="col-lg-4 col-sm-4 col-8 flex-grow-1 col-name">
               <a class="itemside" href="#">
                 <div class="left">
-                  <img src="/product-images/{{this._id}}.jpg" class="img-sm img-thumbnail" alt="Item">
+                  <img src="/{{this.product_images.[0].path}}" class="img-sm img-thumbnail" alt="Item">
                 </div>
                 <div class="info">
                   <h6 class="mb-0">{{this.product_name}}</h6>
@@ -61,7 +61,11 @@
             </div>
             <div class="col-lg-2 col-sm-2 col-4 col-price"> <span>${{this.product_price}}</span> </div>
             <div class="col-lg-2 col-sm-2 col-4 col-status">
-              <span class="badge rounded-pill alert-success">{{this.product_category}}</span>
+              {{#if this.product_status}}
+              <span class="badge rounded-pill alert-success">Listed</span>
+              {{else}}
+              <span class="badge rounded-pill alert-danger">Unlisted</span>
+              {{/if}}
             </div>
             <div class="col-lg-1 col-sm-2 col-4 col-date">
               <span>{{this.product_quantity}} nos</span>
@@ -70,11 +74,17 @@
               <a href="/admin/edit-product/{{this._id}}" class="btn btn-sm font-sm rounded btn-brand">
                 <i class="material-icons md-edit"></i> Edit
               </a>
-              {{!-- <a href="/admin/delete-product/{{this._id}}"
-                onclick="return confirm('Do you want to delete {{this.product_name}}')"
-                class="btn btn-sm font-sm btn-light rounded">
-                <i class="material-icons md-delete_forever"></i> Delete
-              </a> --}}
+               {{#if this.product_status}}
+              <button data-product="{{this._id}}" 
+                class="btn btn-sm font-sm btn-light rounded product">
+                <i class="material-icons md-delete_forever"></i> Disable
+              </button>
+              {{else}}
+               <button data-product="{{this._id}}" 
+                class="btn btn-sm font-sm btn-light rounded product">
+                <i class="material-icons md-delete_forever"></i> Enable
+              </button>
+              {{/if}}
             </div>
           </div> <!-- row .// -->
         </article> <!-- itemlist  .// -->
@@ -95,3 +105,29 @@
     </div>
   </section> <!-- content-main end// -->
 </main>
+
+<script>
+  
+  $(document).ready(function(){
+    $(".product").click(function(){
+      const productId = $(this).data('product');
+      swal("Are you sure you want to do this?", {
+  buttons: ["NO", "YES"],
+  }).then((result) =>{
+      if(result){
+        $.ajax({
+        url : "/admin/changeProductStatus/" + productId,
+        method : 'patch',
+        }).done((res) =>{
+        swal("Good job!", "You clicked the button!", "success").then(() =>{
+          location.reload();
+        })
+        }).fail((err) =>{
+        swal("Error", "Somthing went wrong", "error")
+        })
+      }
+  })
+      
+    })
+  })
+</script>

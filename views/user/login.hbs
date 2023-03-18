@@ -11,27 +11,14 @@
                                     <div class="heading_s1">
                                         <h3 class="mb-30">Login</h3>
                                     </div>
-                                    {{#if signupStatus}}
-                                    <div class="alert alert-success" role="alert">
-                                        {{signupStatus}}
-                                    </div>
-                                    {{/if}}
-                                    {{#if loginErr}}
-                                    <div class="alert alert-danger" role="alert">
-                                        {{loginErr}}
-                                    </div>
-                                    {{/if}}
-                                    {{#if loginStatus}}
-                                    <div class="alert alert-danger" role="alert">
-                                        {{loginStatus}}
-                                    </div>
-                                    {{/if}}
-                                    <form action="/login" method="post">
+                                    <form id="login-form" action="/login" method="post">
                                         <div class="form-group">
-                                            <input type="text" required="" name="email" placeholder="Your Email">
+                                            <input id="username" type="text" required="" name="email"
+                                                placeholder="Your Email">
                                         </div>
                                         <div class="form-group">
-                                            <input required="" type="password" name="password" placeholder="Password">
+                                            <input id="password" required="" type="password" name="password"
+                                                placeholder="Password">
                                         </div>
                                         <div class="login_footer form-group">
                                             <div class="chek-form">
@@ -62,3 +49,25 @@
     </section>
 </main>
 
+<script>
+    $(document).ready(function () {
+        $("#login-form").submit((e) => {
+            e.preventDefault()
+            $.ajax({
+                url: "/login",
+                type: 'post',
+                data: $('#login-form').serialize()
+            }).done(res => {
+                console.log('success')
+                new swal("Successfull", `${res.message}`, "success").then(() => {
+                    location.reload();
+                })
+            }).fail(err => {
+                console.log('error')
+                new swal("Error", `${err.responseJSON.message}`, "error").then(() => {
+                    location.reload();
+                })
+            })
+        })
+    })
+</script>

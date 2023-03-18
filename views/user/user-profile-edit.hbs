@@ -29,40 +29,40 @@
                                         <div class="row gx-3">
                                             <div class="col-6  mb-3">
                                                 <label class="form-label">First name</label>
-                                                <input class="form-control" name="fname" value="{{userInfo.fname}}"
-                                                    type="text" placeholder="Type here">
+                                                <input class="form-control" id="firstName" name="firstName"
+                                                    value="{{user.firstName}}" type="text" placeholder="Type here">
                                             </div> <!-- col .// -->
                                             <div class="col-6  mb-3">
                                                 <label class="form-label">Last name</label>
-                                                <input class="form-control" value="{{userInfo.lname}}" name="lname"
-                                                    type="text" placeholder="Type here">
+                                                <input class="form-control" id="lastName" value="{{user.lastName}}"
+                                                    name="lastName" type="text" placeholder="Type here">
                                             </div> <!-- col .// -->
                                             <div class="col-lg-6  mb-3">
                                                 <label class="form-label">Email</label>
-                                                <input class="form-control" type="email" name="email"
-                                                    value="{{userInfo.email}}" placeholder="example@mail.com">
+                                                <input class="form-control" id="email" type="email" name="email"
+                                                    value="{{user.email}}" placeholder="example@mail.com">
                                             </div> <!-- col .// -->
                                             <div class="col-lg-6  mb-3">
                                                 <label class="form-label">Phone</label>
-                                                <input class="form-control" type="tel" name="tel"
-                                                    value="{{userInfo.tel}}" placeholder="+1234567890">
+                                                <input class="form-control" id="phone" type="text" name="phone"
+                                                    value="{{user.phone}}" placeholder="+1234567890">
                                             </div> <!-- col .// -->
                                             <div class="col-lg-12  mb-3">
                                                 <label class="form-label">Address</label>
-                                                <input class="form-control" type="text" value="{{userInfo.address}}"
-                                                    name="address" placeholder="Type here">
+                                                <input class="form-control" id="address" type="text"
+                                                    value="{{user.address}}" name="address" placeholder="Type here">
                                             </div> <!-- col .// -->
                                             <div class="col-lg-6  mb-3">
                                                 <label class="form-label">Birthday</label>
-                                                <input class="form-control" value="{{userInfo.dob}}" name="dob"
+                                                <input class="form-control" id="dob" value="{{user.dob}}" name="dob"
                                                     type="text">
                                             </div> <!-- col .// -->
                                         </div> <!-- row.// -->
                                     </div> <!-- col.// -->
                                     <aside class="col-lg-4">
                                         <figure class="text-lg-center">
-                                            <img class="img-lg mb-3 img-avatar" id="userImage" src="/user-images/{{userInfo.ownerId}}.jpg"
-                                                alt="User Photo">
+                                            <img class="img-lg mb-3 img-avatar" id="userImage"
+                                                src="/{{user.userProfile}}" alt="User Photo">
                                             <figcaption>
                                                 <button type="button" id="proImage"
                                                     class="btn btn-light rounded font-md">
@@ -114,14 +114,49 @@
 <!-- Main Script -->
 <script src="assets/js/main.js" type="text/javascript"></script>
 <script>
-    $('#proImage').click(function () {
-        console.log('clicked')
-        $('#uploadPro').click();
-    });
+    $(document).ready(function () {
 
-    // changing user image on change
+        $('#proImage').click(function () {
+            $('#uploadPro').click();
+        });
+
+        // changing user image on change
+
+        $("#user-info").submit((e) => {
+            e.preventDefault();
+            e.stopImmediatePropagation();
+            let formData = new FormData(document.getElementById("user-info"));
+
+            swal("Are you sure you want to do this?", {
+                buttons: ["No", "Yes"],
+            }).then(() => {
+                console.log('clicked');
+                $.ajax({
+                    url: "/update-user-info",
+                    method: "post",
+                    data: formData,
+                    success: (response) => {
+                        console.log(response);
+                        swal("Successfull !", "Info has been updated", "success").then(() => {
+                            $("#firstName").val(response.firstName);
+                            $("#lastName").val(response.lastName);
+                            $("#email").val(response.email);
+                            $("#phone").val(response.phone);
+                            $("#dob").val(response.dob);
+                            $("#address").val(response.address);
+                            const imageUrl = `${response.userImage}`;
+                            $("userImage").attr('src', imageUrl);
+                        });
+                    },
+                    caches: false,
+                    contentType: false,
+                    processData: false,
+                }); 
+            });
+        });
+
+    });
     function viewImage(event) {
         document.getElementById('userImage').src = URL.createObjectURL(event.target.files[0])
     }
-
 </script>

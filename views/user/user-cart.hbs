@@ -65,11 +65,11 @@
                                         </div>
                                     </td>
                                     <td class="text-right" data-title="Cart">
-                                        <span>Rs. {{this.product.product_price}}</span>
+                                        <span>₹ {{mult this.product.product_price this.quantity}}</span>
                                     </td>
                                     <td class="action" data-title="Remove"><a
                                             onclick="removeCartProduct('{{this._id}}','{{this.product._id}}')"
-                                            class="text-muted"><i class="fi-rs-trash"></i></a></td>
+                                            class="text-muted"><i class="fi-rs-trash"> </i></a></td>
 
                                 </tr>
                                 {{/each}}

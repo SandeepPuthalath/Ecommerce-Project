@@ -29,25 +29,14 @@
                                                 class="fi-rs-shopping-bag mr-10"></i>Orders</a>
                                     </li>
                                     <li class="nav-item">
-                                        <a class="nav-link" id="orders-tab" data-bs-toggle="tab" href="#history"
-                                            role="tab" aria-controls="history" aria-selected="false"><i
-                                                class="fi-rs-shopping-bag mr-10"></i>Orders History</a>
-                                    </li>
-                                    <li class="nav-item">
-                                        <a class="nav-link" id="track-orders-tab" data-bs-toggle="tab"
-                                            href="#track-orders" role="tab" aria-controls="track-orders"
-                                            aria-selected="false"><i class="fi-rs-shopping-cart-check mr-10"></i>Track
-                                            Your Order</a>
-                                    </li>
-                                    <li class="nav-item">
                                         <a class="nav-link" id="address-tab" data-bs-toggle="tab" href="#address"
                                             role="tab" aria-controls="address" aria-selected="true"><i
                                                 class="fi-rs-marker mr-10"></i>My Address</a>
                                     </li>
                                     <li class="nav-item">
-                                        <a class="nav-link" id="account-detail-tab" data-bs-toggle="tab"
-                                            href="#account-detail" role="tab" aria-controls="account-detail"
-                                            aria-selected="true"><i class="fi-rs-user mr-10"></i>Account details</a>
+                                        <a class="nav-link" id="coupon-detail-tab" data-bs-toggle="tab"
+                                            href="#coupon-detail" role="tab" aria-controls="coupon-detail"
+                                            aria-selected="true"><i class="fi-rs-user mr-10"></i>My coupons</a>
                                     </li>
                                     <li class="nav-item">
                                         <a class="nav-link" href="/logout"><i
@@ -72,39 +61,6 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="tab-pane fade" id="history" role="tabpanel" aria-labelledby="history-tab">
-                                    <div class="card">
-                                        <div class="card-header">
-                                            <h5 class="mb-0">Orders History</h5>
-                                        </div>
-                                        <div class="card-body">
-                                            <div class="table-responsive">
-                                                <table class="table">
-                                                    <thead>
-                                                        <tr>
-                                                            <th>Order</th>
-                                                            <th>Date</th>
-                                                            <th>Expect</th>
-                                                            <th>Total</th>
-                                                            <th>Status</th>
-                                                        </tr>
-                                                    </thead>
-                                                    <tbody>
-                                                        {{#each orderHistory}}
-                                                        <tr id="{{this._id}}">
-                                                            <td>{{this._id}}</td>
-                                                            <td>{{this.dateOfOrder}}</td>
-                                                            <td>{{this.dateOfFullfilment}}</td>
-                                                            <td>Rs. {{this.totalAmount}}</td>
-                                                            <td>{{this.status}}</td>
-                                                        </tr>
-                                                        {{/each}}
-                                                    </tbody>
-                                                </table>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
                                 <div class="tab-pane fade" id="orders" role="tabpanel" aria-labelledby="history-tab">
                                     <div class="card">
                                         <div class="card-header">
@@ -124,7 +80,7 @@
                                                             <th>Actions</th>
                                                         </tr>
                                                     </thead>
-                                                    <tbody>
+                                                    <tbody id="ordersContainer">
                                                         {{#each orderDetails}}
                                                         <tr id="{{this._id}}">
                                                             <td>{{inc @index}}</td>
@@ -132,340 +88,87 @@
                                                             <td>{{this.dateOfOrder}}</td>
                                                             <td>{{this.dateOfFullfilment}}</td>
                                                             <td>Rs. {{this.totalAmount}}</td>
-                                                            <td>{{this.status}}</td>
+                                                            <td><span
+                                                                    class="badge rounded-pill alert-{{paymentStatus this.status}}">{{this.status}}</span>
+                                                            </td>
                                                             {{!-- <td><button onclick="cancelOrder('{{this._id}}')"
                                                                     class=" btn btn-sm d-block">Cancel</button></td>
                                                             --}}
                                                             <td>
-                                                                <ul class="nav flex-column" role="tablist">
-                                                                    <li class="nav-item">
-                                                                        <a data-value="{{this._id}}" class="nav-link"
-                                                                            id="orderDetails-tab" data-bs-toggle="tab"
-                                                                            href="#orderDetails" role="tab"
-                                                                            aria-controls="orderDetails"
-                                                                            aria-selected="false"
-                                                                            class="btn-small d-block">View</a>
-                                                                    </li>
-                                                                </ul>
+                                                                <a href="/api/user/settings/{{this._id}}"
+                                                                    class="btn-small d-block">View</a>
                                                             </td>
                                                         </tr>
                                                         {{/each}}
                                                     </tbody>
                                                 </table>
                                             </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="tab-pane fade" id="track-orders" role="tabpanel"
-                                    aria-labelledby="track-orders-tab">
-                                    <div class="card">
-                                        <div class="card-header">
-                                            <h5 class="mb-0">Orders tracking</h5>
-                                        </div>
-                                        <div class="card-body contact-from-area">
-                                            <p>To track your order please enter your OrderID in the box below and press
-                                                "Track" button. This was given to you on your receipt and in the
-                                                confirmation email you should have received.</p>
-                                            <div class="row">
-                                                <div class="col-lg-8">
-                                                    <form class="contact-form-style mt-30 mb-50" action="#"
-                                                        method="post">
-                                                        <div class="input-style mb-20">
-                                                            <label>Order ID</label>
-                                                            <input name="order-id"
-                                                                placeholder="Found in your order confirmation email"
-                                                                type="text" class="square">
-                                                        </div>
-                                                        <div class="input-style mb-20">
-                                                            <label>Billing email</label>
-                                                            <input name="billing-email"
-                                                                placeholder="Email you used during checkout"
-                                                                type="email" class="square">
-                                                        </div>
-                                                        <button class="submit submit-auto-width"
-                                                            type="submit">Track</button>
-                                                    </form>
-                                                </div>
+                                            <div class="pagination-area mt-15 mb-50">
+                                                <nav aria-label="Page navigation example">
+                                                    <ul id="paginationContainer"
+                                                        class="pagination justify-content-start">
+                                                    </ul>
+                                                </nav>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                                 <div class="tab-pane fade" id="address" role="tabpanel" aria-labelledby="address-tab">
-                                    <div class="row">
-                                        <div class="col-lg-6">
+                                    <div id="addressContainer" class="row">
+                                        {{#each addresses}}
+                                        <div id="{{this._id}}" class="col-lg-6">
                                             <div class="card mb-3 mb-lg-0">
                                                 <div class="card-header">
                                                     <h5 class="mb-0">Billing Address</h5>
                                                 </div>
                                                 <div class="card-body">
-                                                    <address>3522 Interstate<br> 75 Business Spur,<br> Sault Ste.
-                                                        <br>Marie, MI 49783
+                                                    <p class="h6">{{this.full_name}}</p>
+                                                    <p>{{this.email_id}}</p>
+                                                    <address>{{this.address_line_1}}<br> {{this.city}},<br>
+                                                        {{this.state}}.
+                                                        <br>{{this.country}}, {{this.pin_code}}
                                                     </address>
                                                     <p>New York</p>
-                                                    <a href="#" class="btn-small">Edit</a>
+                                                    <a href="#" onclick="getAddress('{{this._id}}')"
+                                                        class="btn-small m-1"><i class="fi-rs-edit">
+                                                        </i>Edit</a>
+                                                    <a href="#" onclick="deleteAddress('{{this._id}}')"
+                                                        class="btn-small m-1 text-danger"><i class="fi-rs-trash">
+                                                        </i>Delete</a>
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="col-lg-6">
-                                            <div class="card">
-                                                <div class="card-header">
-                                                    <h5 class="mb-0">Shipping Address</h5>
-                                                </div>
-                                                <div class="card-body">
-                                                    <address>4299 Express Lane<br>
-                                                        Sarasota, <br>FL 34249 USA <br>Phone: 1.941.227.4444</address>
-                                                    <p>Sarasota</p>
-                                                    <a href="#" class="btn-small">Edit</a>
-                                                </div>
-                                            </div>
-                                        </div>
+                                        {{/each}}
                                     </div>
                                 </div>
-                                <div class="tab-pane fade" id="account-detail" role="tabpanel"
-                                    aria-labelledby="account-detail-tab">
+                                <div class="tab-pane fade" id="coupon-detail" role="tabpanel"
+                                    aria-labelledby="coupon-detail-tab">
                                     <div class="card">
                                         <div class="card-header">
-                                            <h5>Account Details</h5>
+                                            <h5>Available Coupons</h5>
                                         </div>
                                         <div class="card-body">
-                                            <p>Already have an account? <a href="page-login-register.html">Log in
-                                                    instead!</a></p>
-                                            <form method="post" name="enq">
-                                                <div class="row">
-                                                    <div class="form-group col-md-6">
-                                                        <label>First Name <span class="required">*</span></label>
-                                                        <input required="" class="form-control square" name="name"
-                                                            type="text">
-                                                    </div>
-                                                    <div class="form-group col-md-6">
-                                                        <label>Last Name <span class="required">*</span></label>
-                                                        <input required="" class="form-control square" name="phone">
-                                                    </div>
-                                                    <div class="form-group col-md-12">
-                                                        <label>Display Name <span class="required">*</span></label>
-                                                        <input required="" class="form-control square" name="dname"
-                                                            type="text">
-                                                    </div>
-                                                    <div class="form-group col-md-12">
-                                                        <label>Email Address <span class="required">*</span></label>
-                                                        <input required="" class="form-control square" name="email"
-                                                            type="email">
-                                                    </div>
-                                                    <div class="form-group col-md-12">
-                                                        <label>Current Password <span class="required">*</span></label>
-                                                        <input required="" class="form-control square" name="password"
-                                                            type="password">
-                                                    </div>
-                                                    <div class="form-group col-md-12">
-                                                        <label>New Password <span class="required">*</span></label>
-                                                        <input required="" class="form-control square" name="npassword"
-                                                            type="password">
-                                                    </div>
-                                                    <div class="form-group col-md-12">
-                                                        <label>Confirm Password <span class="required">*</span></label>
-                                                        <input required="" class="form-control square" name="cpassword"
-                                                            type="password">
-                                                    </div>
-                                                    <div class="col-md-12">
-                                                        <button type="submit" class="btn btn-fill-out submit"
-                                                            name="submit" value="Submit">Save</button>
+                                            <div id="addressContainer" class="row">
+                                                {{#each coupons}}
+                                                <div id="{{this._id}}" class="col-lg-6">
+                                                    <div class="card mb-3 mb-lg-0">
+                                                        <div class="card-header">
+                                                            <span>Coupon code:<h3 class="mb-0" id="text-{{this._id}}">
+                                                                    {{this.code}}
+                                                                    </h5></span>
+                                                        </div>
+                                                        <div class="card-body">
+                                                            <button id="copy-coupon-{{this._id}}"
+                                                                onclick="copyCoupon('{{this._id}}')"
+                                                                class="btn btn-primary btn-small m-1">Copy code</button>
+                                                        </div>
                                                     </div>
                                                 </div>
-                                            </form>
+                                                {{/each}}
+                                            </div>
+
                                         </div>
                                     </div>
-                                </div>
-                                <div class="tab-pane fade" id="orderDetails" role="tabpanel"
-                                    aria-labelledby="orderDetails-tab">
-                                    <section class="content-main">
-                                        <div class="content-header">
-                                            <div>
-                                                <h2 class="content-title card-title">Order detail</h2>
-                                                <p>Details for Order ID: {{orderDetails._id}} </p>
-                                            </div>
-                                        </div>
-                                        <div class="card">
-                                            <header class="card-header">
-                                                <div class="row align-items-center">
-                                                    <div class="col-lg-6 col-md-6 mb-lg-0 mb-15">
-                                                        <span>
-                                                            <i class="material-icons md-calendar_today"></i>
-                                                            <b>{{orderDetails.dateOfOrder}}</b>
-                                                        </span>
-                                                        <br />
-                                                        <small class="text-muted">Order ID:{{orderDetails._id}}</small>
-                                                    </div>
-                                                    <div class="col-lg-6 col-md-6 ms-auto text-md-end">
-                                                        <select class="form-select d-inline-block mb-lg-0 mb-15 mw-200">
-                                                            <option>Change status</option>
-                                                            <option>Awaiting payment</option>
-                                                            <option>Confirmed</option>
-                                                            <option>Shipped</option>
-                                                            <option>Delivered</option>
-                                                        </select>
-                                                        <a class="btn btn-primary" href="#">Save</a>
-                                                        <a id="invoice" class="btn btn-secondary print ms-2" href="#"><i
-                                                                class="icon material-icons md-print"></i></a>
-                                                    </div>
-                                                </div>
-                                            </header>
-                                            <!-- card-header end// -->
-                                            <div class="card-body">
-                                                <div class="row mb-50 mt-20 order-info-wrap">
-                                                    <div class="col-md-4">
-                                                        <article class="icontext align-items-start">
-                                                            <span class="icon icon-sm rounded-circle bg-primary-light">
-                                                                <i class="text-primary material-icons md-person"></i>
-                                                            </span>
-                                                            <div class="text">
-                                                                <h6 class="mb-1">Customer</h6>
-                                                                <p class="mb-1">
-                                                                    {{orderDetails.address.name}}
-                                                                    <template class="__cf_email__"
-                                                                        data-cfemail="e2838e879aa2879a838f928e87cc818d8f">[email&#160;protected]</template>
-                                                                    <br />
-                                                                    +91{{orderDetails.address.phoneNumber}}
-                                                                </p>
-                                                                <a href="#">View profile</a>
-                                                            </div>
-                                                        </article>
-                                                    </div>
-                                                    <!-- col// -->
-                                                    <div class="col-md-4">
-                                                        <article class="icontext align-items-start">
-                                                            <span class="icon icon-sm rounded-circle bg-primary-light">
-                                                                <i
-                                                                    class="text-primary material-icons md-local_shipping"></i>
-                                                            </span>
-                                                            <div class="text">
-                                                                <h6 class="mb-1">Order info</h6>
-                                                                <p class="mb-1">
-                                                                    Shipping: Fargo express
-                                                                    <br />
-                                                                    Pay method:
-                                                                    {{orderItems.payment}}
-                                                                    <br />
-                                                                    Status:
-                                                                    {{orderItems.status}}
-                                                                </p>
-                                                                <a href="#">Download info</a>
-                                                            </div>
-                                                        </article>
-                                                    </div>
-                                                    <!-- col// -->
-                                                    <div class="col-md-4">
-                                                        <article class="icontext align-items-start">
-                                                            <span class="icon icon-sm rounded-circle bg-primary-light">
-                                                                <i class="text-primary material-icons md-place"></i>
-                                                            </span>
-                                                            <div class="text">
-                                                                <h6 class="mb-1">Deliver to</h6>
-                                                                <p class="mb-1">
-                                                                    City:
-                                                                    {{orderDetails.address.city}}
-                                                                    <br />{{orderDetails.address.address_line}}
-                                                                    <br />
-                                                                    {{orderDetails.address.state}}
-                                                                </p>
-                                                                {{! <a href="#">View profile</a> }}
-                                                            </div>
-                                                        </article>
-                                                    </div>
-                                                    <!-- col// -->
-                                                </div>
-                                                <!-- row // -->
-                                                <div class="row">
-                                                    <div class="col-lg-7">
-                                                        <div class="table-responsive">
-                                                            <table class="table">
-                                                                <thead>
-                                                                    <tr>
-                                                                        <th width="40%">Product</th>
-                                                                        <th width="20%">Unit Price</th>
-                                                                        <th width="20%">Quantity</th>
-                                                                        <th width="20%" class="text-end">Total</th>
-                                                                    </tr>
-                                                                </thead>
-                                                                <tbody>
-                                                                    {{#each orderItems}}
-                                                                    <tr>
-                                                                        <td>
-                                                                            <a class="itemside" href="#">
-                                                                                <div class="left">
-                                                                                    <img src="/product-images/{{this.product._id}}.jpg"
-                                                                                        width="40" height="40"
-                                                                                        class="img-xs" alt="Item" />
-                                                                                </div>
-                                                                                <div class="info">
-                                                                                    {{this.product.product_name}}</div>
-                                                                            </a>
-                                                                        </td>
-                                                                        <td><span
-                                                                                id="product_{{this.product.product_price}}">{{this.product.product_price}}</span>
-                                                                        </td>
-                                                                        <td><span
-                                                                                id="quantity_{{this.quantity}}">{{this.quantity}}</span>
-                                                                        </td>
-                                                                        <td class="text-end">₹ <span>{{mult
-                                                                                this.product.product_price
-                                                                                this.quantity}}</span></td>
-                                                                    </tr>
-                                                                    {{/each}}
-                                                                    <tr>
-                                                                        <td colspan="4">
-                                                                            <hr>
-                                                                            <article class="float-end">
-                                                                                <dl class="dlist">
-                                                                                    <dt>Subtotal:</dt>
-                                                                                    <dd>$<b
-                                                                                            id="subTotal">{{orderDetails.totalAmount}}</b>
-                                                                                    </dd>
-                                                                                </dl>
-                                                                                <dl class="dlist">
-                                                                                    <dt>Coupon discount:</dt>
-                                                                                    <dd>$<b id="discount">10.00</b></dd>
-                                                                                </dl>
-                                                                                <dl class="dlist">
-                                                                                    <dt>Grand total:</dt>
-                                                                                    <dd><b class="h5">$</b><b
-                                                                                            id="grandTotal"
-                                                                                            class="h5"></b> </dd>
-                                                                                </dl>
-                                                                                <dl class="dlist">
-                                                                                    <dt class="text-muted">Status:</dt>
-                                                                                    <dd>
-                                                                                        <span
-                                                                                            class="badge rounded-pill alert-success text-success">Payment
-                                                                                            done</span>
-                                                                                    </dd>
-                                                                                </dl>
-                                                                            </article>
-                                                                        </td>
-                                                                    </tr>
-                                                                </tbody>
-                                                            </table>
-                                                        </div>
-                                                        <!-- table-responsive// -->
-                                                    </div>
-                                                    <!-- col// -->
-                                                    <div class="col-lg-1"></div>
-                                                    <div class="col-lg-4">
-                                                        <div class="h-25 pt-4">
-                                                            <div class="mb-3">
-                                                                <label>Notes</label>
-                                                                <textarea class="form-control" name="notes" id="notes"
-                                                                    placeholder="Type some note"></textarea>
-                                                            </div>
-                                                            <button class="btn btn-primary">Save note</button>
-                                                        </div>
-                                                    </div>
-                                                    <!-- col// -->
-                                                </div>
-                                            </div>
-                                            <!-- card-body end// -->
-                                        </div>
-                                        <!-- card end// -->
-                                    </section>
                                 </div>
                             </div>
                         </div>
@@ -474,131 +177,506 @@
             </div>
     </section>
 </main>
+<script>
+    function copyText(htmlElement) {
+
+        if (!htmlElement) {
+            return;
+        }
+        let elementText = htmlElement.innerText;
+
+        let inputElement = document.createElement('input');
+        inputElement.setAttribute('value', elementText);
+        document.body.appendChild(inputElement)
+        inputElement.select();
+        console.log('clicked')
+        document.execCommand('copy')
+        inputElement.parentNode.removeChild(inputElement)
+
+    }
+
+    function copyCoupon(couponId) {
+        copyText(document.querySelector('#text-' + couponId));
+        setTimeout(function () {
+            document.querySelector('#copy-coupon-' + couponId).innerHTML = 'Copy code'
+        }, 2000)
+        document.querySelector('#copy-coupon-' + couponId).innerHTML = 'Copie'
+    }
+
+</script>
 
 <script>
     $(document).ready(function () {
-        $("#orderDetails-tab").click((e) => {
-            e.preventDefault();
-            console.log('clicked')
-            const orderId = $('#orderDetails-tab').data('value');
-            console.log(orderId)
-            $.ajax({
-                url: '/api/user/settings/' + orderId,
-                type: 'get'
-            }).done((res) => {
+        const itemsPerPage = 10;
+        const numItems = $('#ordersContainer').children().length;
+        const numPages = Math.ceil(numItems / itemsPerPage);
 
-            })
+        // Create pagination links
+        for (let i = 1; i <= numPages; i++) {
+            $('<li class="page-item active"><a class="page-link" data-page="' + i + '" href="#">' + i + '</a></li>').appendTo('#paginationContainer');
+        }
+
+        // Bind click event to pagination links
+        $('.page-link').click(function (e) {
+            const currentPage = $(this).data('page');
+            const startIndex = (currentPage - 1) * itemsPerPage;
+            const endIndex = startIndex + itemsPerPage;
+            console.log(startIndex, endIndex);
+            $('#ordersContainer').children().hide().slice(startIndex, endIndex).show();
+            return false;
         })
-        $('#invoice').click((e) => {
-            console.log('clicked')
-            e.preventDefault();
-            swal("Are you sure you want to do this?", {
-                buttons: ["Oh noez!", true],
-            }).then((res) => {
-                if (res) {
-                    var data = {
-                        // Customize enables you to provide your own templates
-                        // Please review the documentation for instructions and examples
-                        "customize": {
-                            //  "template": fs.readFileSync('template.html', 'base64') // Must be base64 encoded html 
-                        },
-                        "images": {
-                            // The logo on top of your invoice
-                            "logo": "https://public.easyinvoice.cloud/img/logo_en_original.png",
-                            // The invoice background
-                            "background": "https://public.easyinvoice.cloud/img/watermark-draft.jpg"
-                        },
-                        // Your own data
-                        "sender": {
-                            "company": "Sample Corp",
-                            "address": "Sample Street 123",
-                            "zip": "1234 AB",
-                            "city": "Sampletown",
-                            "country": "Samplecountry"
-                            //"custom1": "custom value 1",
-                            //"custom2": "custom value 2",
-                            //"custom3": "custom value 3"
-                        },
-                        // Your recipient
-                        "client": {
-                            "company": "Client Corp",
-                            "address": "Clientstreet 456",
-                            "zip": "4567 CD",
-                            "city": "Clientcity",
-                            "country": "Clientcountry"
-                            // "custom1": "custom value 1",
-                            // "custom2": "custom value 2",
-                            // "custom3": "custom value 3"
-                        },
-                        "information": {
-                            // Invoice number
-                            "number": "2021.0001",
-                            // Invoice data
-                            "date": "12-12-2021",
-                            // Invoice due date
-                            "due-date": "31-12-2021"
-                        },
-                        // The products you would like to see on your invoice
-                        // Total values are being calculated automatically
-                        "products": [
-                            {
-                                "quantity": 2,
-                                "description": "Product 1",
-                                "tax-rate": 6,
-                                "price": 33.87
-                            },
-                            {
-                                "quantity": 4.1,
-                                "description": "Product 2",
-                                "tax-rate": 6,
-                                "price": 12.34
-                            },
-                            {
-                                "quantity": 4.5678,
-                                "description": "Product 3",
-                                "tax-rate": 21,
-                                "price": 6324.453456
-                            }
-                        ],
-                        // The message you would like to display on the bottom of your invoice
-                        "bottom-notice": "Kindly pay your invoice within 15 days.",
-                        // Settings to customize your invoice
-                        "settings": {
-                            "currency": "USD", // See documentation 'Locales and Currency' for more info. Leave empty for no currency.
-                            // "locale": "nl-NL", // Defaults to en-US, used for number formatting (See documentation 'Locales and Currency')
-                            // "tax-notation": "gst", // Defaults to 'vat'
-                            // "margin-top": 25, // Defaults to '25'
-                            // "margin-right": 25, // Defaults to '25'
-                            // "margin-left": 25, // Defaults to '25'
-                            // "margin-bottom": 25, // Defaults to '25'
-                            // "format": "A4", // Defaults to A4, options: A3, A4, A5, Legal, Letter, Tabloid
-                            // "height": "1000px", // allowed units: mm, cm, in, px
-                            // "width": "500px", // allowed units: mm, cm, in, px
-                            // "orientation": "landscape", // portrait or landscape, defaults to portrait
-                        },
-                        // Translate your invoice to your preferred language
-                        "translate": {
-                            // "invoice": "FACTUUR",  // Default to 'INVOICE'
-                            // "number": "Nummer", // Defaults to 'Number'
-                            // "date": "Datum", // Default to 'Date'
-                            // "due-date": "Verloopdatum", // Defaults to 'Due Date'
-                            // "subtotal": "Subtotaal", // Defaults to 'Subtotal'
-                            // "products": "Producten", // Defaults to 'Products'
-                            // "quantity": "Aantal", // Default to 'Quantity'
-                            // "price": "Prijs", // Defaults to 'Price'
-                            // "product-total": "Totaal", // Defaults to 'Total'
-                            // "total": "Totaal" // Defaults to 'Total'
-                        },
-                    };
-
-                    //Create your invoice! Easy!
-                    easyinvoice.createInvoice(data, function (result) {
-                        //The response will contain a base64 encoded PDF file
-                        easyinvoice.download('myInvoice.pdf', result.pdf);
-                    });
-                }
-            })
-        })
-
+        // Show first page by default
+        $('.page-link:first').addClass('active');
+        $('#ordersContainer').children().hide().slice(0, itemsPerPage).show();
     })
+</script>
+
+{{!-- modal start --}}
+
+<style>
+    #addressModal {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        margin: auto;
+        z-index: 9999;
+        width: 100%;
+        height: 100%;
+        overflow: auto;
+        background-color: rgba(0, 0, 0, 0.5);
+    }
+
+
+    .modalAddress-content {
+        background-color: #fefefe;
+        margin: 15% auto;
+        padding: 20px;
+        border: 1px solid #888;
+        width: 80%;
+        max-width: 400px;
+    }
+
+    .modalAddress {
+        max-width: 100%;
+    }
+
+    .closeAddress {
+        color: #aaa;
+        float: right;
+        font-size: 28px;
+        font-weight: bold;
+    }
+
+    .closeAddress:hover,
+    .closeAddress:focus {
+        color: black;
+        text-decoration: none;
+        cursor: pointer;
+    }
+</style>
+
+<div id="addressModal" class="modalAddress">
+    <div class="modalAddress-content">
+        <span class="closeAddress">&times;</span>
+        <main class="main">
+            <div class="container">
+
+                <div class="mb-25">
+                    <h4>Enter Address</h4>
+                </div>
+                <form action="" id="update-address">
+                    <div class="form-group">
+                        <input type="text" id="address-name" required="" name="full_name" placeholder="First name *" />
+                    </div>
+                    <div class="form-group">
+                        <div class="custom_select">
+                            <select id="address-country" name="country" class="form-control select-active">
+                                <option value="">Country</option>
+                                <option value="AX">Aland Islands</option>
+                                <option value="AF">Afghanistan</option>
+                                <option value="AL">Albania</option>
+                                <option value="DZ">Algeria</option>
+                                <option value="AD">Andorra</option>
+                                <option value="AO">Angola</option>
+                                <option value="AI">Anguilla</option>
+                                <option value="AQ">Antarctica</option>
+                                <option value="AG">Antigua and Barbuda</option>
+                                <option value="AR">Argentina</option>
+                                <option value="AM">Armenia</option>
+                                <option value="AW">Aruba</option>
+                                <option value="AU">Australia</option>
+                                <option value="AT">Austria</option>
+                                <option value="AZ">Azerbaijan</option>
+                                <option value="BS">Bahamas</option>
+                                <option value="BH">Bahrain</option>
+                                <option value="BD">Bangladesh</option>
+                                <option value="BB">Barbados</option>
+                                <option value="BY">Belarus</option>
+                                <option value="PW">Belau</option>
+                                <option value="BE">Belgium</option>
+                                <option value="BZ">Belize</option>
+                                <option value="BJ">Benin</option>
+                                <option value="BM">Bermuda</option>
+                                <option value="BT">Bhutan</option>
+                                <option value="BO">Bolivia</option>
+                                <option value="BQ">Bonaire, Saint Eustatius and Saba</option>
+                                <option value="BA">Bosnia and Herzegovina</option>
+                                <option value="BW">Botswana</option>
+                                <option value="BV">Bouvet Island</option>
+                                <option value="BR">Brazil</option>
+                                <option value="IO">British Indian Ocean Territory</option>
+                                <option value="VG">British Virgin Islands</option>
+                                <option value="BN">Brunei</option>
+                                <option value="BG">Bulgaria</option>
+                                <option value="BF">Burkina Faso</option>
+                                <option value="BI">Burundi</option>
+                                <option value="KH">Cambodia</option>
+                                <option value="CM">Cameroon</option>
+                                <option value="CA">Canada</option>
+                                <option value="CV">Cape Verde</option>
+                                <option value="KY">Cayman Islands</option>
+                                <option value="CF">Central African Republic</option>
+                                <option value="TD">Chad</option>
+                                <option value="CL">Chile</option>
+                                <option value="CN">China</option>
+                                <option value="CX">Christmas Island</option>
+                                <option value="CC">Cocos (Keeling) Islands</option>
+                                <option value="CO">Colombia</option>
+                                <option value="KM">Comoros</option>
+                                <option value="CG">Congo (Brazzaville)</option>
+                                <option value="CD">Congo (Kinshasa)</option>
+                                <option value="CK">Cook Islands</option>
+                                <option value="CR">Costa Rica</option>
+                                <option value="HR">Croatia</option>
+                                <option value="CU">Cuba</option>
+                                <option value="CW">CuraÇao</option>
+                                <option value="CY">Cyprus</option>
+                                <option value="CZ">Czech Republic</option>
+                                <option value="DK">Denmark</option>
+                                <option value="DJ">Djibouti</option>
+                                <option value="DM">Dominica</option>
+                                <option value="DO">Dominican Republic</option>
+                                <option value="EC">Ecuador</option>
+                                <option value="EG">Egypt</option>
+                                <option value="SV">El Salvador</option>
+                                <option value="GQ">Equatorial Guinea</option>
+                                <option value="ER">Eritrea</option>
+                                <option value="EE">Estonia</option>
+                                <option value="ET">Ethiopia</option>
+                                <option value="FK">Falkland Islands</option>
+                                <option value="FO">Faroe Islands</option>
+                                <option value="FJ">Fiji</option>
+                                <option value="FI">Finland</option>
+                                <option value="FR">France</option>
+                                <option value="GF">French Guiana</option>
+                                <option value="PF">French Polynesia</option>
+                                <option value="TF">French Southern Territories</option>
+                                <option value="GA">Gabon</option>
+                                <option value="GM">Gambia</option>
+                                <option value="GE">Georgia</option>
+                                <option value="DE">Germany</option>
+                                <option value="GH">Ghana</option>
+                                <option value="GI">Gibraltar</option>
+                                <option value="GR">Greece</option>
+                                <option value="GL">Greenland</option>
+                                <option value="GD">Grenada</option>
+                                <option value="GP">Guadeloupe</option>
+                                <option value="GT">Guatemala</option>
+                                <option value="GG">Guernsey</option>
+                                <option value="GN">Guinea</option>
+                                <option value="GW">Guinea-Bissau</option>
+                                <option value="GY">Guyana</option>
+                                <option value="HT">Haiti</option>
+                                <option value="HM">Heard Island and McDonald Islands</option>
+                                <option value="HN">Honduras</option>
+                                <option value="HK">Hong Kong</option>
+                                <option value="HU">Hungary</option>
+                                <option value="IS">Iceland</option>
+                                <option value="IN">India</option>
+                                <option value="ID">Indonesia</option>
+                                <option value="IR">Iran</option>
+                                <option value="IQ">Iraq</option>
+                                <option value="IM">Isle of Man</option>
+                                <option value="IL">Israel</option>
+                                <option value="IT">Italy</option>
+                                <option value="CI">Ivory Coast</option>
+                                <option value="JM">Jamaica</option>
+                                <option value="JP">Japan</option>
+                                <option value="JE">Jersey</option>
+                                <option value="JO">Jordan</option>
+                                <option value="KZ">Kazakhstan</option>
+                                <option value="KE">Kenya</option>
+                                <option value="KI">Kiribati</option>
+                                <option value="KW">Kuwait</option>
+                                <option value="KG">Kyrgyzstan</option>
+                                <option value="LA">Laos</option>
+                                <option value="LV">Latvia</option>
+                                <option value="LB">Lebanon</option>
+                                <option value="LS">Lesotho</option>
+                                <option value="LR">Liberia</option>
+                                <option value="LY">Libya</option>
+                                <option value="LI">Liechtenstein</option>
+                                <option value="LT">Lithuania</option>
+                                <option value="LU">Luxembourg</option>
+                                <option value="MO">Macao S.A.R., China</option>
+                                <option value="MK">Macedonia</option>
+                                <option value="MG">Madagascar</option>
+                                <option value="MW">Malawi</option>
+                                <option value="MY">Malaysia</option>
+                                <option value="MV">Maldives</option>
+                                <option value="ML">Mali</option>
+                                <option value="MT">Malta</option>
+                                <option value="MH">Marshall Islands</option>
+                                <option value="MQ">Martinique</option>
+                                <option value="MR">Mauritania</option>
+                                <option value="MU">Mauritius</option>
+                                <option value="YT">Mayotte</option>
+                                <option value="MX">Mexico</option>
+                                <option value="FM">Micronesia</option>
+                                <option value="MD">Moldova</option>
+                                <option value="MC">Monaco</option>
+                                <option value="MN">Mongolia</option>
+                                <option value="ME">Montenegro</option>
+                                <option value="MS">Montserrat</option>
+                                <option value="MA">Morocco</option>
+                                <option value="MZ">Mozambique</option>
+                                <option value="MM">Myanmar</option>
+                                <option value="NA">Namibia</option>
+                                <option value="NR">Nauru</option>
+                                <option value="NP">Nepal</option>
+                                <option value="NL">Netherlands</option>
+                                <option value="AN">Netherlands Antilles</option>
+                                <option value="NC">New Caledonia</option>
+                                <option value="NZ">New Zealand</option>
+                                <option value="NI">Nicaragua</option>
+                                <option value="NE">Niger</option>
+                                <option value="NG">Nigeria</option>
+                                <option value="NU">Niue</option>
+                                <option value="NF">Norfolk Island</option>
+                                <option value="KP">North Korea</option>
+                                <option value="NO">Norway</option>
+                                <option value="OM">Oman</option>
+                                <option value="PK">Pakistan</option>
+                                <option value="PS">Palestinian Territory</option>
+                                <option value="PA">Panama</option>
+                                <option value="PG">Papua New Guinea</option>
+                                <option value="PY">Paraguay</option>
+                                <option value="PE">Peru</option>
+                                <option value="PH">Philippines</option>
+                                <option value="PN">Pitcairn</option>
+                                <option value="PL">Poland</option>
+                                <option value="PT">Portugal</option>
+                                <option value="QA">Qatar</option>
+                                <option value="IE">Republic of Ireland</option>
+                                <option value="RE">Reunion</option>
+                                <option value="RO">Romania</option>
+                                <option value="RU">Russia</option>
+                                <option value="RW">Rwanda</option>
+                                <option value="ST">São Tomé and Príncipe</option>
+                                <option value="BL">Saint Barthélemy</option>
+                                <option value="SH">Saint Helena</option>
+                                <option value="KN">Saint Kitts and Nevis</option>
+                                <option value="LC">Saint Lucia</option>
+                                <option value="SX">Saint Martin (Dutch part)</option>
+                                <option value="MF">Saint Martin (French part)</option>
+                                <option value="PM">Saint Pierre and Miquelon</option>
+                                <option value="VC">Saint Vincent and the Grenadines</option>
+                                <option value="SM">San Marino</option>
+                                <option value="SA">Saudi Arabia</option>
+                                <option value="SN">Senegal</option>
+                                <option value="RS">Serbia</option>
+                                <option value="SC">Seychelles</option>
+                                <option value="SL">Sierra Leone</option>
+                                <option value="SG">Singapore</option>
+                                <option value="SK">Slovakia</option>
+                                <option value="SI">Slovenia</option>
+                                <option value="SB">Solomon Islands</option>
+                                <option value="SO">Somalia</option>
+                                <option value="ZA">South Africa</option>
+                                <option value="GS">South Georgia/Sandwich Islands</option>
+                                <option value="KR">South Korea</option>
+                                <option value="SS">South Sudan</option>
+                                <option value="ES">Spain</option>
+                                <option value="LK">Sri Lanka</option>
+                                <option value="SD">Sudan</option>
+                                <option value="SR">Suriname</option>
+                                <option value="SJ">Svalbard and Jan Mayen</option>
+                                <option value="SZ">Swaziland</option>
+                                <option value="SE">Sweden</option>
+                                <option value="CH">Switzerland</option>
+                                <option value="SY">Syria</option>
+                                <option value="TW">Taiwan</option>
+                                <option value="TJ">Tajikistan</option>
+                                <option value="TZ">Tanzania</option>
+                                <option value="TH">Thailand</option>
+                                <option value="TL">Timor-Leste</option>
+                                <option value="TG">Togo</option>
+                                <option value="TK">Tokelau</option>
+                                <option value="TO">Tonga</option>
+                                <option value="TT">Trinidad and Tobago</option>
+                                <option value="TN">Tunisia</option>
+                                <option value="TR">Turkey</option>
+                                <option value="TM">Turkmenistan</option>
+                                <option value="TC">Turks and Caicos Islands</option>
+                                <option value="TV">Tuvalu</option>
+                                <option value="UG">Uganda</option>
+                                <option value="UA">Ukraine</option>
+                                <option value="AE">United Arab Emirates</option>
+                                <option value="GB">United Kingdom (UK)</option>
+                                <option value="US">USA (US)</option>
+                                <option value="UY">Uruguay</option>
+                                <option value="UZ">Uzbekistan</option>
+                                <option value="VU">Vanuatu</option>
+                                <option value="VA">Vatican</option>
+                                <option value="VE">Venezuela</option>
+                                <option value="VN">Vietnam</option>
+                                <option value="WF">Wallis and Futuna</option>
+                                <option value="EH">Western Sahara</option>
+                                <option value="WS">Western Samoa</option>
+                                <option value="YE">Yemen</option>
+                                <option value="ZM">Zambia</option>
+                                <option value="ZW">Zimbabwe</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <input id="address-phone" required="" type="text" name="phone_number" placeholder="Phone *" />
+                    </div>
+                    <div class="form-group">
+                        <input id="address-email" required="" type="text" name="email_id"
+                            placeholder="Email address *" />
+                        <input type="text" name="addressId" id="addressId" value="" hidden />
+                    </div>
+                    <div class="form-group">
+                        <input type="text" id="address-address" name="address_line_1" required=""
+                            placeholder="Address *" />
+                    </div>
+                    <div class="form-group">
+                        <input required="" type="text" id="address-city" name="city" placeholder="City / Town *" />
+                    </div>
+                    <div class="form-group">
+                        <input required="" type="text" id="address-state" name="state" placeholder="State / County *" />
+                    </div>
+                    <div class="form-group">
+                        <input required="" type="text" id="address-pincode" name="pin_code"
+                            placeholder="Postcode / ZIP *" />
+                    </div>
+                    <div>
+                        <button type="submit" class="btn hover-up bg-dark btn-sm">Update
+                            Address</button>
+                    </div>
+                </form>
+            </div>
+        </main>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function () {
+        $('#update-address').submit((e) => {
+            e.preventDefault();
+            const addressId = $('#addressId').val();
+            $.ajax({
+                url: '/api/user/address/' + addressId,
+                type: 'put',
+                data: $('#update-address').serialize()
+            }).done(res => {
+                $(`#${addressId}`).remove();
+                $(`<div id="${res.updated._id}" class="col-lg-6">
+                        <div class="card mb-3 mb-lg-0">
+                            <div class="card-header">
+                                <h5 class="mb-0">Billing Address</h5>
+                            </div>
+                            <div class="card-body">
+                                <p class="h6">${res.updated.full_name}</p>
+                                <p>${res.updated.email_id}</p>
+                                <address>${res.updated.address_line_1}<br> ${res.updated.city},<br>
+                                    ${res.updated.state}.
+                                    <br>${res.updated.country}, ${res.updated.pin_code}
+                                </address>
+                                <p>New York</p>
+                                <a href="#" onclick="getAddress('${res.updated._id}')"
+                                    class="btn-small m-1">Edit</a>
+                                <a href="#" onclick="deleteAddress('${res.updated._id}')"
+                                    class="btn-small m-1 text-danger">Delete</a>
+                            </div>
+                        </div>
+                    </div>`).appendTo('#addressContainer');
+                modalAddres.hide();
+                swal("Ok! The address has been updated!", {
+                    icon: "success",
+                });
+            }).fail(err => {
+                swal("Error", `${res.responseJSON.message}`, "error")
+            })
+        })
+    })
+</script>
+
+
+<script>
+    var modalAddres = $("#addressModal");
+
+    // Get the <span> element that closes the modal
+    var spanAddress = $(".closeAddress");
+
+    // When the user clicks on <span> (x), close the modal
+    spanAddress.click(function () {
+        modalAddres.hide();
+    });
+
+    // When the user clicks anywhere outside of the modal, close it
+    $(window).click(function (event) {
+        if (event.target == modalAddres[0]) {
+            modalAddres.hide();
+        }
+    });
+
+    function getAddress(addressId) {
+
+        fetch('/api/user/address/' + addressId)
+            .then(response => response.json())
+            .then(data => {
+
+                $('#address-name').val(data.address.full_name)
+                $('#address-country').val(data.address.country)
+                $('#address-phone').val(data.address.phone_number)
+                $('#address-email').val(data.address.email_id)
+                $('#address-address').val(data.address.address_line_1)
+                $('#address-city').val(data.address.city)
+                $('#address-state').val(data.address.state)
+                $('#address-pincode').val(data.address.pin_code)
+                $('#addressId').val(data.address._id);
+                modalAddres.show();
+            })
+            .catch(error => {
+                swal("Error", `${res.responseJSON.message}`, "error")
+            });
+    }
+
+
+    function deleteAddress(addressId) {
+
+        swal("Are you sure you want to do this?", {
+            buttons: ["No!", "Yes!"],
+        }).then(res => {
+            if (res) {
+                $.ajax({
+                    url: '/api/user/address/' + addressId,
+                    type: 'delete'
+                }).done(res => {
+                    $(`#${addressId}`).remove();
+                    swal("Ok! The address has been deleted!", {
+                        icon: "success",
+                    });
+
+                }).fail(err => {
+                    swal("Error", `${res.responseJSON.message}`, "error")
+                })
+            }
+        })
+    }
 </script>

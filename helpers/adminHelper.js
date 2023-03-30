@@ -1,7 +1,7 @@
 const userSchema = require("../model/userModel").default;
-const productSchema = require("../model/productModel");
-const categorySchema = require("../model/categoryModel");
-const orderSchema = require("../model/orderModel");
+const productSchema = require("../model/productModel").default;
+const categorySchema = require("../model/categoryModel").default;
+const orderSchema = require("../model/orderModel").default;
 import {default as bannerSchema} from "../model/bannerModel"
 var objectId = require("mongodb").ObjectId;
 
@@ -140,21 +140,17 @@ module.exports = {
     });
   },
   blockUser: (userId) => {
-    console.log(userId)
     return new Promise((resolve, reject) => {
       userSchema
         .findById(objectId(userId),
           async function (err, user){
             if(err){
-              console.log(err);
               reject(err);
             }
             else{
-              console.log(user)
               user.access = !user.access;
               await user.save((err) =>{
                 if(err){
-                  console.log(err)
                   reject(err)
                 }
               })
@@ -202,7 +198,6 @@ module.exports = {
   updateProduct: (product, productId, newImages) => {
     return new Promise((resolve, reject) => {
       const { name, category, price, quantity, description } = product;
-      console.log(newImages);
 
       if (newImages.length) {
         productSchema.findOneAndUpdate(
@@ -238,7 +233,7 @@ module.exports = {
             }
           )
           .then((updatedProduct) => {
-            console.log(updatedProduct);
+          
             resolve(updatedProduct);
           });
       }
@@ -246,7 +241,7 @@ module.exports = {
     });
   },
   categoryListing: (categoryData) => {
-    console.log(categoryData);
+   
     return new Promise(async (resolve, reject) => {
       let category = await new categorySchema({
         category_name: categoryData.category,
@@ -275,7 +270,6 @@ module.exports = {
     });
   },
   unlist_category: (categoryId) => {
-    console.log(categoryId);
     return new Promise((resolve, reject) => {
       categorySchema
         .updateOne(
@@ -295,7 +289,6 @@ module.exports = {
         },
         (err, product) => {
           if (err) {
-            console.log(err);
             reject(err)
           }
           else {
@@ -303,11 +296,9 @@ module.exports = {
 
             product.save((err, updatedProduct) => {
               if (err) {
-                console.log(err);
                 reject(err)
               }
               else {
-                // console.log(updatedProduct);
                 resolve(updatedProduct);
 
               }
@@ -323,10 +314,8 @@ module.exports = {
         admin.email === loginDetails.email &&
         admin.password === loginDetails.password
       ) {
-        console.log("success");
         resolve(admin);
       } else {
-        console.log("failed to login");
         reject({ status: false });
       }
     });
@@ -334,7 +323,7 @@ module.exports = {
   getAllOrders: () => {
     return new Promise((resolve, reject) => {
       orderSchema
-        .find()
+        .find().sort({createAt: -1})
         .then((orderDetails) => {
           let updatedOrders = orderDetails.map((order) => {
             if (order.status === "placed") {
@@ -435,9 +424,7 @@ module.exports = {
   bannerUpdater: (updateInfo, imageFile) => {
     return new Promise((resolve, reject) => {
       const { title1, title2, title3, discount, tag, bannerId, description } = updateInfo;
-      console.log(title1, title2, title3, discount, tag, bannerId, description)
       if (imageFile) {
-        console.log('got here')
         bannerSchema.updateOne(
           { _id: objectId(bannerId) },
           {
@@ -453,10 +440,8 @@ module.exports = {
             upsert : true
           }
         ).then((result) =>{
-          console.log(result)
           resolve();
         }).catch((err) =>{
-          console.log(err)
           reject(err);
         })
       }
@@ -474,10 +459,8 @@ module.exports = {
             }
           }
         ).then((result) =>{
-          console.log(result)
           resolve()
         }).catch((err) =>{
-          console.log(err)
           reject(err);
         })
       }

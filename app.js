@@ -1,29 +1,39 @@
-let createError = require('http-errors');
-let express = require('express');
-let path = require('path');
-let cookieParser = require('cookie-parser');
-let logger = require('morgan');
-let exhbs = require('express-handlebars')
-import  Handlebars  from "handlebars";
-require('./config/connection');
-let session = require('express-session');
-let nocache = require('nocache');
-require('dotenv').config();
+import createError from "http-errors";
+import express from "express";
+import path from "path";
+import cookieParser from "cookie-parser";
+import logger from "morgan";
+import { engine, create } from 'express-handlebars'
+import Handlebars from "handlebars";
+import db from './config/connection'
+import session from "express-session";
+import nocache from 'nocache'
 import cors from "cors";
 import methodOverride from "method-override";
 
+//user routers
+import userRouter from "./routes/user";
+import userSettingsRouter from "./routes/users/userSettingRoute";
+import productRouter from "./routes/users/productRoute"
+import userCouponRouter from "./routes/users/couponRoute";
+import userAddressRouter from './routes/users/addressRoute'
+import userWishlistRouter from './routes/users/wishlistRoute'
 
-let userRouter = require('./routes/user');
-let adminRouter = require('./routes/admin');
-import couponRouter from "./routes/couponRoute";
-import userSettingsRouter from "./routes/userSettingRoute";
-import cartRouter from "./routes/cartRoute";
+//admin routers
+import adminRouter from './routes/admin'
+import couponRouter from "./routes/admins/couponRoute";
+import cartRouter from "./routes/users/cartRoute";
+import adminUserManagement from './routes/admins/userMangeRoute';
+import adminAuthRouter from './routes/admins/authentication';
+import adminOrderManageRouter from "./routes/admins/orderManageRoute";
+import salesReportRouter from './routes/admins/salesReportRoute';
+import categoryRouter from './routes/admins/categoryManageRoute'
 
 
 let app = express();
 
 // view engine setup
-let hbs = exhbs.create({
+let hbs = create({
   extname: 'hbs',
   defaultLayout: 'layout',
   layoutDir: __dirname + "/views/layouts/",
@@ -42,28 +52,84 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use('/uploads', express.static('uploads'));
+app.use(nocache())
 
-Handlebars.registerHelper('inc', function(value){
+//Handlebars helper functions
+Handlebars.registerHelper('inc', function (value) {
   return value + 1;
 })
 
-Handlebars.registerHelper('checkStatus', function(str){
-  if(str === "Active"){
+Handlebars.registerHelper('checkStatus', function (str) {
+  if (str === "Active") {
     return 'success'
   }
-  else{
+  else {
     return 'danger'
   }
 })
 
-Handlebars.registerHelper("mult", function(input1, input2){
+Handlebars.registerHelper("mult", function (input1, input2) {
   let mult = input1 * input2
-  console.log(input1, input2)
   return Math.round(mult)
 })
 
+Handlebars.registerHelper('paymentStatus', function (str) {
+  switch (str) {
+    case 'Delivered':
+      return 'success'
+    case 'placed':
+      return 'success'
+    case 'Shipped':
+      return 'success'
+    case 'Returned':
+      return 'warning'
+    case 'pending':
+      return 'warning'
+    case 'Cancelled':
+      return 'danger'
+    case 'cancelled':
+      return 'danger'
+  }
+})
 
-// app.use(fileUpload());
+Handlebars.registerHelper('status', function (input) {
+  return (input === 'cancelled' || input === 'Cancelled') ? false : (input === 'Delivered' || input === 'Returned') ? false : true;
+})
+
+Handlebars.registerHelper('orderStatus', function (input) {
+  return (input === 'cancelled' || input === 'Cancelled') ? false : (input === 'pending') ? false : true
+})
+
+Handlebars.registerHelper('orderStatusCheck', function (input) {
+  return (input === 'Delivered') ? 'Return Order' : (input === 'placed') ? 'Cancel Order' : null
+})
+
+//category handlebars helpers
+Handlebars.registerHelper('categoryStatus', function (input) {
+  return !input ? 'Unlisted' : 'Listed'
+})
+
+Handlebars.registerHelper('categoryAttr', function(input){
+  return !input ? 'danger' : 'success'
+})
+
+Handlebars.registerHelper('count', function(input){
+  return input ? input : 0;
+})
+
+Handlebars.registerHelper('length', function(input){
+  return (input == 0) ? false : true;
+})
+
+//coupon helpers
+Handlebars.registerHelper('totalAfterDiscount', function(input1, input2){
+  return (input1 - input2);
+})
+
+
+
+
+
 app.use(session({
   key: 'user_sid',
   secret: 'thisisthekeyforuser',
@@ -72,13 +138,24 @@ app.use(session({
   cookie: { maxAge: 600000 }
 }));
 
-app.use(nocache())
-
+// users router assigning 
 app.use('/', userRouter);
+app.use('/api/user/Settings', userSettingsRouter);
+app.use('/api/user/cart', cartRouter);
+app.use('/api/product', productRouter);
+app.use('/api/user/coupon', userCouponRouter);
+app.use('/api/user/address', userAddressRouter);
+app.use('/api/user/wishlist', userWishlistRouter);
+
+//admin router assigning
 app.use('/admin', adminRouter);
+app.use('/api/admin/auth', adminAuthRouter);
+app.use('/api/admin/users', adminUserManagement);
 app.use('/api/coupon', couponRouter);
-app.use('/api/user/Settings',userSettingsRouter);
-app.use('/api/cart', cartRouter);
+app.use('/api/admin/orders', adminOrderManageRouter)
+app.use('/api/admin/salesReport', salesReportRouter);
+app.use('/api/admin/category', categoryRouter);
+
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {

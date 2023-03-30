@@ -48,25 +48,25 @@
 
             </thead>
             <tbody>
-              {{#each userInfo}}
+              {{#each users}}
               <tr>
                 <td>{{this._id}}</td>
-                <td><b>{{this.name}}</b></td>
+                <td><b>{{this.firstName}}</b></td>
                 <td>{{this.email}}</td>
-                <td>{{this.mobile}}</td>
-                 {{#if this.access}}
-                <td><span class="badge rounded-pill alert-success">Active</span></td>
+                <td>{{this.phone}}</td>
+                {{#if this.blocked}}
+                <td><span class="badge rounded-pill alert-danger">Blocked</span></td>
                 {{else}}
-                <td><span class="badge rounded-pill alert-danger">blocked</span></td>
+                <td><span class="badge rounded-pill alert-success">Active</span></td>
                 {{/if}}
                 <td class="text-end">
-                   {{#if this.access}}
-                  <a href="/admin/user-block/{{this._id}}"
-                    onclick="return confirm('Do you want to block this user {{this.name}}')" class="btn btn-md rounded font-sm">Block</a>
-                    {{else}}
-                    <a  href="/admin/user-block/{{this._id}}"
-                    onclick="return confirm('Do you want to unblock this user{{this.name}}')" class="btn btn-md rounded font-sm">Unblock</a>
-                    {{/if}}
+                  {{!-- {{#if this.blocked}} --}}
+                  <a href="#" data-value="{{this._id}}" class="btn btn-md rounded font-sm user">Block</a>
+                  {{!-- {{else}} --}}
+                  {{!-- <a href="/admin/user-block/{{this._id}}"
+                    onclick="return confirm('Do you want to unblock this user{{this.name}}')"
+                    class="btn btn-md rounded font-sm">Unblock</a>
+                  {{/if}} --}}
 
                   <div class="dropdown">
                     <a href="#" data-bs-toggle="dropdown" class="btn btn-light rounded btn-sm font-sm"> <i
@@ -99,3 +99,30 @@
     </div>
   </section> <!-- content-main end// -->
 </main>
+<script>
+  $(document).ready(function () {
+    $('.user').click(function(e){
+      const userId = $(this).data('value')
+      console.log(userId)
+      swal("Are you sure you want to do this?", {
+        buttons: ["No!", "Yes!"],
+      }).then((res) => {
+        if (res) {
+          $.ajax({
+            url: '/api/admin/users/' + userId,
+            type: 'patch',
+          }).done((res) =>{
+             swal("Successfull", `${res.message}`, "success").then(() =>{
+              location.reload();
+             })
+          }).fail((err) =>{
+           swal("Successfull", `${err.responseJSON.message}`, "success").then(() =>{
+              location.reload();
+             })
+          })
+        }
+
+      })
+    })
+  })
+</script>

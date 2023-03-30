@@ -47,8 +47,8 @@
                     <label class="form-label">Category</label>
                     <select style="text-transform: capitalize;" name="category" class="form-select">
                       {{#each category}}
-                      {{#if this.category_view}}
-                      <option value="{{this.category_name}}">{{this.category_name}}</option>
+                      {{#if this.status}}
+                      <option value="{{this.name}}">{{this.name}}</option>
                       {{/if}}
                       {{/each}}
                     </select>

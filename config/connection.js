@@ -1,13 +1,14 @@
-const mongoose = require('mongoose')
+import { set, connect } from 'mongoose';
 
-mongoose.set('strictQuery',true)
+set('strictQuery',true)
+set('strictPopulate', false)
 
 main().catch((err)=>{
     console.log(err);
 })
 
 async function main(){
-    await mongoose.connect('mongodb://127.0.0.1:27017/CozaStore',{
+    await connect('mongodb://127.0.0.1:27017/CozaStore',{
         useNewUrlParser : true,
         useUnifiedTopology : true
 

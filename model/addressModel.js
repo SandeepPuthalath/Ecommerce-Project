@@ -1,5 +1,5 @@
-const { default: mongoose } = require('mongoose');
-const objectId = require('mongodb').ObjectId
+import { default as mongoose } from 'mongoose';
+import { ObjectId as objectId } from 'mongodb';
 // user address details
 const addressSchema = new mongoose.Schema({
     createdAt : {
@@ -17,4 +17,5 @@ const addressSchema = new mongoose.Schema({
     userId : objectId
 });
 
-module.exports = mongoose.model('address', addressSchema);
+const Address =  mongoose.model('address', addressSchema);
+export default Address;

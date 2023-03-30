@@ -9,6 +9,10 @@ import { processRazorpay } from "../api/razorpay";
 import { core, orders } from "@paypal/checkout-server-sdk";
 import { Convert } from "easy-currencies";
 import { comparePassword, encryptPassword } from "../api/encryption";
+import Wallet from "../model/userWalletModel";
+import Coupon from '../model/couponModel'
+import Cart from '../model/cartModel'
+
 
 const client_id = process.env.PAYPAL_CLIENT_ID;
 const client_secret = process.env.PAYPAL_CLIENT_SECRET;
@@ -36,7 +40,6 @@ export function handleGetSingup(req, res) {
 export async function handleSingnup(req, res) {
   try {
     const user = await encryptPassword(req.body);
-    console.log(user)
     const newUser = await User(user);
     await newUser.save();
     res.status(202).json('User has been create successfully!')
@@ -64,19 +67,16 @@ export const handleLogin = async (req, res) => {
   try {
     const { email, password } = req.body;
     const user = await User.findOne({ email }).lean();
-    console.log(user);
     if (!user) {
       return res.status(401).json({ message: 'Login failed. Please try again.' });
     }
     const passwordMatch = await comparePassword(password, user.password);
-    console.log(passwordMatch);
     if (!passwordMatch) {
       return res.status(401).json({ message: 'Login failed. Please try again.' });
     }
     req.session.user = user;
     return res.status(202).json({ message: 'Login successfull' });
   } catch (error) {
-    console.error(error);
     res.status(500).json({ message: 'Internal server error. Please try again later.' });
   }
 }
@@ -87,7 +87,7 @@ export function otpLogin(req, res) {
       user_header: true,
     });
   } catch (error) {
-    res.status(500).json({message : 'Internal sever error'});
+    res.status(500).json({ message: 'Internal sever error' });
   }
 
 }
@@ -96,20 +96,18 @@ export function handleOtpSending(req, res) {
   const find = req.body;
   try {
     req.session.phone = req.body.phone
-    User.findOne(find, async (err, user) =>{
-      if(err){
-        console.log(err)
-        res.status(401).json({message : "somthing went wrong"})
-      } else if(user){
+    User.findOne(find, async (err, user) => {
+      if (err) {
+        res.status(401).json({ message: "somthing went wrong" })
+      } else if (user) {
         req.session.tempUser = user;
         await sendOtp(find.phone);
-        console.log('otp sended')
-        res.status(202).json({message : "Otp has been send successfully"});
+        res.status(202).json({ message: "Otp has been send successfully" });
       } else {
-        res.status(401).json({message : "User dose not exists"})
+        res.status(401).json({ message: "User dose not exists" })
       }
     })
-    
+
   } catch (error) {
     res.status(500)
   }
@@ -117,37 +115,34 @@ export function handleOtpSending(req, res) {
 // otp verification page
 export function otpVerification(req, res) {
   try {
-    if(req.session.phone){
+    if (req.session.phone) {
       res.render("user/otp-verifying");
     }
-    else{
+    else {
       res.redirect('/otp-login');
     }
-   
+
   } catch (error) {
     res.status(500)
   }
- 
+
 }
 // otp verifiication processing
 export async function handleOtpVerification(req, res) {
   const phone = req.session.phone;
   const otp = req.body.otp;
-  console.log(phone, otp);
   try {
-   const status = await verifyOtp(phone, otp);
-   console.log(status)
-   if(status){
-    console.log('status is true')
-    req.session.user = req.session.tempUser
-    res.status(202).json({message: 'Login successfull'})
-   }
-   else{
-    req.session.tempUser = null;
-    res.status(401).json({message: 'The entered otp is invalid'})
-   }
+    const status = await verifyOtp(phone, otp);
+    if (status) {
+      req.session.user = req.session.tempUser
+      res.status(202).json({ message: 'Login successfull' })
+    }
+    else {
+      req.session.tempUser = null;
+      res.status(401).json({ message: 'The entered otp is invalid' })
+    }
   } catch (error) {
-  res.status(500) 
+    res.status(500)
   }
   // let mobile = req.session.mobile;
   // let enteredOtp = req.body.otp;
@@ -162,32 +157,81 @@ export async function handleOtpVerification(req, res) {
   //   }
   // });
 }
-
+// user logout handling
 export function handleUserLogout(req, res) {
   try {
     req.session.user = null;
-    res.status(202).json({message: "You have logged out successfully"})
+    res.status(202).json({ message: "You have logged out successfully" })
   } catch (error) {
     res.status(500);
+  }
+}
+// user prodfile page 
+export async function getUserProfile(req, res) {
+  try {
+    let user = req.session.user;
+    const dob = new Date(user.dob);
+    user.dob = dob.toISOString().substring(0, 10)
+    console.log(dob.toISOString().substring(0, 10))
+    let cartCount = await getCartItemCount(user);
+    let wishlistCount = await getWishListCount(user);
+    res.render("user/user-profile-edit", {
+      user,
+      cartCount,
+      wishlistCount,
+      dob
+    });
+  } catch (err) {
+    res.status(err);
+  }
+}
+// user profile update handling
+export function updateUserInfo(req, res) {
+  const query = { _id: req.session.user._id }
+  const update = { $set: {} }
+  try {
+    if (req.file) {
+      update.$set[`userProfile`] = req.file.path;
+    }
+
+    if (Object.keys(req.body).length > 0) {
+      for (let field in req.body) {
+        update.$set[field] = req.body[field];
+      }
+    }
+
+    User.findOneAndUpdate(query, update, (err, updatedUser) => {
+      if (err) {
+        res.status(401).json({ message: 'Somthing went wrong' });
+      } else {
+        req.session.user = updatedUser;
+        res.status(202).json(updatedUser)
+      }
+    })
+  } catch (error) {
+    res.status(500).json({ message: 'internal sever error' });
   }
 }
 
 //user handling function end
 
+
+
+
 export async function placeOrder(req, res) {
   let user = req.session.user;
   try {
-    
+
     let total = await getTotalAmount(req.session.user._id);
     let cartCount = await getCartItemCount(user);
     let wishlistCount = await getWishListCount(user);
-    console.log('place order')
     let userAddress = await Address.find({
       userId: objectId(user._id),
     });
     let products = await getUserCart(user._id);
     products = JSON.parse(JSON.stringify(products));
     userAddress = JSON.parse(JSON.stringify(userAddress));
+    const cart = await Cart.findOne({ user: user._id }).lean().exec();
     res.render("user/place-order", {
       user,
       total,
@@ -195,39 +239,41 @@ export async function placeOrder(req, res) {
       products,
       cartCount,
       wishlistCount,
+      cart
     });
   } catch (err) {
     res.status(500);
   }
 }
 export async function checkOut(req, res) {
+  const { user } = req.session;
   try {
     let products = await getCartProductList(req.body.userId);
+    const cart = await Cart.findOne({user: user._id});
     let totalAmount = await getTotalAmount(req.body.userId);
     req.session.amount = totalAmount;
-
     if (req.body["payment_option"] == "cod") {
-      placingOrder(req.body, products, totalAmount)
+      placingOrder(req.body, products, cart)
         .then(async (orderDetails) => {
           await removeAllProducts(req.body.userId);
-          let redirect_urls = "/api/cart";
+          let redirect_urls = "/api/user/settings/" + orderDetails._id;
           res.json({ success: "cod", redirect_urls, orderDetails });
         });
     } else if (req.body["payment_option"] == "paypal") {
-      placingOrder(req.body, products, totalAmount)
+      placingOrder(req.body, products, cart)
         .then(async (orderDetails) => {
           req.session.orderId = orderDetails._id;
 
           let value = parseInt(
-            await Convert(totalAmount).from("INR").to("USD")
+            await Convert(orderDetails.totalAmount).from("INR").to("USD")
           );
           res.json({ success: "paypal", value });
         });
     } else if (req.body["payment_option"] == "razorpay") {
-      placingOrder(req.body, products, totalAmount)
+      placingOrder(req.body, products, cart)
         .then(async (orderDetails) => {
           await removeAllProducts(req.body.userId);
-          processRazorpay(orderDetails._id, totalAmount).then((order) => {
+          processRazorpay(orderDetails._id, orderDetails.totalAmount).then((order) => {
             res.json({ success: "razorpay", order, orderDetails });
           });
         });
@@ -236,11 +282,6 @@ export async function checkOut(req, res) {
     res.sendStatus(500);
   }
 }
-
-
-
-
-
 export function addFromWishlist(req, res) {
   try {
     let prodId = req.params.prodId;
@@ -250,25 +291,23 @@ export function addFromWishlist(req, res) {
       res.json(response);
     });
   } catch (err) {
-    res.status(500);
+    res.status(500).redirect('/error');
   }
 }
-
-
 export async function getAccountSettings(req, res) {
   let user = req.session.user;
   let orderDetails = await _orderDetails(user._id);
-  let orderHistory = await _orderHistory(user._id);
   let cartCount = await getCartItemCount(user);
   let wishlistCount = await getWishListCount(user);
-  orderDetails = JSON.parse(JSON.stringify(orderDetails));
-  orderHistory = JSON.parse(JSON.stringify(orderHistory));
+  const addresses = await Address.find({ userId: user._id }).limit(5).lean().exec();
+  const coupons = await Coupon.find().limit(3).lean().exec();
   res.render("user/user-details", {
     user,
     orderDetails,
-    orderHistory,
     cartCount,
     wishlistCount,
+    addresses,
+    coupons
   });
 }
 export function orderCancelling(req, res) {
@@ -344,47 +383,6 @@ export function paypalCancel(req, res) {
     res.status(err);
   }
 }
-export async function getUserProfile(req, res) {
-  try {
-    let user = req.session.user;
-    let cartCount = await getCartItemCount(user);
-    let wishlistCount = await getWishListCount(user);
-    res.render("user/user-profile-edit", {
-      user,
-      cartCount,
-      wishlistCount,
-    });
-  } catch (err) {
-    res.status(err);
-  }
-}
-export function updateUserInfo(req, res) {
-  const query = { _id: req.session.user._id }
-  const update = { $set: {} }
-  try {
-    if (req.file) {
-      update.$set[`userProfile`] = req.file.path;
-    }
-
-    if (Object.keys(req.body).length > 0) {
-      for (let field in req.body) {
-        update.$set[field] = req.body[field];
-      }
-    }
-    console.log(update)
-    User.findOneAndUpdate(query, update, (err, updatedUser) => {
-      if (err) {
-        console.log(err);
-        res.status(401).json({ message: 'Somthing went wrong' });
-      } else {
-        console.log(updatedUser)
-        res.status(202).json(updatedUser)
-      }
-    })
-  } catch (error) {
-    res.status(500).json({ message: 'internal sever error' });
-  }
-}
 export function verifyPayment(req, res) {
   try {
     verifyingPayment(req.body)
@@ -395,7 +393,6 @@ export function verifyPayment(req, res) {
           });
       })
       .catch((err) => {
-        console.log("the error", err);
         res.json({ status: false });
       });
   } catch (err) {
@@ -433,12 +430,12 @@ export async function paypalPayment(req, res) {
     res.status(500).json({ error: e.message });
   }
 }
-export function UserWallet(req, res) {
+export async function UserWallet(req, res) {
   try {
     let userId = req.params.id;
-    getUserWallet(userId).then((walletBalance) => {
-      res.json(walletBalance);
-    });
+    const wallet = await Wallet.findOne({ ownerId: userId }).select('walletBalance').lean().exec();
+    const transaction = await Wallet.findOne({ ownerId: userId }).select('transactions').sort({ 'transactions.transactionDate': 'asc' }).lean().exec();
+    res.status(200).json({ balance: wallet.walletBalance, transaction: transaction.transactions });
   } catch (error) {
     res.status(500);
   }

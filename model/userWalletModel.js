@@ -1,16 +1,18 @@
-const { default: mongoose } = require('mongoose');
-const objectId = require('mongodb').ObjectId;
+import { default as mongoose } from 'mongoose';
+import { ObjectId as objectId } from 'mongodb';
 
 const walletScheama = new mongoose.Schema({
-    createdAt : {
-        type : Date,
-        default : Date.now()
+    createdAt: {
+        type: Date,
+        default: Date.now()
     },
-    ownerId : objectId,
-    walletBalance : Number,
-    transactions : Array
+    ownerId: objectId,
+    walletBalance: Number,
+    transactions: Array
 
 });
 
-module.exports = mongoose.model('wallet', walletScheama);
+const Wallet = mongoose.model('wallet', walletScheama);
+
+export default Wallet
 

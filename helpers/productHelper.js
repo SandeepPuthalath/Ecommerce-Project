@@ -1,7 +1,7 @@
-const productSchema = require("../model/productModel");
+const productSchema = require("../model/productModel").default;
 const bannerSchema = require("../model/bannerModel").default;
-const cartSchema = require("../model/cartModel");
-const wishlistSchema = require("../model/wishlistModel");
+const cartSchema = require("../model/cartModel").default;
+const wishlistSchema = require("../model/wishlistModel").default;
 const objectId = require("mongodb").ObjectId;
 
 module.exports = {
@@ -59,11 +59,15 @@ module.exports = {
     });
   },
   getWishListCount : (user) =>{
-    return new Promise((resolve, reject) =>{
+    return new Promise( async (resolve, reject) =>{
         if(user){
-            wishlistSchema.findOne({userId: objectId(user._id)}).select("product").then((result) =>{
-                resolve(result.product.length)
-            })
+          const wishList = await wishlistSchema.findOne({userId: objectId(user._id)}).select('product');
+          if(wishList){
+           resolve(wishList.product.length);
+          }
+          else{
+            resolve(null);
+          }
         }
         else{
             resolve(null)

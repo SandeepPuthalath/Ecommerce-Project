@@ -22,9 +22,15 @@ const couponSchema = new mongoose.Schema({
         type: Date,
         require: true,
     },
+    usersUsed: [
+        {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'User'
+        }
+    ],
     isActive: {
         type: String,
-        enum : ['Active', 'Expired'],
+        enum: ['Active', 'Expired'],
         default: 'Active'
     },
     createdAt: {
@@ -35,15 +41,15 @@ const couponSchema = new mongoose.Schema({
 })
 
 // checking whether the coupon is active of not
-couponSchema.pre('save', function(next) {
+couponSchema.pre('save', function (next) {
     const now = new Date();
     if (this.expirationDate < now) {
         this.isActive = 'Expired';
     } else {
-      this.isActive = 'Active';
+        this.isActive = 'Active';
     }
     next();
-  });
+});
 
 // pre-save middleware to make the 'name' field uppercase
 couponSchema.pre('save', function (next) {
@@ -53,4 +59,6 @@ couponSchema.pre('save', function (next) {
     next();
 });
 
-export default mongoose.model('coupon', couponSchema);
+const Coupon = mongoose.model('coupon', couponSchema);
+
+export default Coupon;

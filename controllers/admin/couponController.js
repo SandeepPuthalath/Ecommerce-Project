@@ -1,4 +1,4 @@
-import Coupon from '../model/couponModel';
+import Coupon from '../../model/couponModel';
 import mongoose from 'mongoose';
 
 
@@ -21,7 +21,7 @@ export const handleCreateCoupon = async (req, res) => {
         if (error.code == 11000) {
             res.status(404).json({ error: `Coupon ${req.body.code} already exists` })
         } else {
-            res.status(404);
+            res.status(404).redirect('/error');
         }
     }
 }

@@ -285,8 +285,9 @@
                         type: "patch",
                         data: $('#coupon-update').serialize(),
                     }).done(update => {
-                        swal("Successfull", `${update.code}`, "success");
-                        location.reload()
+                        swal("Successfull", `${update.code}`, "success").then(() =>{
+                             location.reload()
+                        })
                     }).fail(err => {
                         swal("Error", `${err.responseJSON.error}`, "error");
                     })

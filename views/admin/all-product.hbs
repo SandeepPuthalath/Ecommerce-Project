@@ -6,8 +6,6 @@
         <p>Lorem ipsum dolor sit amet.</p>
       </div>
       <div>
-        <a href="#" class="btn btn-light rounded font-md">Export</a>
-        <a href="#" class="btn btn-light rounded  font-md">Import</a>
         <a href="/admin/add-product" class="btn btn-primary btn-sm rounded">Create new</a>
       </div>
     </div>
@@ -40,7 +38,7 @@
           </div>
         </div>
       </header> <!-- card-header end// -->
-      <div class="card-body">
+      <div id="productsContainer" class="card-body">
         {{#each product}}
         <article class="itemlist">
           <div class="row align-items-center">
@@ -74,14 +72,12 @@
               <a href="/admin/edit-product/{{this._id}}" class="btn btn-sm font-sm rounded btn-brand">
                 <i class="material-icons md-edit"></i> Edit
               </a>
-               {{#if this.product_status}}
-              <button data-product="{{this._id}}" 
-                class="btn btn-sm font-sm btn-light rounded product">
+              {{#if this.product_status}}
+              <button data-product="{{this._id}}" class="btn btn-sm font-sm btn-light rounded product">
                 <i class="material-icons md-delete_forever"></i> Disable
               </button>
               {{else}}
-               <button data-product="{{this._id}}" 
-                class="btn btn-sm font-sm btn-light rounded product">
+              <button data-product="{{this._id}}" class="btn btn-sm font-sm btn-light rounded product">
                 <i class="material-icons md-delete_forever"></i> Enable
               </button>
               {{/if}}
@@ -91,15 +87,9 @@
         {{/each}}
       </div> <!-- card-body end// -->
     </div> <!-- card end// -->
-    <div class="pagination-area mt-30 mb-50">
+    <div class="pagination-area mt-15 mb-50">
       <nav aria-label="Page navigation example">
-        <ul class="pagination justify-content-start">
-          <li class="page-item active"><a class="page-link" href="#">01</a></li>
-          <li class="page-item"><a class="page-link" href="#">02</a></li>
-          <li class="page-item"><a class="page-link" href="#">03</a></li>
-          <li class="page-item"><a class="page-link dot" href="#">...</a></li>
-          <li class="page-item"><a class="page-link" href="#">16</a></li>
-          <li class="page-item"><a class="page-link" href="#"><i class="material-icons md-chevron_right"></i></a></li>
+        <ul id="paginationContainer" class="pagination justify-content-start">
         </ul>
       </nav>
     </div>
@@ -107,27 +97,72 @@
 </main>
 
 <script>
-  
-  $(document).ready(function(){
-    $(".product").click(function(){
+
+  $(document).ready(function () {
+    $(".product").click(function () {
       const productId = $(this).data('product');
       swal("Are you sure you want to do this?", {
-  buttons: ["NO", "YES"],
-  }).then((result) =>{
-      if(result){
-        $.ajax({
-        url : "/admin/changeProductStatus/" + productId,
-        method : 'patch',
-        }).done((res) =>{
-        swal("Good job!", "You clicked the button!", "success").then(() =>{
-          location.reload();
-        })
-        }).fail((err) =>{
-        swal("Error", "Somthing went wrong", "error")
-        })
-      }
-  })
-      
+        buttons: ["NO", "YES"],
+      }).then((result) => {
+        if (result) {
+          $.ajax({
+            url: "/admin/changeProductStatus/" + productId,
+            method: 'patch',
+          }).done((res) => {
+            swal("Good job!", "You clicked the button!", "success").then(() => {
+              location.reload();
+            })
+          }).fail((err) => {
+            swal("Error", "Somthing went wrong", "error")
+          })
+        }
+      })
     })
+  })
+</script>
+<script>
+  $(document).ready(function () {
+    const itemsPerPage = 5;
+    const numItems = $('#productsContainer').children().length;
+    const numPages = Math.ceil(numItems / itemsPerPage);
+
+    // Create pagination links
+    $('<li class="page-item"><a id="leftToggle" class="page-link" href="#"><i class="material-icons md-chevron_left"></i></a></li>').appendTo('#paginationContainer')
+
+    for (let i = 1; i <= numPages; i++) {
+      $(`<li class="page-item"><a class="page-link  pageLink" data-page="${i}" href="#">${i}</a></li>`).appendTo('#paginationContainer');
+    }
+
+    $('<li class="page-item"><a id="rightToggle" class="page-link" href="#"><i class="material-icons md-chevron_right"></i></a></li>').appendTo('#paginationContainer')
+
+    // Bind click event to pagination links
+    $('.pageLink ').click(function (e) {
+      const currentPage = $(this).data('page');
+      const startIndex = (currentPage - 1) * itemsPerPage;
+      const endIndex = startIndex + itemsPerPage;
+
+      $('#productsContainer').children().hide().slice(startIndex, endIndex).show();
+      return false;
+    })
+    // Show first page by default
+    $('.pageLink:first').addClass('active');
+    $('#productsContainer').children().hide().slice(0, itemsPerPage).show();
+
+    const numLinkPerPage = 3;
+    const numLinkItems = $('#paginationContainer').children().length;
+    const numLinkPages = Math.ceil(numLinkItems / numLinkPerPage);
+    console.log(numLinkPages);
+
+    $('#leftToggle').click((e)=>{
+      console.log('clicked-left')
+      const currentToggle = $
+    })
+
+     $('#rightToggle').click((e)=>{
+      console.log('clicked-right')
+    })
+
+    {{!-- $('.pageLink:first').addClass('active'); --}}
+    $('#paginationContainer').children().hide().slice(0, itemsPerPage).show();
   })
 </script>

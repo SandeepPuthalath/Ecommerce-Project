@@ -1,22 +1,45 @@
-const { default: mongoose } = require('mongoose');
+import { default as mongoose } from 'mongoose';
 
-var objectId = require('mongodb').ObjectId
+import { ObjectId as objectId } from 'mongodb';
 
 // user order details
 const orderSchema = new mongoose.Schema({
-    createAt :{
+    createAt: {
         type: Date,
-        default : Date.now()
+        default: Date.now()
     },
-    dateOfOrder : String,
-    dateOfFullfilment : String,
-    userId : objectId,
-    address : Object,
-    orderedItems : Array,
-    totalAmount : Number,
-    paymentMethod : String,
-    status : String
+    dateOfOrder: String,
+    dateOfFullfilment: String,
+    userId: objectId,
+    address: Object,
+    orderedItems: [
+        {
+            item: {
+                type: mongoose.Schema.Types.ObjectId,
+                ref: 'products'
+            },
+            quantity: Number
+        }
+    ],
+    coupon:{
+        type: String,
+        default: null
+    },
+    discount:{
+        type: Number,
+        require: true,
+        default:0
+    },
+    total:{
+        type:Number,
+        require:true,
+    },
+    totalAmount: Number,
+    paymentMethod: String,
+    status: String
 
 })
 
-module.exports = mongoose.model('order', orderSchema);
+const Order = mongoose.model('order', orderSchema);
+
+export default Order

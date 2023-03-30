@@ -1,13 +1,13 @@
 function zoomIn() {
-  var main_image = document.getElementById("main_image");
-  var curr_width = main_image.clientWidth;
+  const main_image = document.getElementById("main_image");
+  const curr_width = main_image.clientWidth;
   console.log(curr_width);
   main_image.style.width = curr_width + 100 + "px";
 }
 
 function zoomOut() {
-  var main_image = document.getElementById("main_image");
-  var curr_width = main_image.clientWidth;
+  const main_image = document.getElementById("main_image");
+  const curr_width = main_image.clientWidth;
   main_image.style.width = curr_width - 100 + "px";
 }
 
@@ -67,7 +67,7 @@ function paypalPayment(total) {
 }
 
 function razorpayPayment(orderInfo) {
-  var options = {
+  const options = {
     key: "rzp_test_dT2hX9gH8hyKFB", // Enter the Key ID generated from the Dashboard
     amount: orderInfo.order.amount, // Amount is in currency subunits. Default currency is INR. Hence, 50000 refers to 50000 paise
     currency: "INR",
@@ -82,7 +82,7 @@ function razorpayPayment(orderInfo) {
         });
       });
 
-      verifyPayment(response, orderInfo.order);
+      verifyPayment(response, orderInfo.order, orderInfo.orderDetails);
     },
     prefill: {
       name: `${orderInfo.orderDetails.address.name}`, //your customer's name
@@ -96,11 +96,12 @@ function razorpayPayment(orderInfo) {
       color: "#3399cc",
     },
   };
-  var rzp1 = new Razorpay(options);
+  const rzp1 = new Razorpay(options);
   rzp1.open();
 }
 
-function verifyPayment(payment, order) {
+function verifyPayment(payment, order, orderDetails) {
+  console.log(order)
   $.ajax({
     url: "/verify-payment",
     data: {
@@ -116,7 +117,7 @@ function verifyPayment(payment, order) {
           icon: "success",
           button: "Ok!",
         }).then(() => {
-          location.href = '/api/cart'
+          location.href = '/api/user/settings/' + orderDetails._id
         })
 
       } else {
@@ -138,17 +139,21 @@ function verifyPayment(payment, order) {
 function addToCart(prodId) {
   const iconQtycount = document.getElementById('cartCount')
   $.ajax({
-    url: "/api/cart/add-to-cart/" + prodId,
+    url: "/api/user/cart/add-to-cart/" + prodId,
     method: "put",
-    success: (response) => {
-      if (response.status) {
-        iconQtycount.innerHTML = parseInt(iconQtycount.innerHTML) + 1;
-        swal("Successfull !", "Prodcut added to cart !", "success");
-      } else {
-        location.href = "/login";
-      }
-    },
-  });
+  }).done(res => {
+    if (res.error) {
+      swal(`Failed! ${res.message}!`, {
+        icon: "error",
+      });
+    } else {
+      iconQtycount.innerHTML = parseInt(iconQtycount.innerHTML) + 1;
+      swal("Successfull !", "Prodcut added to cart !", "success");
+    }
+  }).fail(err => {
+    location.href = "/login";
+
+  })
 }
 
 //ajax function for increasing product quantity
@@ -159,7 +164,7 @@ function changeQuantity(cartId, prodId, userId, count) {
   count = parseInt(count);
 
   $.ajax({
-    url: "/api/cart/change-product-quantity",
+    url: "/api/user/cart/change-product-quantity",
     data: {
       user: userId,
       cart: cartId,
@@ -169,20 +174,20 @@ function changeQuantity(cartId, prodId, userId, count) {
     },
     method: "patch",
     success: (response) => {
-      if (response.removeProduct) {
+      if (response.response.removeProduct) {
         let productId = "row" + prodId;
         document.getElementById(productId).style.display = "none";
         swal("Successfull !", "Prodcut removed from cart !", "success");
         location.reload();
-      } else if (response.isOutOfStock) {
+      } else if (response.response.isOutOfStock) {
         swal("Sorry !", "Product is out of stock!", "error");
       } else {
         document.getElementById(prodId).innerHTML = quantity + count;
         document.getElementById('cartCount').innerHTML = iconQtycount + count;
-        document.getElementById("totalAmount").innerHTML =
-          "Rs. " + response.totalAmount;
-        document.getElementById("subTotalAmount").innerHTML =
-          "Rs. " + response.totalAmount;
+        document.getElementById('subtotal-' + prodId).innerHTML = parseInt(document.getElementById('product-price-' + prodId).innerHTML) * (quantity + count)
+        document.getElementById("totalAmount").innerHTML = "Rs. " + response.cart.totalAmount
+        document.getElementById("subTotalAmount").innerHTML = "Rs. " + response.total;
+        document.getElementById('discountAmount').innerHTML = response.cart.discount
       }
     },
   });
@@ -193,7 +198,7 @@ function removeCartProduct(cartId, prodId) {
     buttons: ["No", "Yes"],
   }).then(() => {
     $.ajax({
-      url: "/api/cart/remove-cart-product",
+      url: "/api/user/cart/remove-cart-product",
       data: {
         cart: cartId,
         product: prodId,
@@ -216,15 +221,10 @@ function removeCartProduct(cartId, prodId) {
 $("#checkout-form").submit((e) => {
   e.preventDefault();
   e.stopImmediatePropagation();
-
-  swal({
-    title: "Are you sure?",
-    text: "you want to place the order .... !",
-    icon: "warning",
-    buttons: true,
-    dangerMode: true,
-  }).then((willDelete) => {
-    if (willDelete) {
+  swal("Are you sure you want to do this?", {
+    buttons: ["No", "Yes"],
+  }).then((res) => {
+    if (res) {
       $.ajax({
         url: "/place-order",
         method: "post",
@@ -247,41 +247,10 @@ $("#checkout-form").submit((e) => {
           }
         },
       });
-    } else {
-      swal("Your imaginary file is safe!");
     }
-  });
+  })
 });
 
-function cancelOrder(orderId) {
-  swal({
-    title: "Are you sure?",
-    text: "Once you cancelled, you will not be able to reorder this....!",
-    icon: "warning",
-    buttons: true,
-    dangerMode: true,
-  }).then((willDelete) => {
-    if (willDelete) {
-      $.ajax({
-        url: "/user/order-cancel",
-        data: {
-          orderId: orderId,
-        },
-        method: "post",
-        success: (response) => {
-          swal("Poof! your order has been cancelled ", {
-            icon: "success",
-          }).then(() => {
-            // document.getElementById(orderId).style.display = "none";
-            location.reload();
-          });
-        },
-      });
-    } else {
-      swal("Your imaginary file is safe!");
-    }
-  });
-}
 
 // adding address
 
@@ -308,6 +277,7 @@ $("#add-address").submit((e) => {
 
 function addToWishlist(prodId, userId) {
   if (prodId && userId) {
+    console.log(userId, prodId)
     $.ajax({
       url: "/addToWishlist",
       method: "post",

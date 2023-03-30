@@ -1,12 +1,12 @@
 import express from "express";
 const router = express.Router();
-import { checkingAdmin as auth } from "../middleware/sessionHandling";
+import { checkingAdmin as auth } from "../../middleware/sessionHandling";
 import {
     handleGetAllCoupons,
     handleCreateCoupon,
     handleGetCouponById,
     handleEditCoupon
-} from "../controllers/couponController"
+} from "../../controllers/admin/couponController"
 
 
 router.route('/')

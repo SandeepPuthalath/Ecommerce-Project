@@ -3,6 +3,7 @@ var router = express.Router();
 const user_controller = require("../controllers/userControllers");
 const page_controller = require("../controllers/pageController");
 import { authenticationCheck as auth, userChecking } from "../middleware/sessionHandling";
+import { checkCartProduct } from '../middleware/cartUtility'
 import multer from "../middleware/multer";
 
 /* GET home page. */
@@ -76,7 +77,7 @@ router.get("/user/image-zoom/:id", page_controller.getImageZoomPage);
 
 router
   .route("/place-order")
-  .get(userChecking, user_controller.placeOrder)
+  .get(userChecking, checkCartProduct, user_controller.placeOrder)
   .post(user_controller.checkOut);
 
 // rendering user-details page

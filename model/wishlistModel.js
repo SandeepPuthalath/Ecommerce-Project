@@ -1,10 +1,11 @@
-const { default: mongoose } = require('mongoose');
-const objectId = require('mongodb').ObjectId;
+import { default as mongoose } from 'mongoose';
+import { ObjectId as objectId } from 'mongodb';
 
 const wishlistSchema = new mongoose.Schema({
     userId : objectId,
     product : Array
 })
 
+const Wishlist = mongoose.model('wishlist', wishlistSchema);
 
-module.exports = mongoose.model('wishlist', wishlistSchema);
+export default Wishlist;

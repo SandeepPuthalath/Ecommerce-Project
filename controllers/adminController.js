@@ -1,20 +1,45 @@
 const adminHelper = require("../helpers/adminHelper");
+import Order from '../model/orderModel';
+import Category from '../model/categoryModel';
+
+
 
 module.exports = {
   // rendering admin dashboard...
   adminDashboard: async (req, res) => {
+    let paymentData;
     try {
       let admin = req.session.admin;
       const dashboardDetails = await adminHelper.getDashboardDetails();
       const chartData = await adminHelper.getChartDetails();
-      res.render("admin/dashboard", {
-        admin,
-        totalOrders: dashboardDetails.totalOrders,
-        totalRevenue: dashboardDetails.totalRevenue,
-        monthlyRevenue: dashboardDetails.monthlyRevenue,
-        totalProduct: dashboardDetails.totalProduct,
-        chartData
-      });
+      Order.find().select('paymentMethod').exec((err, orders) => {
+        if (err) {
+          res.status(404).redirect('/error');
+        } else {
+          // payment method wise sales data 
+          const payment = new Map();
+          for (let i = 0; i < orders.length; i++) {
+            if (!payment.has(orders[i].paymentMethod)) {
+              payment.set(orders[i].paymentMethod, 1);
+            } else {
+              let count = payment.get(orders[i].paymentMethod) + 1
+              payment.set(orders[i].paymentMethod, count);
+            }
+          }
+          paymentData = Array.from(payment.values());
+
+          res.render("admin/dashboard", {
+            admin,
+            totalOrders: dashboardDetails.totalOrders,
+            totalRevenue: dashboardDetails.totalRevenue,
+            monthlyRevenue: dashboardDetails.monthlyRevenue,
+            totalProduct: dashboardDetails.totalProduct,
+            chartData,
+            paymentData,
+          });
+        }
+      })
+
     } catch (err) {
       res.status(500);
     }
@@ -34,7 +59,7 @@ module.exports = {
     }
   },
   // for blocking the user
-  accessRestricter : (req, res) => {
+  accessRestricter: (req, res) => {
     let userId = req.params.id;
     adminHelper.blockUser(userId).then(() => {
       res.redirect("/admin/all-user");
@@ -43,8 +68,8 @@ module.exports = {
   // add product page rendering ...
   addProduct: (req, res) => {
     try {
-      adminHelper.getAllCategory().then((category) => {
-        category = JSON.parse(JSON.stringify(category));
+        Category.find().lean().then((category) => {
+          console.log(category)
         let admin = req.session.admin;
         res.render("admin/add-product", {
           admin,
@@ -84,7 +109,6 @@ module.exports = {
   // product listing page rendering
   productListing: (req, res) => {
     adminHelper.getAllProducts().then((product) => {
-      console.log(product);
       let admin = req.session.admin;
       product = JSON.parse(JSON.stringify(product));
       res.render("admin/all-product", { admin, product });
@@ -92,8 +116,7 @@ module.exports = {
   },
   // for editing the information about the products
   editProduct: async (req, res) => {
-    let category = await adminHelper.getAllCategory();
-    category = JSON.parse(JSON.stringify(category));
+    let category = await Category.find().lean();
     adminHelper.getProductDetails(req.params.id).then((product) => {
       const [product1] = product;
       product = JSON.parse(JSON.stringify(product1));
@@ -204,7 +227,7 @@ module.exports = {
     req.session.admin = null;
     req.session.loginStatus = false;
     req.session.loggedOut = "you are successfully logged out";
-    res.redirect("/admin/admin-login");
+    res.redirect("/api/admin/auth");
   },
   usersOrderDetails: async (req, res) => {
     try {
@@ -276,19 +299,19 @@ module.exports = {
     try {
       adminHelper.bannerUpdater(req.body, req.file).then(() => {
         res.json(true)
-      }).catch((err) =>{
+      }).catch((err) => {
         res.json(err);
       });
-      
+
     } catch (error) {
       res.status(500);
     }
   },
-  deleteBanner : (req, res) =>{
+  deleteBanner: (req, res) => {
     let bannerId = req.params.id;
-    adminHelper.bannerDeleter(bannerId).then((status) =>{
+    adminHelper.bannerDeleter(bannerId).then((status) => {
       res.json(true)
-    }).catch((err) =>{
+    }).catch((err) => {
       res.json(err);
     })
   }

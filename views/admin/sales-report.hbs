@@ -1,0 +1,205 @@
+<main class="main-wrap">
+    <section class="content-main">
+        <div class="content-header">
+            <div>
+                <h2 class="content-title card-title">Sales Report </h2>
+                <p>Lorem ipsum dolor sit amet.</p>
+            </div>
+            <div>
+                <a href="#" id="xlsheet" class="btn btn-light rounded font-md">Download XLSheet</a>
+                <a href="#" id="pdf" data-value="{{orders}}" class="btn btn-light rounded  font-md">Download PDF</a>
+            </div>
+        </div>
+        <div class="card mb-4">
+            <header class="card-header">
+                <form id="date-wise-report" method="post">
+                    <div class="row gx-3">
+                        <div class="col-lg-2 col-6 col-md-3">
+                            <label class="form-label">Start Date</label>
+                            <input type="date" name="startDate" value="" class="form-control" required>
+                        </div>
+                        <div class="col-lg-2 col-6 col-md-3">
+                            <label class="form-label">End Date</label>
+                            <input type="date" name="endDate" value="" class="form-control" required>
+                        </div>
+                        <div class="col-lg-4 col-md-6 me-auto">
+                            <button type="submit" class="btn btn-primary mt-4  btn-sm rounded">Get Report</button>
+                        </div>
+                    </div>
+                </form>
+            </header> <!-- card-header end// -->
+            <div id="sales-report" class="card-body">
+                <div class="table-responsive">
+                    <table id="sales-table" class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th scope="col">Sl.No</th>
+                                <th scope="col">#ID</th>
+                                <th scope="col">Customer</th>
+                                <th scope="col">Contact</th>
+                                <th scope="col">Address</th>
+                                <th scope="col">Payment</th>
+                                <th scope="col">Date</th>
+                                <th scope="col">Status</th>
+                                <th scope="col">Total amount</th>
+                            </tr>
+                        </thead>
+                        <tbody id="defaultReport">
+                            {{#each orders}}
+                            <tr>
+                                <td>{{inc @index}}</td>
+                                <td>{{this._id}}</td>
+                                <td><b>{{this.address.name}}</b></td>
+                                <td>{{this.address.phoneNumber}}</td>
+                                <td>
+                                    <h5>{{this.address.name}}</h5>
+                                    <p>phone: {{this.address.phoneNumber}}</p>
+                                    <p>{{this.address.address_line}}, {{this.address.city}}</p>
+                                    <p>{{this.address.state}}, {{this.orders.country}}</p>
+                                </td>
+                                <td><span class="badge rounded-pill alert-success">{{this.paymentMethod}}</span></td>
+                                <td>{{this.dateOfOrder}}</td>
+                                <td class="text-end"><span
+                                        class="badge rounded-pill alert-success">{{this.status}}</span></td>
+                                <td>
+                                    <h3>₹ {{this.totalAmount}}</h3>
+                                </td>
+                            </tr>
+                            {{/each}}
+                        </tbody>
+                    </table>
+                </div> <!-- table-responsive //end -->
+            </div> <!-- card-body end// -->
+        </div> <!-- card end// -->
+        <div class="pagination-area mt-15 mb-50">
+            <nav aria-label="Page navigation example">
+                <ul class="pagination justify-content-start">
+                    <li class="page-item active"><a class="page-link" href="#">01</a></li>
+                    <li class="page-item"><a class="page-link" href="#">02</a></li>
+                    <li class="page-item"><a class="page-link" href="#">03</a></li>
+                    <li class="page-item"><a class="page-link dot" href="#">...</a></li>
+                    <li class="page-item"><a class="page-link" href="#">16</a></li>
+                    <li class="page-item"><a class="page-link" href="#"><i
+                                class="material-icons md-chevron_right"></i></a></li>
+                </ul>
+            </nav>
+        </div>
+    </section> <!-- content-main end// -->
+
+</main>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.3/html2pdf.bundle.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.16.8/xlsx.full.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.7.7/handlebars.min.js"></script>
+
+<script>
+    $(document).ready(function () {
+
+        $('#pdf').click(function (e) {
+
+            swal("Are you sure you want to do this?", {
+                buttons: ["Oh noez!", "Aww yiss!"],
+            }).then((res) => {
+                if (res) {
+                    event.preventDefault();
+                    var element = document.getElementById('sales-report');
+                    let randomNumber = Math.floor(Math.random() * (10000000000 - 1)) + 1;
+                    var opt = {
+                        margin: 0,
+                        filename: 'SalesReport' + randomNumber + '.pdf',
+                        html2canvas: { scale: 10 },
+                        jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
+                    };
+
+                    html2pdf().set(opt).from(element).save();
+                }
+            })
+
+        })
+
+
+    })
+
+    $(document).ready(function () {
+        $('#xlsheet').on('click', function () {
+            swal("Are you sure you want to do this?", {
+                buttons: ["Oh noez!", "Aww yiss!"],
+            }).then((res) => {
+                if (res) {
+                    const rows = $('#sales-table tr');
+                    const data = [];
+
+
+                    // Loop through rows and cells to build the data array
+                    rows.each(function (index, row) {
+                        const rowData = [];
+                        $(row).find('th, td').each(function (index, cell) {
+                            rowData.push($(cell).text());
+                        });
+                        data.push(rowData);
+                    });
+
+                    // Convert the data array to a SheetJS workbook and sheet
+                    const ws = XLSX.utils.aoa_to_sheet(data);
+                    const wb = XLSX.utils.book_new();
+                    XLSX.utils.book_append_sheet(wb, ws, 'Sheet1');
+
+                    // Save the workbook as an Excel file
+                    XLSX.writeFile(wb, 'sales-table.xlsx');
+                }
+            })
+
+        });
+    });
+
+    $(document).ready(function () {
+        $('#date-wise-report').submit(function (e) {
+            e.preventDefault();
+            console.log('clicked')
+            swal("Are you sure you want to do this?", {
+                buttons: ["Oh noez!", "Aww yiss!"],
+            }).then((res) => {
+                if (res) {
+                    $.ajax({
+                        url: '/api/admin/salesReport',
+                        type: 'post',
+                        data: $('#date-wise-report').serialize()
+                    }).done(res => {
+                        $('#defaultReport').remove();
+                        renderSalesReport(res);
+                    }).fail(err => {
+                        swal("Error!", `${res.responseJSON.message}`, "error");
+                    })
+                }
+            })
+        })
+
+    })
+
+
+    function renderSalesReport(data) {
+        
+        $('<tbody id="date-wise-sales"></tbody>').appendTo('#sales-table')
+        for (let i = 0; i < data.length; i++) {
+            $(`<tr>
+                <td>`+ (i + 1) + `</td>
+                <td>`+ data[i]._id + `</td>
+                <td><b>`+ data[i].address.name + `</b></td>
+                <td>`+ data[i].address.phoneNumber + `</td>
+                <td>
+                    <h5>`+ data[i].address.name + `</h5>
+                    <p>phone: `+ data[i].address.phoneNumber + `</p>
+                    <p>`+ data[i].address.address_line + `, ` + data[i].address.city + `</p>
+                    <p>`+ data[i].address.state + `, ` + data[i].address.country + `</p>
+                </td>
+                <td><span class="badge rounded-pill alert-success">`+ data[i].paymentMethod + `</span></td>
+                <td>`+ data[i].dateOfOrder + `</td>
+                <td class="text-end"><span
+                    class="badge rounded-pill alert-success">`+ data[i].status + `</span></td>
+                <td>
+                     <h3>₹ `+ data[i].totalAmount + `</h3>
+                </td>
+            </tr>`).appendTo('#date-wise-sales').show();
+        }
+    }
+
+</script>

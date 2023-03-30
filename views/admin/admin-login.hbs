@@ -6,13 +6,13 @@
                     <div class="card-body p-5 text-center">
 
                         <h3 class="mb-5">Admin Sign in</h3>
-                       
+
                         {{#if adminLoginErr}}
                         <div class="alert alert-danger" role="alert">
                             {{adminLoginErr}}
                         </div>
                         {{/if}}
-                        <form action="/admin/admin-login" method="post">
+                        <form id="adminLogin-form" method="post">
                             <div class="form-outline mb-4">
                                 <label class="form-label" for="typeEmailX-2">Email</label>
                                 <input name="email" type="email" id="typeEmailX-2" class="form-control form-control-lg"
@@ -34,3 +34,25 @@
         </div>
     </div>
 </section>
+<script>
+
+    $(document).ready(function () {
+        $('#adminLogin-form').submit((e) => {
+            e.preventDefault();
+            $.ajax({
+                url: '/api/admin/auth',
+                type: 'post',
+                data: $('#adminLogin-form').serialize()
+            }).done((res) => {
+                console.log(res)
+                swal("Successfull", `${res.message}`, "success").then(() => {
+                    location.reload();
+                })
+            }).fail((err) => {
+                swal("Failed", `${err.responseJSON.message}`,"error").then(() => {
+                    location.reload();
+                })
+            })
+        })
+    })
+</script>

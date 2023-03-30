@@ -1,0 +1,272 @@
+<link href="/assets/css/main.css" rel="stylesheet" type="text/css" />
+
+<section class="content-main">
+    <div class="card m-5">
+        <header class="card-header">
+            <div class="row align-items-center">
+                <div class="col-lg-6 col-md-6 mb-lg-0 mb-15">
+                    <h2 class="content-title card-title">Order detail</h2>
+                    <span>
+                        <i class="material-icons md-calendar_today"></i>
+                        <b>{{order.dateOfOrder}}</b>
+                    </span>
+                    <br />
+                    <small class="text-muted">Order ID:{{order._id}}</small>
+                </div>
+                <div class="col-lg-6 col-md-6 ms-auto text-md-end">
+                    {{#if (orderStatus order.status)}}
+                    <button class="btn btn-primary" onclick="cancelOrder('{{order._id}}')"
+                        type="submit">{{orderStatusCheck order.status}}</button>
+                    <a class="btn btn-secondary print ms-2" id="invoice" href="#"><i
+                            class="icon material-icons md-print"></i></a>
+                </div>
+                {{/if}}
+            </div>
+        </header>
+        <!-- card-header end// -->
+        <div class="card-body">
+            <div class="row mb-50 mt-20 order-info-wrap">
+                <div class="col-md-4">
+                    <article class="icontext align-items-start">
+                        <span class="icon icon-sm rounded-circle bg-primary-light">
+                            <i class="text-primary material-icons md-person"></i>
+                        </span>
+                        <div class="text">
+                            <h6 class="mb-1">Customer</h6>
+                            <p class="mb-1">
+                                {{order.address.name}}
+                                <template class="__cf_email__"
+                                    data-cfemail="e2838e879aa2879a838f928e87cc818d8f">[email&#160;protected]</template>
+                                <br />
+                                +91{{order.address.phoneNumber}}
+                            </p>
+                            <a href="#">View profile</a>
+                        </div>
+                    </article>
+                </div>
+                <!-- col// -->
+                <div class="col-md-4">
+                    <article class="icontext align-items-start">
+                        <span class="icon icon-sm rounded-circle bg-primary-light">
+                            <i class="text-primary material-icons md-local_shipping"></i>
+                        </span>
+                        <div class="text">
+                            <h6 class="mb-1">Order info</h6>
+                            <p class="mb-1">
+                                Shipping: Fargo express
+                                <br />
+                                Pay method:
+                                {{order.paymentMethod}}
+                                <br />
+                                Status:
+                            <p class="badge rounded-pill alert-{{paymentStatus order.status}}">
+                                {{order.status}}</p>
+                            </p>
+                            <a href="#">Download info</a>
+                        </div>
+                    </article>
+                </div>
+                <!-- col// -->
+                <div class="col-md-4">
+                    <article class="icontext align-items-start">
+                        <span class="icon icon-sm rounded-circle bg-primary-light">
+                            <i class="text-primary material-icons md-place"></i>
+                        </span>
+                        <div class="text">
+                            <h6 class="mb-1">Deliver to</h6>
+                            <p class="mb-1">
+                                City:
+                                {{order.address.city}}
+                                <br />{{order.address.address_line}}
+                                <br />
+                                {{order.address.state}}
+                            </p>
+                            {{! <a href="#">View profile</a> }}
+                        </div>
+                    </article>
+                </div>
+                <!-- col// -->
+            </div>
+            <!-- row // -->
+            <div class="row">
+                <div class="col-lg-7">
+                    <div class="table-responsive">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th width="40%">Product</th>
+                                    <th width="20%">Unit Price</th>
+                                    <th width="20%">Quantity</th>
+                                    <th width="20%" class="text-end">Total</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {{#each itemDetails}}
+                                <tr>
+                                    <td>
+                                        <a class="itemside" href="#">
+                                            <div class="left">
+                                                <img src="/{{this.item.product_images.[0].path}}" width="40" height="40"
+                                                    class="img-xs" alt="Item" />
+                                            </div>
+                                            <div class="info">{{this.item.product_name}}</div>
+                                        </a>
+                                    </td>
+                                    <td><span
+                                            id="product_{{this.item.product_price}}">{{this.item.product_price}}</span>
+                                    </td>
+                                    <td><span id="quantity_{{this.quantity}}">{{this.quantity}}</span> </td>
+                                    <td class="text-end">₹ <span>{{mult this.item.product_price
+                                            this.quantity}}</span></td>
+                                </tr>
+                                {{/each}}
+                                <tr>
+                                    <td colspan="4">
+                                        <hr>
+                                        <article class="float-end">
+                                            <dl class="dlist">
+                                                <dt>Subtotal:</dt>
+                                                <dd>₹<b id="subTotal">{{order.total}}</b></dd>
+                                            </dl>
+                                             <dl class="dlist">
+                                                <dt>Coupon Code:</dt>
+                                                <dd><b id="discount"> {{order.coupon}}</b></dd>
+                                            </dl>
+                                            <dl class="dlist">
+                                                <dt>Coupon discount:</dt>
+                                                <dd>₹<b id="discount">-{{order.discount}}</b></dd>
+                                            </dl>
+                                            <dl class="dlist">
+                                                <dt>Grand total:</dt>
+                                                <dd><b class="h5">₹</b><b id="grandTotal"
+                                                        class="h5">{{order.totalAmount}}</b> </dd>
+                                            </dl>
+                                            <dl class="dlist">
+                                                <dt class="text-muted">Status:</dt>
+                                                <dd>
+                                                    <span
+                                                        class="badge rounded-pill alert-{{paymentStatus order.status}} ">{{order.status}}</span>
+                                                </dd>
+                                            </dl>
+                                        </article>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <!-- table-responsive// -->
+                </div>
+                <!-- col// -->
+                <div class="col-lg-1"></div>
+                <div class="col-lg-4">
+                    <div class="h-25 pt-4">
+                        <div class="mb-3">
+                            <label>Notes</label>
+                            <textarea class="form-control" name="notes" id="notes"
+                                placeholder="Type some note"></textarea>
+                        </div>
+                        <button class="btn btn-primary">Save note</button>
+                    </div>
+                </div>
+                <!-- col// -->
+            </div>
+        </div>
+        <!-- card-body end// -->
+    </div>
+    <!-- card end// -->
+</section>
+<!-- content-main end// -->
+<script src="https://cdn.jsdelivr.net/npm/easyinvoice/dist/easyinvoice.min.js"></script>
+
+<script>
+    $(document).ready(function () {
+        $('#invoice').click((e) => {
+            console.log('clicked')
+            e.preventDefault();
+            swal("Are you sure you want to do this?", {
+                buttons: ["Oh noez!", true],
+            }).then((res) => {
+                if (res) {
+                    const data = {
+                        documentTitle: 'Invoice',
+                        currency: 'USD',
+                        taxNotation: 'vat', // can be 'vat' or 'gst'
+                        marginTop: 25,
+                        marginRight: 25,
+                        marginLeft: 25,
+                        marginBottom: 25,
+                        logo: 'https://www.easyinvoice.cloud/img/logo.png',
+                        sender: {
+                            company: 'My Company',
+                            address: '123 Main St',
+                            zip: '12345',
+                            city: 'Anytown',
+                            country: 'USA',
+                        },
+                        client: {
+                            company: 'Client Company',
+                            address: '456 Elm St',
+                            zip: '67890',
+                            city: 'Othertown',
+                            country: 'USA',
+                        },
+                        invoiceNumber: '2023.001',
+                        invoiceDate: 'March 28, 2023',
+                        products: [
+                            {
+                                quantity: 2,
+                                description: 'Product 1',
+                                tax: 6.00,
+                                price: 10.00,
+                            },
+                            {
+                                quantity: 1,
+                                description: 'Product 2',
+                                tax: 2.50,
+                                price: 20.00,
+                            },
+                        ],
+                    };
+
+                    //Create your invoice! Easy!
+                    easyinvoice.createInvoice(data, function (result) {
+                        //The response will contain a base64 encoded PDF file
+                        easyinvoice.download('myInvoice.pdf', result.pdf);
+                    });
+                }
+            })
+        })
+    })
+
+
+    function cancelOrder(orderId) {
+        console.log(orderId)
+        swal({
+            title: "Are you sure?",
+            text: "Once you cancelled, you will not be able to reorder this....!",
+            icon: "warning",
+            buttons: true,
+            dangerMode: true,
+        }).then((willDelete) => {
+            if (willDelete) {
+                $.ajax({
+                    url: "/user/order-cancel",
+                    data: {
+                        orderId: orderId,
+                    },
+                    method: "post",
+                    success: (response) => {
+                        swal("Poof! your order has been cancelled ", {
+                            icon: "success",
+                        }).then(() => {
+                            // document.getElementById(orderId).style.display = "none";
+                            location.reload();
+                        });
+                    },
+                });
+            } else {
+                swal("Your imaginary file is safe!");
+            }
+        });
+    }
+</script>

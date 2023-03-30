@@ -34,23 +34,27 @@
         <div class="container">
             <div class="header-wrap">
                 <div class="logo logo-width-1">
-                    <a href="/"><img src="/imgs/theme/logo.svg" alt="logo"></a>
+                    <a href="/"><img src="/imgs/myImg/logo_transparent.png" alt="logo"></a>
                 </div>
                 <div class="header-right">
-                    <div class="search-style-2">
-                        <form action="#">
-                            <input type="text" placeholder="Search for items...">
-                        </form>
+                    <div class="container search-style-2">
+                        
+                            <input style="width: 500px; border-radius: 100px;" id="autocomplete" type="text" name="serach" placeholder="Search for items..."
+                                class="form-control form-control-lg" />
+                            <span style="z-index: 1; position: absolute;" id="searchResult"></span>
+                      
                     </div>
-                    <div class="header-action-right">
+                    <div style="position: relative;" class="header-action-right">
                         <div class="header-action-2">
                             {{#if user}}
                             <div class="header-action-icon-2">
                                 <ul class="nav">
                                     <li class="dropdown nav-item">
                                         <a class="dropdown-toggle" data-bs-toggle="dropdown" href="#"
-                                            id="dropdownAccount" aria-expanded="false"> <img
-                                                class="img-xs rounded-circle" src="/{{user.userProfile}}" alt="User"></a>
+                                            id="dropdownAccount" aria-expanded="false">
+                                            <img style="width: 3rem;" class="img-xs rounded-circle"
+                                                src="/{{user.userProfile}}" alt="User">
+                                        </a>
                                         <div class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownAccount">
                                             <a class="dropdown-item" href="/user-profile-edit"><i
                                                     class="material-icons md-perm_identity"></i>Edit
@@ -59,10 +63,6 @@
                                                     class="material-icons md-settings"></i>Account Settings</a>
                                             <a class="dropdown-item" id="walletButton" href="#"><i
                                                     class="material-icons md-account_balance_wallet"></i>Wallet</a>
-                                            <a class="dropdown-item" href="#"><i
-                                                    class="material-icons md-receipt"></i>Billing</a>
-                                            <a class="dropdown-item" href="#"><i
-                                                    class="material-icons md-help_outline"></i>Help center</a>
                                             <div class="dropdown-divider"></div>
                                             <a class="dropdown-item text-danger logout" href="#"><i
                                                     class="material-icons md-exit_to_app"></i>Logout</a>
@@ -74,17 +74,13 @@
                             <div class="header-action-icon-2">
                                 <a href="/user-wishlist">
                                     <img class="svgInject" alt="Evara" src="/imgs/theme/icons/icon-heart.svg">
-                                    {{#if wishlistCount}}
-                                    <span class="pro-count blue">{{this.wishlistCount}}</span>
-                                    {{/if}}
+                                    <span class="pro-count blue">{{count wishlistCount}}</span>
                                 </a>
                             </div>
                             <div class="header-action-icon-2">
-                                <a class="mini-cart-icon" href="/api/cart">
+                                <a class="mini-cart-icon" href="/api/user/cart">
                                     <img alt="Evara" src="/imgs/theme/icons/icon-cart.svg">
-                                    {{#if cartCount}}
-                                    <span id="cartCount" class="pro-count blue">{{cartCount.totalQty}}</span>
-                                    {{/if}}
+                                    <span id="cartCount" class="pro-count blue">{{count cartCount.totalQty}}</span>
                                 </a>
                             </div>
 
@@ -110,7 +106,7 @@
                                 <li><a class="active" href="/">Home</a>
 
                                 </li>
-                                <li><a href="/product-view">Shop</a>
+                                <li><a href="/api/product">Shop</a>
                                 </li>
                             </ul>
                         </nav>
@@ -121,10 +117,14 @@
                     <div class="header-action-2">
                         <div class="header-action-icon-2">
                             <a href="/user-wishlist">
+                                <img alt="Evara" src="/imgs/theme/icons/icon-heart.svg">
+                                <span class="pro-count blue">{{count wishlistCount}}</span>
                             </a>
                         </div>
                         <div class="header-action-icon-2">
-                            <a class="mini-cart-icon" href="/api/cart">
+                            <a class="mini-cart-icon" href="/api/user/cart">
+                                <img alt="Evara" src="/imgs/theme/icons/icon-cart.svg">
+                                <span id="cartCount" class="pro-count blue">{{count cartCount.totalQty}}</span>
                             </a>
                         </div>
                         <div class="header-action-icon-2 d-block d-lg-none">
@@ -169,7 +169,7 @@
                         <li class="menu-item-has-children"><span class="menu-expand"></span><a href="/">Home</a>
                         </li>
                         <li class="menu-item-has-children"><span class="menu-expand"></span><a
-                                href="/product-view">shop</a>
+                                href="/api/product">shop</a>
                         </li>
 
                     </ul>
@@ -202,6 +202,24 @@
         </div>
     </div>
 </div>
+<style>
+    #myDropdown {
+        display: none;
+        position: absolute;
+        z-index: 1;
+    }
+
+    #myDropdown a {
+        display: block;
+        padding: 5px;
+        text-decoration: none;
+        color: #000;
+    }
+
+    #myDropdown a:hover {
+        background-color: #f1f1f1;
+    }
+</style>
 <style>
     #myModal {
         display: none;
@@ -254,7 +272,7 @@
         <p>Balance: ₹<span id="walletBalance"></span></p>
         <h2>Transaction History</h2>
         <table>
-            <thead>
+            <thead id="transactions">
                 <tr>
                     <th>Date</th>
                     <th>Description</th>
@@ -262,22 +280,13 @@
                 </tr>
             </thead>
             <tbody>
-                <tr>
-                    <td>March 1, 2023</td>
-                    <td>Product Purchase</td>
-                    <td>-$50.00</td>
-                </tr>
-                <tr>
-                    <td>February 28, 2023</td>
-                    <td>Deposit</td>
-                    <td>$150.00</td>
-                </tr>
                 <!-- Add more transaction history rows here -->
             </tbody>
         </table>
         <input style="visibility: hidden;" type="text" value="{{user._id}}" data-user="{{user._id}}" id="userId">
     </div>
 </div>
+
 <script>
     $(document).ready(function () {
         // Get the modal
@@ -288,12 +297,14 @@
 
         // When the user clicks on <span> (x), close the modal
         span.click(function () {
+            $('#transactions tr').remove();
             modal.hide();
         });
 
         // When the user clicks anywhere outside of the modal, close it
         $(window).click(function (event) {
             if (event.target == modal[0]) {
+                $('#transactions tr').remove();
                 modal.hide();
             }
         });
@@ -305,7 +316,17 @@
                 url: "/user-wallet/" + userId,
                 method: "get",
             }).done((res) => {
-                document.getElementById("walletBalance").innerHTML = res;
+                console.log(res)
+                document.getElementById("walletBalance").innerHTML = res.balance;
+                for (let i = 0; i < 4; i++) {
+                    const tranDate = new Date(res.transaction[i].transactionDate);
+                    $(` <tr>
+                    <td>${tranDate}</td>
+                    <td>${res.transaction[i].description}</td>
+                    <td class="text-success">+${res.transaction[i].amount}</td>
+                </tr>`).appendTo('#transactions')
+
+                }
             })
 
             modal.show();
@@ -325,6 +346,41 @@
         })
 
     });
+
+    function loadData(query = '') {
+
+        fetch('/api/product/search', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ payload: query })
+        }).then(res => res.json()).then(data => {
+            let payload = data.payload;
+
+            let html = '<ul class="list-group">';
+
+            if (payload.length > 0) {
+                for (let count = 0; count < payload.length; count++) {
+                    let regularExpression = new RegExp('(' + query + ')', 'gi');
+                    html += `<a href="/api/product/search/result/?name=` + query + `" class="list-group-item
+                     list-group-item-action">`+`<img style="width: 2rem" src="`+payload[count].product_images[0].path+`" >`+ payload[count].product_name.replace(regularExpression, `<span class="text-primary fw-bold">$1</span>`) + `</a>`;
+                }
+            }
+
+            html += `</ul>`
+
+            document.getElementById('searchResult').innerHTML = html
+
+        });
+    }
+
+    var serachElement = document.getElementById('autocomplete')
+    serachElement.onkeyup = function () {
+        let query = serachElement.value;
+
+        loadData(query);
+    }
 
 
 </script>

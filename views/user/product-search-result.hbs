@@ -1,0 +1,134 @@
+<main class="main">
+	<div class="page-header breadcrumb-wrap">
+		<div class="container">
+			<div class="breadcrumb">
+				<a href="/" rel="nofollow">Home</a>
+				<span></span> Shop
+			</div>
+		</div>
+	</div>
+	<section class="mt-50 mb-50">
+		<div class="container">
+			<div class="row flex-row-reverse">
+				<div class="col-lg-9">
+					<div class="shop-product-fillter">
+						<div class="totall-product">
+							<p> We found <strong class="text-brand">688</strong> items for you!</p>
+						</div>
+						<div class="sort-by-product-area">
+							<div class="sort-by-cover">
+								<div class="sort-by-product-wrap">
+									<div class="sort-by">
+										<span><i class="fi-rs-apps-sort"></i>Sort by:</span>
+									</div>
+									<div class="sort-by-dropdown-wrap">
+										<span> Featured <i class="fi-rs-angle-small-down"></i></span>
+									</div>
+								</div>
+								<div class="sort-by-dropdown">
+									<ul>
+										<li><a class="active" href="#">Featured</a></li>
+										<li><a href="#">Price: Low to High</a></li>
+										<li><a href="#">Price: High to Low</a></li>
+										<li><a href="#">Release Date</a></li>
+									</ul>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div id="searchContainer" class="row product-grid-3"></div>
+					<div id="productsContainer" class="row product-grid-3">
+						{{#if (length search.length)}}
+						{{#each search}}
+						<div class="col-lg-4 col-md-4 col-12 col-sm-6">
+							<div class="product-cart-wrap mb-30">
+								<div class="product-img-action-wrap">
+									<div class="product-img product-img-zoom">
+										<a href="/product/{{this._id}}">
+											<img class="default-img" src="/{{this.product_images.[0].path}}" alt="">
+											<img class="hover-img" src="/{{this.product_images.[1].path}}" alt="">
+										</a>
+									</div>
+									<div class="product-action-1">
+										<a aria-label="Add To Wishlist"  onclick="addToWishlist('{{this._id}}','{{../user._id}}')" class="action-btn hover-up"
+											href="#"><i class="fi-rs-heart"></i></a>
+									</div>
+									<div class="product-badges product-badges-position product-badges-mrg">
+										<span class="hot">Hot</span>
+									</div>
+								</div>
+								<div class="product-content-wrap">
+									<div class="product-category">
+										<a href="shop-grid-right.html">Music</a>
+									</div>
+									<h2><a href="shop-product-right.html">{{this.product_name}}</a></h2>
+									<div class="rating-result" title="90%">
+										<span>
+											<span>90%</span>
+										</span>
+									</div>
+									<div class="product-price">
+										<span>Rs. {{this.product_price}}</span>
+										<span class="old-price">$245.8</span>
+									</div>
+									<div class="product-action-1 show">
+										<a aria-label="Add To Cart" href="#"  class="action-btn hover-up" onclick="addToCart('{{this._id}}')"><i
+												class="fi-rs-shopping-bag-add"></i></a>
+									</div>
+								</div>
+							</div>
+						</div>
+						{{/each}}
+						{{else}}
+						<img style="width:30%; height: 20%;" class="m-3" src="/imgs/myImg/search.png" alt="">
+						{{/if}}
+					</div>
+					<!--pagination-->
+					<div class="pagination-area mt-15 mb-sm-5 mb-lg-0">
+						<nav aria-label="Page navigation example">
+							<ul id="paginationContainer" class="pagination justify-content-start">
+							</ul>
+						</nav>
+					</div>
+				</div>
+				<div class="col-lg-3 primary-sidebar sticky-sidebar">
+					<div class="widget-category mb-30">
+						<h5 class="section-title style-1 mb-30 wow fadeIn animated">Category</h5>
+						<ul class="categories">
+							{{#each categories}}
+							<li><a href="/api/product/filter/category/?category={{this.name}}">{{this.name}}</a></li>
+							{{/each}}
+						</ul>
+					</div>
+				</div>
+			</div>
+		</div>
+	</section>
+</main>
+
+<script>
+	  $(document).ready(function () {
+        const itemsPerPage = 6;
+        const numItems = $('#productsContainer').children().length;
+        const numPages = Math.ceil(numItems / itemsPerPage);
+        
+        // Create pagination links
+        for (let i = 1; i <= numPages; i++) {
+            $(`<li class="page-item"><a class="pageLink page-link" data-page="${i}" href="#">${i}</a></li>`).appendTo('#paginationContainer');
+        }
+		$(`<li class="page-item"><a class="page-link" href="#"><i
+											class="fi-rs-angle-double-small-right"></i></a></li>`).appendTo('#paginationContainer');
+        // Bind click event to pagination links
+        $('.pageLink').click(function (e) {
+            const currentPage = $(this).data('page');
+            const startIndex = (currentPage - 1) * itemsPerPage;
+            const endIndex = startIndex + itemsPerPage;
+            
+            $('#productsContainer').children().hide().slice(startIndex, endIndex).show();
+            return false;
+        })
+        // Show first page by default
+        $('.pageLink:first').addClass('active');
+        $('#productsContainer').children().hide().slice(0, itemsPerPage).show();
+    })
+</script>

@@ -1,6 +1,6 @@
-const { default: mongoose } = require('mongoose');
+import { default as mongoose } from 'mongoose';
 
-var objectId = require('mongodb').ObjectId
+import { ObjectId as objectId } from 'mongodb';
 
 // user cart details...
 const cartSchema = new mongoose.Schema({
@@ -11,8 +11,22 @@ const cartSchema = new mongoose.Schema({
     user : objectId,
     product : Array,
     totalAmount : Number,
-    paymentMethod : String,
-    status : String
+    status : String,
+    coupon:{
+        type: String,
+        default: null
+    },
+    discount:{
+        type: Number,
+        default: 0
+    },
+    totalAmount:{
+        type: Number,
+        require: true,
+    }
 })
 
-module.exports = mongoose.model('cart', cartSchema);
+const Cart =  mongoose.model('cart', cartSchema);
+
+export default Cart
+

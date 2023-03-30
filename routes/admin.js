@@ -9,18 +9,10 @@ import multer from "../middleware/multer"
 /* GET admin Dashboard.... */
 router.get("/", checkingAdmin, adminController.adminDashboard);
 
-router
-  .route("/admin-login")
-  .get(adminAuthenticationCheck, adminController.adminLogin)
-  .post(adminController.adminLoginPost);
-
-// Getting all users details....
-
-router.get(
-  "/all-user",
-  checkingAdmin,
-  adminController.adminAllUser
-);
+// router
+//   .route("/admin-login")
+//   .get(adminAuthenticationCheck, adminController.adminLogin)
+//   .post(adminController.adminLoginPost);
 
 //Blocking users....
 

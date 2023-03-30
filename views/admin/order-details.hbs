@@ -17,19 +17,31 @@
             <br />
             <small class="text-muted">Order ID:{{orderDetails._id}}</small>
           </div>
+          {{#if (status orderDetails.status)}}
+          <form id="orderStatus-form" method="patch">
+            <div class="col-lg-6 col-md-6 ms-auto text-md-end">
+              <select name="status" class="form-select d-inline-block mb-lg-0 mb-15 mw-200">
+                <option value="Cancelled">Cancelled</option>
+                <option value="Delivered">Delivered</option>
+                <option value="Returned">Returned</option>
+                <option value="Shipped">Shipped</option>
+              </select>
+              <button data-value="{{orderDetails._id}}" id="changeStatus" class="btn btn-primary"
+                type="submit">Save</button>
+              {{!-- <a class="btn btn-secondary print ms-2" href="#"><i class="icon material-icons md-print"></i></a>
+              --}}
+            </div>
+          </form>
+          {{else}}
           <div class="col-lg-6 col-md-6 ms-auto text-md-end">
-            <select class="form-select d-inline-block mb-lg-0 mb-15 mw-200">
-              <option>Change status</option>
-              <option>Awaiting payment</option>
-              <option>Confirmed</option>
-              <option>Shipped</option>
-              <option>Delivered</option>
+            <select name="status" class="form-select d-inline-block mb-lg-0 mb-15 mw-200" disabled>
+              <option value="Cancelled">{{orderDetails.status}}</option>
             </select>
-            <a class="btn btn-primary" href="#">Save</a>
-            <a class="btn btn-secondary print ms-2" href="#"><i
-                class="icon material-icons md-print"
-              ></i></a>
+            <a href="#" class="btn btn-primary">Save</a>
+            {{!-- <a class="btn btn-secondary print ms-2" href="#"><i class="icon material-icons md-print"></i></a>
+            --}}
           </div>
+          {{/if}}
         </div>
       </header>
       <!-- card-header end// -->
@@ -44,10 +56,8 @@
                 <h6 class="mb-1">Customer</h6>
                 <p class="mb-1">
                   {{orderDetails.address.name}}
-                  <template
-                    class="__cf_email__"
-                    data-cfemail="e2838e879aa2879a838f928e87cc818d8f"
-                  >[email&#160;protected]</template>
+                  <template class="__cf_email__"
+                    data-cfemail="e2838e879aa2879a838f928e87cc818d8f">[email&#160;protected]</template>
                   <br />
                   +91{{orderDetails.address.phoneNumber}}
                 </p>
@@ -67,10 +77,10 @@
                   Shipping: Fargo express
                   <br />
                   Pay method:
-                  {{orderItems.payment}}
+                  {{orderDetails.paymentMethod}}
                   <br />
                   Status:
-                  {{orderItems.status}}
+                <p class="badge rounded-pill alert-{{paymentStatus orderDetails.status}}">{{orderDetails.status}}</p>
                 </p>
                 <a href="#">Download info</a>
               </div>
@@ -112,25 +122,20 @@
                 </thead>
                 <tbody>
                   {{#each orderItems}}
-                    <tr>
-                      <td>
-                        <a class="itemside" href="#">
-                          <div class="left">
-                            <img
-                              src="/product-images/{{this.product._id}}.jpg"
-                              width="40"
-                              height="40"
-                              class="img-xs"
-                              alt="Item"
-                            />
-                          </div>
-                          <div class="info">{{this.product.product_name}}</div>
-                        </a>
-                      </td>
-                      <td><span id="product_{{this.product.product_price}}">{{this.product.product_price}}</span></td>
-                      <td><span id="quantity_{{this.quantity}}">{{this.quantity}}</span> </td>
-                      <td class="text-end">₹ <span>{{mult this.product.product_price this.quantity}}</span></td>
-                    </tr>
+                  <tr>
+                    <td>
+                      <a class="itemside" href="#">
+                        <div class="left">
+                          <img src="/{{this.product.product_images.[0].path}}" width="40" height="40" class="img-xs"
+                            alt="Item" />
+                        </div>
+                        <div class="info">{{this.product.product_name}}</div>
+                      </a>
+                    </td>
+                    <td><span id="product_{{this.product.product_price}}">{{this.product.product_price}}</span></td>
+                    <td><span id="quantity_{{this.quantity}}">{{this.quantity}}</span> </td>
+                    <td class="text-end">₹ <span>{{mult this.product.product_price this.quantity}}</span></td>
+                  </tr>
                   {{/each}}
                   <tr>
                     <td colspan="4">
@@ -138,7 +143,7 @@
                       <article class="float-end">
                         <dl class="dlist">
                           <dt>Subtotal:</dt>
-                          <dd>$<b  id="subTotal">{{orderDetails.totalAmount}}</b></dd>
+                          <dd>$<b id="subTotal">{{orderDetails.totalAmount}}</b></dd>
                         </dl>
                         <dl class="dlist">
                           <dt>Coupon discount:</dt>
@@ -152,8 +157,7 @@
                           <dt class="text-muted">Status:</dt>
                           <dd>
                             <span
-                              class="badge rounded-pill alert-success text-success"
-                            >Payment done</span>
+                              class="badge rounded-pill alert-{{paymentStatus orderDetails.status}} ">{{orderDetails.status}}</span>
                           </dd>
                         </dl>
                       </article>
@@ -170,12 +174,7 @@
             <div class="h-25 pt-4">
               <div class="mb-3">
                 <label>Notes</label>
-                <textarea
-                  class="form-control"
-                  name="notes"
-                  id="notes"
-                  placeholder="Type some note"
-                ></textarea>
+                <textarea class="form-control" name="notes" id="notes" placeholder="Type some note"></textarea>
               </div>
               <button class="btn btn-primary">Save note</button>
             </div>
@@ -190,10 +189,43 @@
   <!-- content-main end// -->
 </main>
 <script>
-  const grandTotal = document.getElementById('grandTotal'); 
+  const grandTotal = document.getElementById('grandTotal');
   const subTotal = parseInt(document.getElementById('subTotal').innerHTML)
-  const discount = parseInt(document.getElementById('discount').innerHTML); 
+  const discount = parseInt(document.getElementById('discount').innerHTML);
   const result = subTotal - discount;
   grandTotal.innerHTML = result;
-  
+
+</script>
+
+<script>
+  $(document).ready(function () {
+
+
+    $('#orderStatus-form').submit(function (e) {
+      e.preventDefault();
+      const orderId = $('#changeStatus').data('value');
+      console.log(orderId);
+      swal("Are you sure you want to do this?", {
+        buttons: ["Oh noez!", "Aww yiss!"],
+      }).then((res) => {
+        if (res) {
+          $.ajax({
+            url: '/api/admin/orders/' + orderId,
+            type: 'patch',
+            data: $('#orderStatus-form').serialize()
+          }).done((res) => {
+            swal("Successfull", `${res}`, "success").then(() => {
+              location.reload()
+            })
+          }).fail(err =>{
+            swal("Error", `${err.responseJSON.message}`, "error").then(() => {
+              location.reload()
+            })
+          })
+        }
+      })
+    })
+
+    
+  })
 </script>

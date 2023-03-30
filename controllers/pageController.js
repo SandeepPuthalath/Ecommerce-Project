@@ -1,5 +1,4 @@
 import { getCartItemCount, getWishListCount, pageProductLoading, bannerLoading, productView as _productView } from "../helpers/productHelper";
-import { getUserInfo } from "../helpers/userHelper";
 let cartCount = null;
 let wishlistCount = null;
 let userInfo = null;
@@ -9,8 +8,6 @@ export async function loadLandingPage(req, res) {
   if (user) {
     cartCount = await getCartItemCount(user);
     wishlistCount = await getWishListCount(user);
-    userInfo = await getUserInfo(user._id)
-    console.log(userInfo)
   }
   pageProductLoading().then(async (product) => {
     product = JSON.parse(JSON.stringify(product));
@@ -23,8 +20,7 @@ export async function loadLandingPage(req, res) {
       banners,
       logged_out: req.session.loggedOut,
       cartCount,
-      wishlistCount,
-      userInfo
+      wishlistCount
     });
     req.session.loggedOut = false;
   });

@@ -1,0 +1,333 @@
+{{!-- modal section --}}
+<style>
+    #myModal {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        margin: auto;
+        z-index: 9999;
+        width: 100%;
+        height: 100%;
+        overflow: auto;
+        background-color: rgba(0, 0, 0, 0.5);
+    }
+
+
+    .modal-content {
+        background-color: #fefefe;
+        margin: 15% auto;
+        padding: 20px;
+        border: 1px solid #888;
+        width: 80%;
+        max-width: 400px;
+    }
+
+    .modal {
+        max-width: 100%;
+    }
+
+    .close {
+        color: #aaa;
+        float: right;
+        font-size: 28px;
+        font-weight: bold;
+    }
+
+    .close:hover,
+    .close:focus {
+        color: black;
+        text-decoration: none;
+        cursor: pointer;
+    }
+</style>
+<main class="main-wrap">
+    <section class="content-main">
+        <div class="content-header">
+            <div>
+                <h2 class="content-title card-title">Categories </h2>
+                <p>List, Unlist or delete a category</p>
+            </div>
+            <div>
+                <input type="text" placeholder="Search Categories" class="form-control bg-white">
+            </div>
+        </div>
+        <div class="card">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-3">
+                        <form id="category-form" method="post">
+                            <div class="mb-4">
+                                <label for="product_name" class="form-label">Name</label>
+                                <input type="text" name="name" placeholder="Type here" class="form-control" required />
+                            </div>
+                            <div class="mb-4">
+                                <label for="product_name" class="form-label">Description</label>
+                                <input type="text" name="description" placeholder="Type here" class="form-control"
+                                    required />
+                            </div>
+                            <div class="d-grid">
+                                <button type="submit" class="btn btn-primary">Create category</button>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="col-md-9">
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th class="text-center">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" value="" />
+                                            </div>
+                                        </th>
+                                        <th>Sl.No</th>
+                                        <th>Name</th>
+                                        <th>Description</th>
+                                        <th>Status</th>
+                                        <th class="text-end">Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="categorysContainer">
+                                    {{#each category}}
+                                    <tr id="{{this._id}}">
+                                        <td class="text-center">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" value="" />
+                                            </div>
+                                        </td>
+                                        <td>{{inc @index}}</td>
+                                        <td><b>{{this.name}}</b></td>
+                                        <td><b>{{this.description}}</b></td>
+                                        <td class="text-{{categoryAttr this.status}}">{{categoryStatus this.status}}
+                                        </td>
+                                        <td class="text-end">
+                                            <div class="dropdown">
+                                                <a href="#" data-bs-toggle="dropdown"
+                                                    class="btn btn-light rounded btn-sm font-sm"> <i
+                                                        class="material-icons md-more_horiz"></i> </a>
+                                                <div class="dropdown-menu">
+                                                    <a class="dropdown-item text-{{categoryAttr this.status}}" href="#"
+                                                        onclick="changeCategoryStatus('{{this._id}}')">{{categoryStatus
+                                                        this.status}}</a>
+                                                    <a class="dropdown-item text-primary"
+                                                        onclick="getCategory('{{this._id}}')" href="#">Edit</a>
+                                                    <a class="dropdown-item text-danger"
+                                                        onclick="deleteCategory('{{this._id}}')" href="#">Delete</a>
+                                                </div>
+                                            </div> <!-- dropdown //end -->
+                                        </td>
+                                    </tr>
+                                    {{/each}}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div> <!-- .col// -->
+                </div> <!-- .row // -->
+            </div> <!-- card body .// -->
+        </div> <!-- card .// -->
+
+        {{!-- modal start --}}
+        <div id="myModal" class="modal">
+            <div class="modal-content">
+                <span class="close">&times;</span>
+                <div class="content-header">
+                    <div>
+                        <h2 class="content-title card-title">Category</h2>
+                        <p>Update Category</p>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-9">
+                                <form id="edit-category-form" method="put">
+                                    <div class="mb-4">
+                                        <label for="category_name" class="form-label">Name</label>
+                                        <input type="text" id="categoryName" name="name" placeholder="Type here"
+                                            class="form-control" required />
+                                    </div>
+                                    <div class="mb-4">
+                                        <label for="category_description" class="form-label">Description</label>
+                                        <input type="text" id="categoryDescription" name="description"
+                                            placeholder="Type here" class="form-control" required />
+                                    </div>
+                                    <div style="display: none;" class="mb-4">
+                                        <label for="" class="form-label">Description</label>
+                                        <input type="text" id="categoryId" name="" placeholder="Type here"
+                                            class="form-control" required />
+                                    </div>
+                                    <div class="d-grid">
+                                        <button type="submit" class="btn btn-primary">Update category</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div> <!-- .row // -->
+                    </div> <!-- card body .// -->
+                </div> <!-- card .// -->
+            </div>
+        </div>
+        {{!-- modal end --}}
+        <div class="pagination-area mt-15 mb-50">
+            <nav aria-label="Page navigation example">
+                <ul id="paginationContainer" class="pagination justify-content-start">
+                </ul>
+            </nav>
+        </div>
+    </section> <!-- content-main end// -->
+</main>
+{{!-- pagination --}}
+<script>
+    $(document).ready(function () {
+        const itemsPerPage = 5;
+        const numItems = $('#categorysContainer').children().length;
+        const numPages = Math.ceil(numItems / itemsPerPage);
+
+        // Create pagination links
+        for (let i = 1; i <= numPages; i++) {
+            $('<li class="page-item active"><a class="page-link" data-page="' + i + '" href="#">' + i + '</a></li>').appendTo('#paginationContainer');
+        }
+
+        // Bind click event to pagination links
+        $('.page-link').click(function (e) {
+            const currentPage = $(this).data('page');
+            const startIndex = (currentPage - 1) * itemsPerPage;
+            const endIndex = startIndex + itemsPerPage;
+
+            $('#categorysContainer').children().hide().slice(startIndex, endIndex).show();
+            return false;
+        })
+        // Show first page by default
+        $('.page-link:first').addClass('active');
+        $('#categorysContainer').children().hide().slice(0, itemsPerPage).show();
+    })
+
+</script>
+
+<script>
+    $(document).ready(function () {
+        $('#category-form').submit((e) => {
+            e.preventDefault();
+            swal("Are you sure you want to do this?", {
+                buttons: ["No!", "Yes!"],
+            }).then((res) => {
+                if (res) {
+
+                    addCategory();
+
+                }
+            })
+        })
+    })
+
+    function addCategory() {
+        $.ajax({
+            url: '/api/admin/category',
+            type: 'post',
+            data: $('#category-form').serialize()
+        }).done(res => {
+            swal("Successfull", `${res.message}`, "success").then(() => {
+                location.reload()
+            })
+        }).fail(err => {
+            swal("Error", `${err.responseJSON.message}`, "error");
+        })
+    }
+
+    function changeCategoryStatus(categoryId) {
+        swal("Are you sure you want to do this?", {
+            buttons: ["No!", "Yes!"],
+        }).then((res) => {
+            if (res) {
+                $.ajax({
+                    url: '/api/admin/category/' + categoryId,
+                    type: 'patch'
+                }).done(res => {
+                    swal("Successfull", `${res.message}`, "success").then(() => {
+                        location.reload();
+                    })
+                }).fail(err => {
+                    swal("Error", `${err.responseJSON.message}`, "error");
+                })
+            }
+        })
+    }
+
+
+    function deleteCategory(categoryId) {
+
+        swal("Are you sure you want to do this?", {
+            buttons: ["No!", "Yes!"],
+        }).then((res) => {
+            if (res) {
+                $.ajax({
+                    url: '/api/admin/category/' + categoryId,
+                    type: 'delete'
+                }).done(res => {
+                    swal("Successfull", `${res.message}`, "success").then(() => {
+                        $(`#${categoryId}`).remove();
+                    })
+                }).fail(err => {
+                    swal("Error", `${err.responseJSON.message}`, "error");
+                })
+            }
+        })
+    }
+
+    function getCategory(categoryId) {
+
+        var modal = $("#myModal");
+
+        // Get the <span> element that closes the modal
+        var span = $(".close");
+
+        // When the user clicks on <span> (x), close the modal
+        span.click(function () {
+            modal.hide();
+        });
+
+        // When the user clicks anywhere outside of the modal, close it
+        $(window).click(function (event) {
+            if (event.target == modal[0]) {
+                modal.hide();
+            }
+        });
+
+        $.ajax({
+            url: '/api/admin/category/' + categoryId,
+            type: 'get'
+        }).done(res => {
+            $('#categoryName').val(res.name);
+            $('#categoryDescription').val(res.description);
+            $('#categoryId').val(res._id);
+            modal.show();
+        }).fail(err => {
+            swal("Error", `${err.responseJSON.message}`, "error");
+        })
+    }
+</script>
+
+<script>
+    //edit category
+    $(document).ready(function () {
+
+        $('#edit-category-form').submit(e => {
+            e.preventDefault();
+            const categoryId = $('#categoryId').val();
+
+            $.ajax({
+                url: '/api/admin/category/' + categoryId,
+                type: 'put',
+                data: $('#edit-category-form').serialize()
+            }).done(res => {
+                swal("Successfull", `${res.message}`, "success").then(() => {
+                    location.reload();
+                })
+            }).fail(err => {
+                 swal("Error", `${err.responseJSON.message}`, "error");
+            })
+        })
+    })
+</script>

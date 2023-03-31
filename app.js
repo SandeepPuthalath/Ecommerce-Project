@@ -30,7 +30,7 @@ import salesReportRouter from './routes/admins/salesReportRoute';
 import categoryRouter from './routes/admins/categoryManageRoute'
 
 
-let app = express();
+const app = express();
 
 // view engine setup
 let hbs = create({
@@ -173,6 +173,7 @@ app.use(function (err, req, res, next) {
   res.render('error');
 });
 
-module.exports = app;
+module.exports = app
+
 
 

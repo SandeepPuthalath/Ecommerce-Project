@@ -49,7 +49,7 @@ module.exports = {
             },
           },
         ]);
-        response.monthlyRevenue = monthlyRevenue[0].total;
+        response.monthlyRevenue = monthlyRevenue[0]?.total;
       }
       totalProduct = await productSchema.aggregate([
         {
@@ -60,7 +60,7 @@ module.exports = {
         },
       ]);
 
-      response.totalProduct = totalProduct[0].total;
+      response.totalProduct = totalProduct[0]?.total;
 
       resolve(response);
 

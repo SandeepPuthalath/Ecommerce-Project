@@ -1,0 +1,12 @@
+#twilio opt sendind and verification
+TWILIO_ACCOUNT_SID = 'your_twilio_sid'
+TWILIO_AUTH_TOKEN = 'your_twilio_auth_token'
+TWILIO_SERVICE_SID = 'your_twilio_service_sid'
+
+#paypal keys 
+PAYPAL_CLIENT_ID = 'you_paypal_client_id'
+PAYPAL_CLIENT_SECRET = 'your_paypal_client_secret'
+
+#razorpay keys
+RAZORPAY_KEY_ID = 'your_razorpay_key_id'
+RAZORPAY_KEY_SECRET = 'your_razorpay_key_secret'

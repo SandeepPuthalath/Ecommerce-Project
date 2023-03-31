@@ -1,4 +1,7 @@
 import { set, connect } from 'mongoose';
+import { config } from "dotenv";
+config();
+const uri = process.env.MONGODB_URI
 
 set('strictQuery',true)
 set('strictPopulate', false)
@@ -8,7 +11,7 @@ main().catch((err)=>{
 })
 
 async function main(){
-    await connect('mongodb://127.0.0.1:27017/CozaStore',{
+    await connect(uri,{
         useNewUrlParser : true,
         useUnifiedTopology : true
 

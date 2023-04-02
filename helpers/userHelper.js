@@ -457,7 +457,7 @@ export function addItemToWishlist(details) {
                 });
         }
         else {
-            let userWishlist = new wishlistSchema({
+            let userWishlist = new Wishlist({
                 userId: objectId(details.userId),
                 product: objectId(details.prodId)
             });
